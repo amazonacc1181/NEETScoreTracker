@@ -348,7 +348,7 @@ public class MainActivity extends Activity {
             double avg = averageSubject(records, i);
             addProgressRow(subjectCard, subjects[i], records.isEmpty() ? "No scores yet" :
                     String.format(Locale.getDefault(), "%.0f%% of section marks", avg / caps[i] * 100),
-                    records.isEmpty() ? 0 : Math.max(0, Math.min(1, avg / caps[i])),
+                    (float) (records.isEmpty() ? 0 : Math.max(0, Math.min(1, avg / caps[i]))),
                     i == 2 ? TEAL : BLUE);
         }
 
