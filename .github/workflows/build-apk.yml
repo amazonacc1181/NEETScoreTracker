@@ -5,6 +5,9 @@ on:
     branches: [ main, feature/neet-iq-ai-3.0 ]
   pull_request:
     branches: [ main ]
+concurrency:
+  group: neet-iq-ai-3-build-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
