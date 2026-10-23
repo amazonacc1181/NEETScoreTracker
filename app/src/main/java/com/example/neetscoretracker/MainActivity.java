@@ -1854,34 +1854,13 @@ public class MainActivity extends Activity {
         LinearLayout ai = card();
         ai.setPadding(dp(15), dp(14), dp(15), dp(14));
         p.addView(ai);
-        ai.addView(txt(getStoredApiKey().isEmpty() ? "Ask AI is not connected" : "Ask AI is connected",
+        ai.addView(txt(LocalLlmEngine.isModelInstalled(this) ? "On-device AI model installed" : "On-device AI model not installed",
                 14, INK, true));
-        ai.addView(txt("The API key is encrypted locally with Android Keystore. Questions and relevant score context are sent to OpenAI only when you submit them.",
+        ai.addView(txt("Ask AI uses local llama.cpp inference when a model is installed. Chat prompts and saved study context are not sent to a cloud model. The first model download requires internet; generation after setup works offline.",
                 11, MUTED, false), margin(0, 6, 0, 0));
-        TextView aiButton = secondaryButton(getStoredApiKey().isEmpty() ? "Connect OpenAI API key" : "Manage API key");
-        ai.addView(aiButton, margin(0, 10, 0, 0));
-        aiButton.setOnClickListener(v -> showApiKeyDialog());
-
-        p.addView(section("Language model"));
-        LinearLayout modelCard = card();
-        modelCard.setPadding(dp(15), dp(13), dp(15), dp(14));
-        p.addView(modelCard);
-        modelCard.addView(txt("Choose online model", 13, INK, true));
-        modelCard.addView(txt("The model is used only when an API key is configured. More capable models can cost more per request.", 10, MUTED, false), margin(0, 4, 0, 0));
-        Spinner modelPicker = new Spinner(this);
-        String[] modelLabels = {"GPT-4.1 mini · balanced", "GPT-4.1 · higher capability", "GPT-4o mini · lower cost"};
-        String[] modelIds = {"gpt-4.1-mini", "gpt-4.1", "gpt-4o-mini"};
-        modelPicker.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, modelLabels));
-        String chosenModel = prefs.getString("llm_model", "gpt-4.1-mini");
-        for (int i=0;i<modelIds.length;i++) if(modelIds[i].equals(chosenModel)) modelPicker.setSelection(i);
-        modelCard.addView(modelPicker, margin(0, 3, 0, 0));
-        TextView saveModel = secondaryButton("Save model preference");
-        modelCard.addView(saveModel, margin(0, 7, 0, 0));
-        saveModel.setOnClickListener(v -> {
-            String id = modelIds[Math.max(0, modelPicker.getSelectedItemPosition())];
-            prefs.edit().putString("llm_model", id).apply();
-            showToast("Online model set to " + id);
-        });
+        TextView manageLocal = secondaryButton("Manage offline AI model");
+        ai.addView(manageLocal, margin(0, 10, 0, 0));
+        manageLocal.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LocalModelActivity.class)));
 
         p.addView(section("Data & maintenance"));
         TextView share = secondaryButton("Export / share score report");
