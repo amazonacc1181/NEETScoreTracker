@@ -1547,11 +1547,13 @@ public class MainActivity extends Activity {
         HttpURLConnection conn = null;
         try {
             JSONArray messages = new JSONArray();
-            String system = "You are NEET IQ, a precise, supportive NEET-UG study coach for an Indian student. " +
-                    "Explain concepts clearly, state assumptions, use correct units, and distinguish NCERT facts from shortcuts. " +
-                    "Never fabricate exam announcements, official cutoffs, or answer keys. Prefer concise structured help, practical study plans, and step-by-step reasoning. " +
+            String system = "You are NEET IQ, a precise, evidence-conscious NEET-UG study coach for an Indian student. " +
+                    "When a saved question is supplied, explicitly analyse the stem, each option, the saved key, the student's selected answer, and the explanation. " +
+                    "Give the correct concept, step-by-step reasoning, why distractors are wrong, a memory cue, and what to revise. " +
+                    "Use the saved study dataset as evidence; cite the local chapter or mock record when possible. Clearly state when data is missing, and never invent answer keys or official exam announcements. " +
+                    "For requests about patterns, analyse the topic-risk summary built from the entire saved question history, not just the recent examples. " +
                     "If asked a medical question, keep it educational and do not diagnose.";
-            String performance = buildPerformanceContext();
+            String performance = buildPerformanceContext(chatMessages.isEmpty() ? "" : chatMessages.get(chatMessages.size()-1).text);
             if (!performance.isEmpty()) system += "\n\nRelevant saved mock performance context (use only when helpful):\n" + performance;
             messages.put(new JSONObject().put("role", "system").put("content", system));
             ArrayList<ChatMessage> context = new ArrayList<>();
@@ -1601,7 +1603,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private String buildPerformanceContext() {
+    private String buildPerformanceContext(String currentQuery) {
         StringBuilder b = new StringBuilder();
         ArrayList<TestResult> results = getResults();
         b.append("TARGET AND TEST HISTORY (newest first)\n");
@@ -1625,8 +1627,26 @@ public class MainActivity extends Activity {
         }
         b.append("Question attempts: ").append(answered).append("; correct: ").append(correct)
                 .append("; incorrect: ").append(wrong).append(".\n");
-        for (int i=0;i<Math.min(28,questions.size());i++) {
-            NeetLocalModel.Question q=questions.get(i);
+        b.append("ADAPTIVE TOPIC-RISK SUMMARY BUILT FROM ALL GRADED SAVED QUESTIONS\n");
+        List<NeetLocalModel.TopicInsight> topicInsights = localModel.rankTopics(questions);
+        for (int i=0;i<Math.min(80,topicInsights.size());i++) {
+            NeetLocalModel.TopicInsight topic=topicInsights.get(i);
+            b.append("- ").append(topic.subject).append(" / ").append(topic.chapter).append(": risk ")
+                    .append(Math.round(topic.risk*100)).append("%, ").append(topic.wrong).append("/")
+                    .append(topic.attempts).append(" wrong, ").append(Math.round(topic.accuracy)).append("% accuracy.\n");
+            if (b.length()>8500) break;
+        }
+        b.append("QUESTION TEXT EXAMPLES (recent plus query matches)\n");
+        ArrayList<NeetLocalModel.Question> contextQuestions = new ArrayList<>();
+        java.util.HashSet<String> includedIds = new java.util.HashSet<>();
+        for (NeetLocalModel.Question q : localModel.retrieve(currentQuery, questions, 8)) {
+            contextQuestions.add(q); includedIds.add(q.id);
+        }
+        for (NeetLocalModel.Question q : questions) {
+            if (contextQuestions.size() >= 28) break;
+            if (includedIds.add(q.id)) contextQuestions.add(q);
+        }
+        for (NeetLocalModel.Question q : contextQuestions) {
             b.append("- [").append(q.subject).append(" / ").append(q.chapter).append(" / ").append(q.difficulty).append("] ")
                     .append(q.prompt).append("\n");
             if (!q.optionA.isEmpty() || !q.optionB.isEmpty()) b.append("  Options: A ").append(q.optionA).append("; B ").append(q.optionB)
@@ -1991,6 +2011,12 @@ public class MainActivity extends Activity {
         header.addView(close, new LinearLayout.LayoutParams(dp(38), dp(42)));
         panel.addView(header);
         panel.addView(line(), margin(0, 16, 0, 14));
+        ScrollView drawerScroll = new ScrollView(this);
+        drawerScroll.setVerticalScrollBarEnabled(false);
+        LinearLayout navContent = new LinearLayout(this);
+        navContent.setOrientation(LinearLayout.VERTICAL);
+        drawerScroll.addView(navContent, new ScrollView.LayoutParams(-1, -2));
+        panel.addView(drawerScroll, new LinearLayout.LayoutParams(-1, 0, 1f));
 
         if (toolsDrawer) {
             LinearLayout targetCard = card();
@@ -1998,38 +2024,38 @@ public class MainActivity extends Activity {
             targetCard.addView(txt("CURRENT SCORE TARGET", 9, MUTED, true));
             targetCard.addView(txt(getTargetScore() + " / 720", 27, INK, true), margin(0, 5, 0, 0));
             targetCard.addView(txt("Edit target and exam date in Settings.", 10, MUTED, false), margin(0, 2, 0, 0));
-            panel.addView(targetCard);
-            panel.addView(section("Shortcuts"));
-            addNavRow(panel, d, "◷", "Focus timer", "25-minute study block", "focus");
-            addNavRow(panel, d, "✎", "Mistake journal", "Learn from wrong answers", "mistakes");
-            addNavRow(panel, d, "∑", "Formula vault", "Fast subject-wise revision", "formula");
-            addNavRow(panel, d, "✓", "Study planner", "Today's checklist", "planner");
-            addNavRow(panel, d, "Q", "Question lab", "Store and inspect question-level data", "questions");
-            addNavRow(panel, d, "✦", "Offline AI insights", "Analyse all locally saved data", "insights");
-            addNavRow(panel, d, "⇧", "Import data", "Import question CSV or workspace JSON", "import");
-            addNavRow(panel, d, "⇩", "Export workspace", "Back up tests, questions and notes", "export");
-            addNavRow(panel, d, "⚙", "Settings", "Target, data and AI key", "settings");
+            navContent.addView(targetCard);
+            navContent.addView(section("Shortcuts"));
+            addNavRow(navContent, d, "◷", "Focus timer", "25-minute study block", "focus");
+            addNavRow(navContent, d, "✎", "Mistake journal", "Learn from wrong answers", "mistakes");
+            addNavRow(navContent, d, "∑", "Formula vault", "Fast subject-wise revision", "formula");
+            addNavRow(navContent, d, "✓", "Study planner", "Today's checklist", "planner");
+            addNavRow(navContent, d, "Q", "Question lab", "Store and inspect question-level data", "questions");
+            addNavRow(navContent, d, "✦", "Offline AI insights", "Analyse all locally saved data", "insights");
+            addNavRow(navContent, d, "⇧", "Import data", "Import question CSV or workspace JSON", "import");
+            addNavRow(navContent, d, "⇩", "Export workspace", "Back up tests, questions and notes", "export");
+            addNavRow(navContent, d, "⚙", "Settings", "Target, data and AI key", "settings");
         } else {
-            addNavRow(panel, d, "⌂", "Today", "Overview and quick actions", "home");
-            addNavRow(panel, d, "▦", "Mock tests", "Record scores and history", "tests");
-            addNavRow(panel, d, "↗", "Performance", "Average, trend and subjects", "analytics");
-            addNavRow(panel, d, "✓", "Study planner", "Checklist and routine", "planner");
-            addNavRow(panel, d, "∑", "Formula vault", "Search revision formulas", "formula");
-            addNavRow(panel, d, "✎", "Mistake journal", "Save recurring errors", "mistakes");
-            addNavRow(panel, d, "Q", "Question lab", "Store, search and inspect questions", "questions");
-            addNavRow(panel, d, "◷", "Focus timer", "Build a focused block", "focus");
-            addNavRow(panel, d, "✦", "Ask AI", "Online LLM or local coach", "ai");
-            addNavRow(panel, d, "◈", "Offline AI insights", "Pattern analysis without internet", "insights");
-            addNavRow(panel, d, "⇧", "Import data", "Question CSV or workspace JSON", "import");
-            addNavRow(panel, d, "⇩", "Export workspace", "Backup the data you own", "export");
-            addNavRow(panel, d, "⚙", "Settings", "Target, API key and data", "settings");
+            addNavRow(navContent, d, "⌂", "Today", "Overview and quick actions", "home");
+            addNavRow(navContent, d, "▦", "Mock tests", "Record scores and history", "tests");
+            addNavRow(navContent, d, "↗", "Performance", "Average, trend and subjects", "analytics");
+            addNavRow(navContent, d, "✓", "Study planner", "Checklist and routine", "planner");
+            addNavRow(navContent, d, "∑", "Formula vault", "Search revision formulas", "formula");
+            addNavRow(navContent, d, "✎", "Mistake journal", "Save recurring errors", "mistakes");
+            addNavRow(navContent, d, "Q", "Question lab", "Store, search and inspect questions", "questions");
+            addNavRow(navContent, d, "◷", "Focus timer", "Build a focused block", "focus");
+            addNavRow(navContent, d, "✦", "Ask AI", "Online LLM or local coach", "ai");
+            addNavRow(navContent, d, "◈", "Offline AI insights", "Pattern analysis without internet", "insights");
+            addNavRow(navContent, d, "⇧", "Import data", "Question CSV or workspace JSON", "import");
+            addNavRow(navContent, d, "⇩", "Export workspace", "Backup the data you own", "export");
+            addNavRow(navContent, d, "⚙", "Settings", "Target, API key and data", "settings");
             View space = new View(this);
-            panel.addView(space, new LinearLayout.LayoutParams(-1, 0, 1f));
+            navContent.addView(space, new LinearLayout.LayoutParams(-1, 0, 1f));
             LinearLayout footer = card();
             footer.setPadding(dp(13), dp(13), dp(13), dp(13));
             footer.addView(txt("A little better each test.", 13, INK, true));
             footer.addView(txt("Your saved results remain on this device.", 10, MUTED, false), margin(0, 4, 0, 0));
-            panel.addView(footer);
+            navContent.addView(footer);
         }
 
         d.setContentView(panel);
