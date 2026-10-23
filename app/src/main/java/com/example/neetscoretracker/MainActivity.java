@@ -536,8 +536,12 @@ public class MainActivity extends Activity {
             LinearLayout chips = new LinearLayout(this);
             chips.setPadding(0, dp(10), 0, 0);
             chips.addView(scoreChip("PHY  " + r.physics, PALE_BLUE, BLUE));
-            chips.addView(scoreChip("CHE  " + r.chemistry, Color.rgb(255, 245, 228), AMBER), margin(7, 0, 0, 0));
-            chips.addView(scoreChip("BIO  " + r.biology, PALE_TEAL, TEAL), margin(7, 0, 0, 0));
+            LinearLayout.LayoutParams chemChipLp = new LinearLayout.LayoutParams(-2, -2);
+            chemChipLp.leftMargin = dp(7);
+            chips.addView(scoreChip("CHE  " + r.chemistry, Color.rgb(255, 245, 228), AMBER), chemChipLp);
+            LinearLayout.LayoutParams bioChipLp = new LinearLayout.LayoutParams(-2, -2);
+            bioChipLp.leftMargin = dp(7);
+            chips.addView(scoreChip("BIO  " + r.biology, PALE_TEAL, TEAL), bioChipLp);
             c.addView(chips);
         }
         if (deletable) {
@@ -857,7 +861,9 @@ public class MainActivity extends Activity {
         LinearLayout status = new LinearLayout(this);
         status.setGravity(Gravity.CENTER_VERTICAL);
         TextView statusDot = txt("●", 13, getStoredApiKey().isEmpty() ? AMBER : TEAL, true);
-        status.addView(statusDot, margin(0, 0, 8, 0));
+        LinearLayout.LayoutParams statusDotLp = new LinearLayout.LayoutParams(-2, -2);
+        statusDotLp.rightMargin = dp(8);
+        status.addView(statusDot, statusDotLp);
         status.addView(txt(getStoredApiKey().isEmpty() ? "AI connection not configured" : "OpenAI key connected",
                 12, INK, true), new LinearLayout.LayoutParams(0, -2, 1f));
         TextView keyButton = txt(getStoredApiKey().isEmpty() ? "Set up" : "Manage", 11, BLUE, true);
@@ -1447,23 +1453,13 @@ public class MainActivity extends Activity {
         row.addView(new ProgressTrack(this, fraction, color, LINE), margin(0, 8, 0, 0));
     }
 
-    private TextView emptyState(String title, String body) {
+    private View emptyState(String title, String body) {
         LinearLayout c = card();
         c.setOrientation(LinearLayout.VERTICAL);
         c.setPadding(dp(17), dp(17), dp(17), dp(17));
         c.addView(txt(title, 14, INK, true));
         c.addView(txt(body, 11, MUTED, false), margin(0, 5, 0, 0));
-        // Return a TextView-compatible lightweight holder is not possible; this method is wrapped below.
-        return new EmptyStateText(this, c);
-    }
-
-    private class EmptyStateText extends TextView {
-        EmptyStateText(Context context, LinearLayout child) {
-            super(context);
-            setVisibility(View.GONE);
-            child.setLayoutParams(new LinearLayout.LayoutParams(-1, -2));
-            setTag(child);
-        }
+        return c;
     }
 
     private void pageHeading(LinearLayout p, String title, String subtitle) {
