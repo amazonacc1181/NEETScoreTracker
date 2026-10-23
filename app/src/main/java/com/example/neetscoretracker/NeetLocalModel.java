@@ -141,7 +141,7 @@ public final class NeetLocalModel {
                     if(!item.correctAnswer.isEmpty())out.append("  Official/saved answer: ").append(item.correctAnswer).append("\n");
                     if(!item.explanation.isEmpty())out.append("  Explanation: ").append(shorten(item.explanation,260)).append("\n");
                     if(item.answered())out.append("  Your answer: ").append(item.userAnswer)
-                        .append(item.correct()?" (correct)":" (incorrect)").append("\n");
+                        .append(!item.hasAnswerKey()?" (not graded)":item.correct()?" (correct)":" (incorrect)").append("\n");
                 }
             } else {
                 out.append("I could not find a close match in your saved question bank. Add the question with its options, answer and explanation to analyse it locally.\n");
