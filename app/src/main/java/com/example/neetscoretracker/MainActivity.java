@@ -969,17 +969,14 @@ public class MainActivity extends Activity {
                     "Explain concepts clearly, state assumptions, use correct units, and distinguish NCERT facts from shortcuts. " +
                     "Never fabricate exam announcements, official cutoffs, or answer keys. Prefer concise structured help, practical study plans, and step-by-step reasoning. " +
                     "If asked a medical question, keep it educational and do not diagnose.";
+            String performance = buildPerformanceContext();
+            if (!performance.isEmpty()) system += "\n\nRelevant saved mock performance context (use only when helpful):\n" + performance;
             messages.put(new JSONObject().put("role", "system").put("content", system));
             ArrayList<ChatMessage> context = new ArrayList<>();
             int start = Math.max(0, chatMessages.size() - 10);
             for (int i = start; i < chatMessages.size(); i++) context.add(chatMessages.get(i));
             for (ChatMessage msg : context) {
                 messages.put(new JSONObject().put("role", msg.role).put("content", msg.text));
-            }
-            String performance = buildPerformanceContext();
-            if (!performance.isEmpty()) {
-                messages.put(new JSONObject().put("role", "user").put("content",
-                        "My locally saved performance context, use only if relevant:\n" + performance));
             }
             JSONObject body = new JSONObject();
             body.put("model", "gpt-4o-mini");
