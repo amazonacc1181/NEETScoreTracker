@@ -68,7 +68,7 @@ public class LocalModelActivity extends Activity {
                 long free=dir.getUsableSpace();if(free<selectedExpectedBytes*1.10)throw new IllegalStateException("Not enough free storage. Free more space and retry.");
                 connection=(HttpURLConnection)new URL(selectedUrl).openConnection();connection.setConnectTimeout(20000);connection.setReadTimeout(60000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","NEET-IQ-Android/3.0");connection.connect();
                 int code=connection.getResponseCode();if(code<200||code>=300)throw new IllegalStateException("Model host returned HTTP "+code);
-                long total=connection.getContentLengthLong();
+                long total=-1;try{total=Long.parseLong(connection.getHeaderField("Content-Length"));}catch(Exception ignored){}
                 try(BufferedInputStream in=new BufferedInputStream(connection.getInputStream());FileOutputStream out=new FileOutputStream(part)){
                     byte[] buffer=new byte[1024*1024];int count;long read=0,lastUi=0;
                     while((count=in.read(buffer))!=-1){out.write(buffer,0,count);read+=count;if(read-lastUi>4*1024*1024){lastUi=read;final long done=read,all=total>0?total:selectedExpectedBytes;runOnUiThread(()->{progress.setProgress((int)Math.min(100,done*100/Math.max(1,all)));progressText.setText(String.format(Locale.US,"Downloaded %.2f / %.2f GB",done/1073741824.0,all/1073741824.0));});}}
