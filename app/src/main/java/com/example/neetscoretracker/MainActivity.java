@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -84,6 +85,10 @@ public class MainActivity extends Activity {
     private static final String API_KEY_ALIAS = "neet_iq_openai_key_v1";
 
     private android.content.SharedPreferences prefs;
+    private NeetLocalModel localModel;
+    private static final int REQUEST_IMPORT_DATA = 8214;
+    private EditText questionSearch;
+    private LinearLayout questionList;
     private LinearLayout appRoot, contentHost, bottomNav;
     private String currentPage = "home";
     private EditText testNameField;
@@ -116,6 +121,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle state) {
         super.onCreate(state);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        localModel = new NeetLocalModel(this);
+        restoreChatHistory();
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(WHITE);
         getWindow().getDecorView().setSystemUiVisibility(
@@ -123,6 +130,14 @@ public class MainActivity extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         buildShell();
         renderScreen("home");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
+        if (requestCode == REQUEST_IMPORT_DATA) importWorkspaceFile(data.getData());
+        else if (requestCode == REQUEST_EXPORT_DATA) writeExportFile(data.getData());
     }
 
     @Override
@@ -202,6 +217,8 @@ public class MainActivity extends Activity {
             case "planner": buildPlanner(); break;
             case "formula": buildFormulaVault(); break;
             case "mistakes": buildMistakes(); break;
+            case "questions": buildQuestionLab(); break;
+            case "insights": buildOfflineInsights(); break;
             case "ai": buildAI(); break;
             case "settings": buildSettings(); break;
             case "focus": buildFocus(); break;
@@ -214,13 +231,14 @@ public class MainActivity extends Activity {
         bottomNav.removeAllViews();
         addBottomItem("⌂", "Today", "home");
         addBottomItem("▦", "Tests", "tests");
-        addBottomItem("↗", "Trends", "analytics");
+        addBottomItem("Q", "Questions", "questions");
         addBottomItem("✦", "Ask AI", "ai");
     }
 
     private void addBottomItem(String symbol, String label, String page) {
         boolean selected = currentPage.equals(page) ||
                 (page.equals("tests") && currentPage.equals("mistakes")) ||
+                (page.equals("questions") && currentPage.equals("insights")) ||
                 (page.equals("analytics") && currentPage.equals("planner"));
         LinearLayout item = new LinearLayout(this);
         item.setOrientation(LinearLayout.VERTICAL);
@@ -335,7 +353,7 @@ public class MainActivity extends Activity {
         quicks.setOrientation(LinearLayout.HORIZONTAL);
         p.addView(quicks);
         addQuickAction(quicks, "+  Record test", "tests");
-        addQuickAction(quicks, "◷  Focus", "focus");
+        addQuickAction(quicks, "Q  Questions", "questions");
         addQuickAction(quicks, "✦  Ask AI", "ai");
 
         p.addView(section("Subject balance"));
@@ -1341,12 +1359,12 @@ public class MainActivity extends Activity {
     }
 
     private void shareQuestionCsv() {
-        StringBuilder csv = new StringBuilder("subject,chapter,question,optionA,optionB,optionC,optionD,correctAnswer,userAnswer,difficulty,explanation,note\\n");
+        StringBuilder csv = new StringBuilder("subject,chapter,question,optionA,optionB,optionC,optionD,correctAnswer,userAnswer,difficulty,explanation,note\n");
         for (NeetLocalModel.Question q : getQuestionItems()) {
             String[] values={q.subject,q.chapter,q.prompt,q.optionA,q.optionB,q.optionC,q.optionD,q.correctAnswer,q.userAnswer,q.difficulty,q.explanation,q.note};
             for(int i=0;i<values.length;i++) {
                 if(i>0)csv.append(',');
-                csv.append('"').append((values[i]==null?"":values[i]).replace(""","""")).append('"');
+                csv.append('"').append((values[i]==null?"":values[i]).replace("\\"", "\\"\\"")).append('"');
             }
             csv.append('\n');
         }
@@ -1875,6 +1893,10 @@ public class MainActivity extends Activity {
             addNavRow(panel, d, "✎", "Mistake journal", "Learn from wrong answers", "mistakes");
             addNavRow(panel, d, "∑", "Formula vault", "Fast subject-wise revision", "formula");
             addNavRow(panel, d, "✓", "Study planner", "Today's checklist", "planner");
+            addNavRow(panel, d, "Q", "Question lab", "Store and inspect question-level data", "questions");
+            addNavRow(panel, d, "✦", "Offline AI insights", "Analyse all locally saved data", "insights");
+            addNavRow(panel, d, "⇧", "Import data", "Import question CSV or workspace JSON", "import");
+            addNavRow(panel, d, "⇩", "Export workspace", "Back up tests, questions and notes", "export");
             addNavRow(panel, d, "⚙", "Settings", "Target, data and AI key", "settings");
         } else {
             addNavRow(panel, d, "⌂", "Today", "Overview and quick actions", "home");
@@ -1883,8 +1905,12 @@ public class MainActivity extends Activity {
             addNavRow(panel, d, "✓", "Study planner", "Checklist and routine", "planner");
             addNavRow(panel, d, "∑", "Formula vault", "Search revision formulas", "formula");
             addNavRow(panel, d, "✎", "Mistake journal", "Save recurring errors", "mistakes");
+            addNavRow(panel, d, "Q", "Question lab", "Store, search and inspect questions", "questions");
             addNavRow(panel, d, "◷", "Focus timer", "Build a focused block", "focus");
-            addNavRow(panel, d, "✦", "Ask AI", "Study coach and mock analysis", "ai");
+            addNavRow(panel, d, "✦", "Ask AI", "Online LLM or local coach", "ai");
+            addNavRow(panel, d, "◈", "Offline AI insights", "Pattern analysis without internet", "insights");
+            addNavRow(panel, d, "⇧", "Import data", "Question CSV or workspace JSON", "import");
+            addNavRow(panel, d, "⇩", "Export workspace", "Backup the data you own", "export");
             addNavRow(panel, d, "⚙", "Settings", "Target, API key and data", "settings");
             View space = new View(this);
             panel.addView(space, new LinearLayout.LayoutParams(-1, 0, 1f));
@@ -1931,7 +1957,9 @@ public class MainActivity extends Activity {
         parent.addView(row, new LinearLayout.LayoutParams(-1, -2));
         row.setOnClickListener(v -> {
             dialog.dismiss();
-            renderScreen(page);
+            if ("import".equals(page)) startImportWorkspace();
+            else if ("export".equals(page)) shareFullWorkspace();
+            else renderScreen(page);
         });
         row.setBackground(round(WHITE, dp(12)));
     }
