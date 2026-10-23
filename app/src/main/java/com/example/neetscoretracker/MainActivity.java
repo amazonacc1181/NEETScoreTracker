@@ -851,6 +851,548 @@ public class MainActivity extends Activity {
         return c;
     }
 
+
+    // ---------------- Question-level data and offline intelligence ----------------
+
+    private void buildQuestionLab() {
+        ScrollView s = pageScroll();
+        LinearLayout p = pageContent(s);
+        pageHeading(p, "Question lab", "Store the exact question, choices, your answer and the explanation. This dataset powers offline insights and Ask AI.");
+        ArrayList<NeetLocalModel.Question> saved = getQuestionItems();
+        int answered = 0, wrong = 0;
+        for (NeetLocalModel.Question q : saved) if (q.answered()) { answered++; if (q.wrong()) wrong++; }
+
+        LinearLayout stats = new LinearLayout(this);
+        stats.setOrientation(LinearLayout.HORIZONTAL);
+        p.addView(stats);
+        addMetric(stats, "Saved questions", String.valueOf(saved.size()), "Local library", BLUE, true);
+        addMetric(stats, "Answered wrong", String.valueOf(wrong), answered == 0 ? "No attempts yet" : answered + " answered", wrong > 0 ? AMBER : TEAL, false);
+
+        LinearLayout actions = new LinearLayout(this);
+        actions.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams actionsLp = new LinearLayout.LayoutParams(-1, -2);
+        actionsLp.topMargin = dp(13);
+        p.addView(actions, actionsLp);
+        TextView add = primaryButton("+ Add question");
+        actions.addView(add, new LinearLayout.LayoutParams(0, dp(47), 1f));
+        TextView import = secondaryButton("Import CSV / JSON");
+        LinearLayout.LayoutParams importLp = new LinearLayout.LayoutParams(0, dp(47), 1f);
+        importLp.leftMargin = dp(8);
+        actions.addView(import, importLp);
+        add.setOnClickListener(v -> showQuestionDialog(null));
+        import.setOnClickListener(v -> startImportWorkspace());
+
+        TextView inspect = secondaryButton("Analyse my saved data  →");
+        p.addView(inspect, margin(0, 9, 0, 0));
+        inspect.setOnClickListener(v -> renderScreen("insights"));
+
+        questionSearch = editField("Search question, subject or chapter…", "", false);
+        p.addView(questionSearch, margin(0, 17, 0, 0));
+        questionList = new LinearLayout(this);
+        questionList.setOrientation(LinearLayout.VERTICAL);
+        p.addView(questionList, margin(0, 13, 0, 0));
+        questionSearch.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) { refreshQuestionList(); }
+            public void afterTextChanged(Editable e) {}
+        });
+        refreshQuestionList();
+    }
+
+    private void refreshQuestionList() {
+        if (questionList == null) return;
+        questionList.removeAllViews();
+        String query = questionSearch == null ? "" : questionSearch.getText().toString().trim().toLowerCase(Locale.ROOT);
+        ArrayList<NeetLocalModel.Question> saved = getQuestionItems();
+        int shown = 0;
+        for (NeetLocalModel.Question q : saved) {
+            String searchable = (q.subject + " " + q.chapter + " " + q.prompt + " " + q.explanation + " " + q.note).toLowerCase(Locale.ROOT);
+            if (!query.isEmpty() && !searchable.contains(query)) continue;
+            LinearLayout item = card();
+            item.setPadding(dp(14), dp(13), dp(14), dp(13));
+            LinearLayout.LayoutParams itemLp = new LinearLayout.LayoutParams(-1, -2);
+            itemLp.bottomMargin = dp(9);
+            questionList.addView(item, itemLp);
+
+            LinearLayout top = new LinearLayout(this);
+            top.setGravity(Gravity.CENTER_VERTICAL);
+            top.addView(txt(q.chapter.isEmpty() ? "Unsorted chapter" : q.chapter, 14, INK, true),
+                    new LinearLayout.LayoutParams(0, -2, 1f));
+            item.addView(top);
+            TextView subject = scoreChip(q.subject.toUpperCase(Locale.ROOT) + " · " + q.difficulty.toUpperCase(Locale.ROOT),
+                    q.subject.equals("Biology") ? PALE_TEAL : PALE_BLUE,
+                    q.subject.equals("Biology") ? TEAL : BLUE);
+            item.addView(subject, margin(0, 7, 0, 0));
+            TextView prompt = txt(q.prompt, 13, INK, false);
+            prompt.setPadding(0, dp(10), 0, dp(5));
+            item.addView(prompt);
+            if (q.answered()) {
+                String verdict = q.correct() ? "Your answer: " + q.userAnswer + " · Correct" :
+                        "Your answer: " + q.userAnswer + " · Saved answer: " + q.correctAnswer + " · Review";
+                item.addView(txt(verdict, 11, q.correct() ? TEAL : AMBER, true));
+            } else if (!q.correctAnswer.isEmpty()) {
+                item.addView(txt("Saved answer: " + q.correctAnswer + " · Not attempted", 11, MUTED, true));
+            }
+            if (!q.explanation.isEmpty()) item.addView(txt("Explanation: " + q.explanation, 11, MUTED, false), margin(0, 7, 0, 0));
+            if (!q.note.isEmpty()) item.addView(txt("Your note: " + q.note, 11, MUTED, false), margin(0, 5, 0, 0));
+            item.addView(txt("Tap to edit · Long-press to remove", 9, MUTED, false), margin(0, 10, 0, 0));
+            item.setOnClickListener(v -> showQuestionDialog(q));
+            item.setOnLongClickListener(v -> {
+                new AlertDialog.Builder(this).setTitle("Delete this question?")
+                        .setMessage("The question will be removed from your local library.")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete", (d, w) -> {
+                            prefs.edit().remove("q:" + q.id).apply();
+                            refreshQuestionList();
+                            showToast("Question deleted");
+                        }).show();
+                return true;
+            });
+            shown++;
+        }
+        if (shown == 0) questionList.addView(emptyState(query.isEmpty() ? "Your question library is ready" : "No matching questions",
+                query.isEmpty() ? "Add a question or import a question CSV / workspace JSON. Store the chapter, choices, correct answer and your answer to make local analysis useful."
+                        : "Try a different keyword or chapter."));
+    }
+
+    private void showQuestionDialog(NeetLocalModel.Question existing) {
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        LinearLayout form = new LinearLayout(this);
+        form.setOrientation(LinearLayout.VERTICAL);
+        form.setPadding(dp(17), dp(4), dp(17), dp(8));
+        scroll.addView(form);
+
+        form.addView(txt("Subject", 11, MUTED, true));
+        Spinner subject = new Spinner(this);
+        String[] subjects = {"Physics", "Chemistry", "Biology"};
+        subject.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, subjects));
+        if (existing != null) subject.setSelection(existing.subject.equals("Chemistry") ? 1 : existing.subject.equals("Biology") ? 2 : 0);
+        form.addView(subject, margin(0, 3, 0, 8));
+
+        EditText chapter = editField("Chapter / topic (required)", existing == null ? "" : existing.chapter, false);
+        form.addView(chapter, margin(0, 3, 0, 8));
+        EditText prompt = editField("Paste the full question (required)", existing == null ? "" : existing.prompt, false);
+        prompt.setSingleLine(false); prompt.setMinLines(3); prompt.setGravity(Gravity.TOP | Gravity.LEFT);
+        form.addView(prompt, margin(0, 3, 0, 8));
+
+        EditText optionA = editField("Option A (optional)", existing == null ? "" : existing.optionA, false);
+        EditText optionB = editField("Option B (optional)", existing == null ? "" : existing.optionB, false);
+        EditText optionC = editField("Option C (optional)", existing == null ? "" : existing.optionC, false);
+        EditText optionD = editField("Option D (optional)", existing == null ? "" : existing.optionD, false);
+        form.addView(optionA, margin(0, 3, 0, 6));
+        form.addView(optionB, margin(0, 3, 0, 6));
+        form.addView(optionC, margin(0, 3, 0, 6));
+        form.addView(optionD, margin(0, 3, 0, 8));
+
+        LinearLayout labels = new LinearLayout(this);
+        labels.setOrientation(LinearLayout.HORIZONTAL);
+        EditText correct = editField("Correct answer (A/B/C/D)", existing == null ? "" : existing.correctAnswer, false);
+        EditText answer = editField("Your answer (A/B/C/D)", existing == null ? "" : existing.userAnswer, false);
+        labels.addView(correct, new LinearLayout.LayoutParams(0, dp(47), 1f));
+        LinearLayout.LayoutParams answerLp = new LinearLayout.LayoutParams(0, dp(47), 1f);
+        answerLp.leftMargin = dp(7);
+        labels.addView(answer, answerLp);
+        form.addView(labels, margin(0, 2, 0, 8));
+
+        form.addView(txt("Difficulty", 11, MUTED, true));
+        Spinner difficulty = new Spinner(this);
+        String[] levels = {"Easy", "Medium", "Hard"};
+        difficulty.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, levels));
+        if (existing != null) difficulty.setSelection(existing.difficulty.equalsIgnoreCase("Easy") ? 0 : existing.difficulty.equalsIgnoreCase("Hard") ? 2 : 1);
+        form.addView(difficulty, margin(0, 2, 0, 8));
+
+        EditText explanation = editField("Official / personal solution or explanation", existing == null ? "" : existing.explanation, false);
+        explanation.setSingleLine(false); explanation.setMinLines(2); explanation.setGravity(Gravity.TOP | Gravity.LEFT);
+        form.addView(explanation, margin(0, 2, 0, 8));
+        EditText note = editField("Your mistake / concept notes", existing == null ? "" : existing.note, false);
+        note.setSingleLine(false); note.setMinLines(2); note.setGravity(Gravity.TOP | Gravity.LEFT);
+        form.addView(note, margin(0, 2, 0, 8));
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(existing == null ? "Add question" : "Edit question")
+                .setView(scroll)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Save question", null).create();
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String chapterValue = chapter.getText().toString().trim();
+            String promptValue = prompt.getText().toString().trim();
+            String correctValue = correct.getText().toString().trim();
+            if (chapterValue.isEmpty()) { chapter.setError("Add the chapter or topic."); return; }
+            if (promptValue.isEmpty()) { prompt.setError("Paste the question text."); return; }
+            if (correctValue.isEmpty()) { correct.setError("Add the correct answer or option label."); return; }
+            NeetLocalModel.Question q = new NeetLocalModel.Question();
+            q.id = existing == null ? String.valueOf(System.currentTimeMillis()) : existing.id;
+            q.subject = String.valueOf(subject.getSelectedItem());
+            q.chapter = chapterValue; q.prompt = promptValue;
+            q.optionA = optionA.getText().toString().trim();
+            q.optionB = optionB.getText().toString().trim();
+            q.optionC = optionC.getText().toString().trim();
+            q.optionD = optionD.getText().toString().trim();
+            q.correctAnswer = correctValue;
+            q.userAnswer = answer.getText().toString().trim();
+            q.difficulty = String.valueOf(difficulty.getSelectedItem());
+            q.explanation = explanation.getText().toString().trim();
+            q.note = note.getText().toString().trim();
+            q.timestamp = System.currentTimeMillis();
+            prefs.edit().putString("q:" + q.id, questionToJson(q).toString()).apply();
+            dialog.dismiss();
+            renderScreen("questions");
+            showToast("Question saved to your local dataset");
+        }));
+        dialog.show();
+        if (dialog.getWindow() != null) dialog.getWindow().setLayout(
+                Math.min(getResources().getDisplayMetrics().widthPixels - dp(28), dp(520)),
+                Math.min(getResources().getDisplayMetrics().heightPixels - dp(100), dp(720)));
+    }
+
+    private JSONObject questionToJson(NeetLocalModel.Question q) {
+        JSONObject o = new JSONObject();
+        try {
+            o.put("id", q.id); o.put("subject", q.subject); o.put("chapter", q.chapter);
+            o.put("question", q.prompt); o.put("optionA", q.optionA); o.put("optionB", q.optionB);
+            o.put("optionC", q.optionC); o.put("optionD", q.optionD);
+            o.put("correctAnswer", q.correctAnswer); o.put("userAnswer", q.userAnswer);
+            o.put("difficulty", q.difficulty); o.put("explanation", q.explanation);
+            o.put("note", q.note); o.put("timestamp", q.timestamp);
+        } catch (Exception ignored) {}
+        return o;
+    }
+
+    private NeetLocalModel.Question questionFromJson(JSONObject o) {
+        NeetLocalModel.Question q = new NeetLocalModel.Question();
+        q.id = o.optString("id", String.valueOf(System.currentTimeMillis()));
+        q.subject = o.optString("subject", "Other");
+        q.chapter = o.optString("chapter", o.optString("topic", "Unsorted"));
+        q.prompt = o.optString("question", o.optString("prompt", o.optString("text", "")));
+        q.optionA = o.optString("optionA", o.optString("option_a", o.optString("A", "")));
+        q.optionB = o.optString("optionB", o.optString("option_b", o.optString("B", "")));
+        q.optionC = o.optString("optionC", o.optString("option_c", o.optString("C", "")));
+        q.optionD = o.optString("optionD", o.optString("option_d", o.optString("D", "")));
+        q.correctAnswer = o.optString("correctAnswer", o.optString("correct_answer", o.optString("answer", "")));
+        q.userAnswer = o.optString("userAnswer", o.optString("user_answer", o.optString("selectedAnswer", "")));
+        q.difficulty = o.optString("difficulty", "Medium");
+        q.explanation = o.optString("explanation", o.optString("solution", ""));
+        q.note = o.optString("note", o.optString("notes", ""));
+        q.timestamp = o.optLong("timestamp", System.currentTimeMillis());
+        return q;
+    }
+
+    private ArrayList<NeetLocalModel.Question> getQuestionItems() {
+        ArrayList<NeetLocalModel.Question> out = new ArrayList<>();
+        for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+            if (!entry.getKey().startsWith("q:") || !(entry.getValue() instanceof String)) continue;
+            try {
+                NeetLocalModel.Question q = questionFromJson(new JSONObject((String) entry.getValue()));
+                q.id = entry.getKey().substring(2);
+                out.add(q);
+            } catch (Exception ignored) {}
+        }
+        Collections.sort(out, (a, b) -> Long.compare(b.timestamp, a.timestamp));
+        return out;
+    }
+
+    private ArrayList<String> testSummaries() {
+        ArrayList<String> out = new ArrayList<>();
+        for (TestResult r : getResults()) {
+            out.add(formatDate(r.timestamp) + " · " + r.name + ": " + r.score + "/720; " +
+                    r.correct + " correct, " + r.wrong + " wrong" +
+                    (r.hasSubjectBreakdown ? "; Physics " + r.physics + ", Chemistry " + r.chemistry + ", Biology " + r.biology : ""));
+            if (out.size() >= 10) break;
+        }
+        return out;
+    }
+
+    private ArrayList<String> mistakeSummaries() {
+        ArrayList<String> out = new ArrayList<>();
+        for (Mistake m : getMistakes()) {
+            out.add(m.subject + " / " + m.chapter + " · " + m.type + ": " + m.note);
+            if (out.size() >= 20) break;
+        }
+        return out;
+    }
+
+    private String offlineAnalysis(String prompt) {
+        return localModel.analyse(prompt, getQuestionItems(), testSummaries(), mistakeSummaries(), getTargetScore());
+    }
+
+    private void buildOfflineInsights() {
+        ScrollView s = pageScroll();
+        LinearLayout p = pageContent(s);
+        pageHeading(p, "Offline intelligence", "Analyses your stored questions, answers, chapters, mistakes and mock scores without internet or an API key.");
+        ArrayList<NeetLocalModel.Question> qs = getQuestionItems();
+        int answered = 0, correct = 0, wrong = 0;
+        for (NeetLocalModel.Question q : qs) if (q.answered()) { answered++; if (q.correct()) correct++; else wrong++; }
+        LinearLayout stats = new LinearLayout(this);
+        stats.setOrientation(LinearLayout.HORIZONTAL);
+        p.addView(stats);
+        addMetric(stats, "Questions", String.valueOf(qs.size()), "Saved locally", BLUE, true);
+        addMetric(stats, "Accuracy", answered == 0 ? "—" : Math.round(100f * correct / answered) + "%",
+                answered == 0 ? "Record answers to learn" : wrong + " incorrect", answered > 0 && wrong > correct ? AMBER : TEAL, false);
+
+        LinearLayout reportCard = card();
+        reportCard.setPadding(dp(15), dp(15), dp(15), dp(15));
+        p.addView(reportCard, margin(0, 15, 0, 0));
+        reportCard.addView(txt("PERSONALISED DATA REPORT", 10, TEAL, true));
+        TextView report = txt(offlineAnalysis(""), 12, INK, false);
+        report.setTextIsSelectable(true);
+        report.setPadding(0, dp(10), 0, 0);
+        reportCard.addView(report);
+
+        p.addView(section("Ask about your saved dataset"));
+        EditText query = editField("e.g. Why do I keep losing marks in electrostatics?", "", false);
+        query.setSingleLine(false); query.setMinLines(2); query.setGravity(Gravity.TOP | Gravity.LEFT);
+        p.addView(query);
+        TextView analyze = primaryButton("Analyse this question offline");
+        p.addView(analyze, margin(0, 9, 0, 0));
+        analyze.setOnClickListener(v -> {
+            String question = query.getText().toString().trim();
+            report.setText(offlineAnalysis(question));
+            if (question.isEmpty()) showToast("Showing refreshed analysis of all saved data.");
+        });
+        TextView online = secondaryButton("Ask the LLM for deeper reasoning  →");
+        p.addView(online, margin(0, 9, 0, 0));
+        online.setOnClickListener(v -> {
+            renderScreen("ai");
+            sendAIQuestion("Analyse every relevant saved NEET test, question, answer, explanation, mistake and topic signal. Give me the 5 highest-impact actions to improve performance, cite the saved examples you used, and clearly state uncertainty.");
+        });
+    }
+
+    private void startImportWorkspace() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/json", "text/csv", "text/plain", "application/octet-stream"});
+            startActivityForResult(intent, REQUEST_IMPORT_DATA);
+        } catch (Exception ex) {
+            showToast("File picker could not be opened on this device.");
+        }
+    }
+
+    private void importWorkspaceFile(Uri uri) {
+        try (InputStream stream = getContentResolver().openInputStream(uri)) {
+            if (stream == null) throw new IllegalStateException("Unable to read the selected file");
+            String content = readStream(stream).trim();
+            if (content.isEmpty()) { showToast("The selected file is empty."); return; }
+            if (content.startsWith("{")) importWorkspaceJson(new JSONObject(content));
+            else if (content.startsWith("[")) importQuestionArray(new JSONArray(content));
+            else importQuestionCsv(content);
+        } catch (Exception ex) {
+            showToast("Import failed: " + safeMessage(ex));
+        }
+    }
+
+    private void importWorkspaceJson(JSONObject root) throws Exception {
+        int imported = 0;
+        JSONArray tests = root.optJSONArray("tests");
+        if (tests != null) for (int i = 0; i < tests.length(); i++) {
+            JSONObject item = tests.optJSONObject(i);
+            if (item == null) continue;
+            String raw = item.optString("data", "");
+            if (!raw.isEmpty()) prefs.edit().putString("t" + System.currentTimeMillis() + i, raw).apply();
+        }
+        JSONArray mistakes = root.optJSONArray("mistakes");
+        if (mistakes != null) for (int i = 0; i < mistakes.length(); i++) {
+            JSONObject item = mistakes.optJSONObject(i);
+            if (item == null) continue;
+            String raw = item.optString("data", "");
+            if (!raw.isEmpty()) prefs.edit().putString("m:" + System.currentTimeMillis() + i, raw).apply();
+        }
+        JSONArray qs = root.optJSONArray("questions");
+        if (qs != null) imported += storeQuestionArray(qs);
+        JSONObject tasks = root.optJSONObject("tasks");
+        if (tasks != null) {
+            java.util.Iterator<String> keys = tasks.keys();
+            while (keys.hasNext()) { String key = keys.next(); prefs.edit().putBoolean("task:" + key, tasks.optBoolean(key, false)).apply(); }
+        }
+        if (root.has("targetScore")) prefs.edit().putInt("target_score", Math.max(100, Math.min(720, root.optInt("targetScore", getTargetScore())))).apply();
+        if (root.has("targetDate")) prefs.edit().putString("target_date", root.optString("targetDate", "")).apply();
+        JSONArray chat = root.optJSONArray("chat");
+        if (chat != null) {
+            chatMessages.clear();
+            for (int i = Math.max(0, chat.length() - 40); i < chat.length(); i++) {
+                JSONObject item = chat.optJSONObject(i);
+                if (item != null) chatMessages.add(new ChatMessage(item.optString("role", "assistant"), item.optString("text", "")));
+            }
+            persistChatHistory();
+        }
+        renderScreen("home");
+        showToast("Workspace merged successfully · " + imported + " question(s) imported");
+    }
+
+    private void importQuestionArray(JSONArray qs) throws Exception {
+        int count = storeQuestionArray(qs);
+        renderScreen("questions");
+        showToast("Imported " + count + " question(s)");
+    }
+
+    private int storeQuestionArray(JSONArray qs) throws Exception {
+        int count = 0;
+        for (int i = 0; i < qs.length(); i++) {
+            JSONObject o = qs.optJSONObject(i);
+            if (o == null) continue;
+            NeetLocalModel.Question q = questionFromJson(o);
+            if (q.prompt.trim().isEmpty() || q.correctAnswer.trim().isEmpty()) continue;
+            q.id = String.valueOf(System.currentTimeMillis()) + "_" + i;
+            if (q.timestamp <= 0) q.timestamp = System.currentTimeMillis();
+            prefs.edit().putString("q:" + q.id, questionToJson(q).toString()).apply();
+            count++;
+        }
+        return count;
+    }
+
+    private void importQuestionCsv(String csv) throws Exception {
+        String[] lines = csv.split("\\r?\\n");
+        if (lines.length < 2) throw new IllegalArgumentException("CSV needs a header row and at least one question.");
+        List<String> headers = parseCsvLine(lines[0]);
+        Map<String, Integer> index = new HashMap<>();
+        for (int i = 0; i < headers.size(); i++) index.put(headers.get(i).trim().toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", ""), i);
+        if (!index.containsKey("question") && !index.containsKey("prompt") && !index.containsKey("text"))
+            throw new IllegalArgumentException("CSV header must include question or prompt.");
+        JSONArray array = new JSONArray();
+        for (int line = 1; line < lines.length; line++) {
+            if (lines[line].trim().isEmpty()) continue;
+            List<String> cells = parseCsvLine(lines[line]);
+            JSONObject o = new JSONObject();
+            o.put("subject", csvValue(index,cells,"subject"));
+            o.put("chapter", csvValue(index,cells,"chapter","topic"));
+            o.put("question", csvValue(index,cells,"question","prompt","text"));
+            o.put("optionA", csvValue(index,cells,"optiona","a"));
+            o.put("optionB", csvValue(index,cells,"optionb","b"));
+            o.put("optionC", csvValue(index,cells,"optionc","c"));
+            o.put("optionD", csvValue(index,cells,"optiond","d"));
+            o.put("correctAnswer", csvValue(index,cells,"correctanswer","correct","answer"));
+            o.put("userAnswer", csvValue(index,cells,"useranswer","selectedanswer","myanswer"));
+            o.put("difficulty", csvValue(index,cells,"difficulty"));
+            o.put("explanation", csvValue(index,cells,"explanation","solution"));
+            o.put("note", csvValue(index,cells,"note","notes"));
+            array.put(o);
+        }
+        int count = storeQuestionArray(array);
+        renderScreen("questions");
+        showToast("Imported " + count + " question(s) from CSV");
+    }
+
+    private String csvValue(Map<String,Integer> index, List<String> cells, String... names) {
+        for (String name : names) {
+            Integer i=index.get(name);
+            if(i!=null && i>=0 && i<cells.size()) return cells.get(i).trim();
+        }
+        return "";
+    }
+
+    private List<String> parseCsvLine(String line) {
+        ArrayList<String> cells = new ArrayList<>();
+        StringBuilder cell = new StringBuilder();
+        boolean quoted = false;
+        for (int i=0;i<line.length();i++) {
+            char ch=line.charAt(i);
+            if(ch=='"') {
+                if(quoted && i+1<line.length() && line.charAt(i+1)=='"') { cell.append('"'); i++; }
+                else quoted=!quoted;
+            } else if(ch==',' && !quoted) { cells.add(cell.toString()); cell.setLength(0); }
+            else cell.append(ch);
+        }
+        cells.add(cell.toString());
+        return cells;
+    }
+
+    private void shareFullWorkspace() {
+        try {
+            JSONObject root = new JSONObject();
+            root.put("format", "neet-iq-workspace");
+            root.put("version", 2);
+            root.put("exportedAt", System.currentTimeMillis());
+            root.put("targetScore", getTargetScore());
+            root.put("targetDate", prefs.getString("target_date", ""));
+            JSONArray tests = new JSONArray();
+            for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+                if (e.getKey().matches("t\\d+") && e.getValue() instanceof String) {
+                    JSONObject item = new JSONObject(); item.put("data", e.getValue()); tests.put(item);
+                }
+            }
+            root.put("tests", tests);
+            JSONArray mistakes = new JSONArray();
+            for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+                if (e.getKey().startsWith("m:") && e.getValue() instanceof String) {
+                    JSONObject item = new JSONObject(); item.put("data", e.getValue()); mistakes.put(item);
+                }
+            }
+            root.put("mistakes", mistakes);
+            JSONArray qs = new JSONArray();
+            for (NeetLocalModel.Question q : getQuestionItems()) qs.put(questionToJson(q));
+            root.put("questions", qs);
+            JSONObject tasks = new JSONObject();
+            for (String id : plannerTaskIds) tasks.put(id, prefs.getBoolean("task:" + id, false));
+            root.put("tasks", tasks);
+            JSONArray chat = new JSONArray();
+            for (ChatMessage m : chatMessages) chat.put(new JSONObject().put("role",m.role).put("text",m.text));
+            root.put("chat", chat);
+            pendingExportJson = root.toString(2);
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/json");
+            intent.putExtra(Intent.EXTRA_TITLE, "neet-iq-workspace-export.json");
+            startActivityForResult(intent, REQUEST_EXPORT_DATA);
+        } catch (Exception ex) {
+            showToast("Export could not be prepared: " + safeMessage(ex));
+        }
+    }
+
+    private void shareQuestionCsv() {
+        StringBuilder csv = new StringBuilder("subject,chapter,question,optionA,optionB,optionC,optionD,correctAnswer,userAnswer,difficulty,explanation,note\\n");
+        for (NeetLocalModel.Question q : getQuestionItems()) {
+            String[] values={q.subject,q.chapter,q.prompt,q.optionA,q.optionB,q.optionC,q.optionD,q.correctAnswer,q.userAnswer,q.difficulty,q.explanation,q.note};
+            for(int i=0;i<values.length;i++) {
+                if(i>0)csv.append(',');
+                csv.append('"').append((values[i]==null?"":values[i]).replace(""","""")).append('"');
+            }
+            csv.append('\n');
+        }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/csv");
+        intent.putExtra(Intent.EXTRA_SUBJECT,"NEET IQ question bank");
+        intent.putExtra(Intent.EXTRA_TEXT,csv.toString());
+        startActivity(Intent.createChooser(intent,"Share question CSV"));
+    }
+
+    private String pendingExportJson = "";
+    private static final int REQUEST_EXPORT_DATA = 8215;
+
+    private void writeExportFile(Uri uri) {
+        try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+            if (out == null) throw new IllegalStateException("Could not create selected file.");
+            out.write(pendingExportJson.getBytes(StandardCharsets.UTF_8));
+            out.flush();
+            showToast("Workspace backup saved");
+        } catch (Exception ex) {
+            showToast("Could not save backup: " + safeMessage(ex));
+        }
+    }
+
+    private void restoreChatHistory() {
+        try {
+            JSONArray saved = new JSONArray(prefs.getString("chat_history", "[]"));
+            for (int i=Math.max(0,saved.length()-40);i<saved.length();i++) {
+                JSONObject item=saved.optJSONObject(i);
+                if(item!=null)chatMessages.add(new ChatMessage(item.optString("role","assistant"),item.optString("text","")));
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void persistChatHistory() {
+        try {
+            JSONArray saved = new JSONArray();
+            int start = Math.max(0, chatMessages.size()-40);
+            for(int i=start;i<chatMessages.size();i++) {
+                ChatMessage m=chatMessages.get(i);
+                saved.put(new JSONObject().put("role",m.role).put("text",m.text));
+            }
+            prefs.edit().putString("chat_history",saved.toString()).apply();
+        } catch (Exception ignored) {}
+    }
+
     private void buildAI() {
         ScrollView s = pageScroll();
         LinearLayout p = pageContent(s);
