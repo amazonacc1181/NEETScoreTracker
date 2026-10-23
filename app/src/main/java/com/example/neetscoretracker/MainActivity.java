@@ -1430,8 +1430,11 @@ public class MainActivity extends Activity {
         status.addView(keyButton);
         keyButton.setOnClickListener(v -> showApiKeyDialog());
         connect.addView(status);
-        connect.addView(txt("Bring your own OpenAI API key. It is encrypted on this device and is only sent to OpenAI when you ask a question. API usage may be billed by OpenAI.",
+        connect.addView(txt("Offline question retrieval and performance insights work without a key. Connect your own OpenAI API key for broader language-model reasoning; API usage may be billed separately.",
                 10, MUTED, false), margin(0, 7, 0, 0));
+        TextView offline = secondaryButton("Run offline analysis on all saved data");
+        connect.addView(offline, margin(0, 10, 0, 0));
+        offline.setOnClickListener(v -> renderScreen("insights"));
 
         p.addView(section("Conversation"));
         if (chatMessages.isEmpty()) {
@@ -1447,6 +1450,7 @@ public class MainActivity extends Activity {
             addPromptButton(welcome, "Analyse my latest mock", "Analyse my latest NEET mock score and give me 3 practical improvements.");
             addPromptButton(welcome, "Make a 7-day revision plan", "Create a realistic 7-day NEET revision plan that balances Physics, Chemistry and Biology.");
             addPromptButton(welcome, "Explain a difficult concept", "Explain a difficult NEET concept step by step, with a simple analogy and 3 practice questions.");
+            addPromptButton(welcome, "Find patterns in my question bank", "Analyse the saved question bank: identify recurring chapters, repeated errors and the best next revision actions.");
         } else {
             for (ChatMessage msg : chatMessages) {
                 LinearLayout bubble = new LinearLayout(this);
@@ -1502,19 +1506,26 @@ public class MainActivity extends Activity {
             showToast("Type a question first.");
             return;
         }
-        if (getStoredApiKey().isEmpty()) {
-            showApiKeyDialog();
-            return;
-        }
         if (aiBusy) return;
         hideKeyboard();
-        chatMessages.add(new ChatMessage("user", question.trim()));
+        final String userQuestion = question.trim();
+        final boolean useOnlineLlm = !getStoredApiKey().isEmpty();
+        chatMessages.add(new ChatMessage("user", userQuestion));
+        persistChatHistory();
         aiBusy = true;
         renderScreen("ai");
         aiExecutor.execute(() -> {
-            String answer = callOpenAI(question.trim());
+            String answer;
+            try {
+                answer = useOnlineLlm ? callOpenAI(userQuestion) :
+                        localModel.analyse(userQuestion, getQuestionItems(), testSummaries(), mistakeSummaries(), getTargetScore());
+            } catch (Exception ex) {
+                answer = "Analysis couldn't finish: " + safeMessage(ex);
+            }
+            final String finalAnswer = answer;
             runOnUiThread(() -> {
-                chatMessages.add(new ChatMessage("assistant", answer));
+                chatMessages.add(new ChatMessage("assistant", finalAnswer));
+                persistChatHistory();
                 aiBusy = false;
                 renderScreen("ai");
             });
@@ -1580,18 +1591,51 @@ public class MainActivity extends Activity {
     }
 
     private String buildPerformanceContext() {
+        StringBuilder b = new StringBuilder();
         ArrayList<TestResult> results = getResults();
-        if (results.isEmpty()) return "";
-        StringBuilder b = new StringBuilder("Saved mock tests (newest first):\n");
-        for (int i = 0; i < Math.min(5, results.size()); i++) {
+        b.append("TARGET AND TEST HISTORY (newest first)\n");
+        b.append("Target: ").append(getTargetScore()).append("/720; saved tests: ").append(results.size()).append(".\n");
+        for (int i = 0; i < Math.min(10, results.size()); i++) {
             TestResult r = results.get(i);
-            b.append("- ").append(r.name).append(": ").append(r.score).append("/720, ")
-                    .append(r.correct).append(" correct, ").append(r.wrong).append(" wrong");
+            b.append("- ").append(formatDate(r.timestamp)).append(" / ").append(r.name).append(": ")
+                    .append(r.score).append("/720, ").append(r.correct).append(" correct, ")
+                    .append(r.wrong).append(" wrong");
             if (r.hasSubjectBreakdown) b.append("; Physics ").append(r.physics)
                     .append(", Chemistry ").append(r.chemistry).append(", Biology ").append(r.biology);
             b.append('\n');
+            if (b.length() > 14500) return b.substring(0,14500);
         }
-        b.append("Number of saved tests: ").append(results.size()).append(". Target score: ").append(getTargetScore()).append("/720.");
+
+        ArrayList<NeetLocalModel.Question> questions = getQuestionItems();
+        b.append("\nSAVED QUESTIONS (question bank count ").append(questions.size()).append(")\n");
+        int answered=0, wrong=0, correct=0;
+        for (NeetLocalModel.Question q : questions) {
+            if (q.answered()) { answered++; if (q.correct()) correct++; else wrong++; }
+        }
+        b.append("Question attempts: ").append(answered).append("; correct: ").append(correct)
+                .append("; incorrect: ").append(wrong).append(".\n");
+        for (int i=0;i<Math.min(28,questions.size());i++) {
+            NeetLocalModel.Question q=questions.get(i);
+            b.append("- [").append(q.subject).append(" / ").append(q.chapter).append(" / ").append(q.difficulty).append("] ")
+                    .append(q.prompt).append("\n");
+            if (!q.optionA.isEmpty() || !q.optionB.isEmpty()) b.append("  Options: A ").append(q.optionA).append("; B ").append(q.optionB)
+                    .append("; C ").append(q.optionC).append("; D ").append(q.optionD).append("\n");
+            b.append("  Saved answer: ").append(q.correctAnswer);
+            if(q.answered()) b.append("; user's answer: ").append(q.userAnswer).append(q.correct()?" (correct)":" (incorrect)");
+            b.append("\n");
+            if(!q.explanation.isEmpty()) b.append("  Explanation: ").append(q.explanation).append("\n");
+            if(!q.note.isEmpty()) b.append("  Student note: ").append(q.note).append("\n");
+            if(b.length()>15500) { b.append("\n[Question context truncated for request size.]"); return b.substring(0,16500); }
+        }
+
+        b.append("\nMISTAKE JOURNAL\n");
+        ArrayList<String> notes=mistakeSummaries();
+        for(int i=0;i<Math.min(14,notes.size());i++) b.append("- ").append(notes.get(i)).append("\n");
+        b.append("\nPLANNER STATUS\n");
+        for(int i=0;i<plannerTasks.length;i++) b.append("- ").append(plannerTasks[i]).append(": ")
+                .append(prefs.getBoolean("task:"+plannerTaskIds[i],false)?"done":"pending").append("\n");
+        b.append("Exam date: ").append(prefs.getString("target_date","not set")).append("\n");
+        if(b.length()>16500)return b.substring(0,16500);
         return b.toString();
     }
 
