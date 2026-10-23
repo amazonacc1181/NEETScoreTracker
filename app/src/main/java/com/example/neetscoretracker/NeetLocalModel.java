@@ -18,8 +18,9 @@ public final class NeetLocalModel {
         public String correctAnswer="", userAnswer="", difficulty="Medium", explanation="", note="";
         public long timestamp;
         public boolean answered() { return userAnswer != null && !userAnswer.trim().isEmpty(); }
-        public boolean correct() { return answered() && normal(userAnswer).equals(normal(correctAnswer)); }
-        public boolean wrong() { return answered() && !correct(); }
+        public boolean hasAnswerKey() { return correctAnswer != null && !correctAnswer.trim().isEmpty(); }
+        public boolean correct() { return answered() && hasAnswerKey() && normal(userAnswer).equals(normal(correctAnswer)); }
+        public boolean wrong() { return answered() && hasAnswerKey() && !correct(); }
     }
 
     public static final class TopicInsight {
@@ -57,14 +58,14 @@ public final class NeetLocalModel {
     public List<TopicInsight> rankTopics(List<Question> questions) {
         Map<String,Group> groups = new HashMap<>();
         for (Question q : questions) {
-            if (!q.answered()) continue;
+            if (!q.correct() && !q.wrong()) continue;
             String sub = clean(q.subject).isEmpty() ? "Other" : clean(q.subject);
             String chapter = clean(q.chapter).isEmpty() ? "Unsorted" : clean(q.chapter);
             String key = sub + "\u001f" + chapter;
             Group g = groups.get(key);
             if (g==null) { g=new Group(sub,chapter); groups.put(key,g); }
             g.attempts++;
-            if (q.correct()) g.correct++; else g.wrong++;
+            if (q.correct()) g.correct++; else if (q.wrong()) g.wrong++;
             g.difficulty += difficulty(q.difficulty);
             if (q.wrong()) g.consecutiveWrong++;
         }
@@ -87,8 +88,8 @@ public final class NeetLocalModel {
 
     public String analyse(String prompt, List<Question> questions, List<String> tests,
                           List<String> mistakes, int targetScore) {
-        int answered=0, correct=0, wrong=0, total=questions.size();
-        for (Question q : questions) if(q.answered()){answered++;if(q.correct())correct++;else wrong++;}
+        int answered=0, graded=0, correct=0, wrong=0, total=questions.size();
+        for (Question q : questions) if(q.answered()){answered++;if(q.correct()){correct++;graded++;}else if(q.wrong()){wrong++;graded++;}}
         List<TopicInsight> topics=rankTopics(questions);
         StringBuilder out=new StringBuilder();
         out.append("NEET IQ · OFFLINE INTELLIGENCE REPORT\n");
@@ -97,8 +98,9 @@ public final class NeetLocalModel {
         out.append("• Saved questions: ").append(total).append("\n");
         out.append("• Answered: ").append(answered).append("  ·  Correct: ").append(correct)
            .append("  ·  Incorrect: ").append(wrong).append("\n");
-        out.append("• Answer accuracy: ").append(answered==0 ? "not enough answered questions" :
-                String.format(Locale.US,"%.1f%%",100.0*correct/answered)).append("\n");
+        out.append("• Answer accuracy: ").append(graded==0 ? "not enough keyed answers yet" :
+                String.format(Locale.US,"%.1f%%",100.0*correct/graded)).append("\n");
+        out.append("• Attempted but not yet graded: ").append(Math.max(0,answered-graded)).append("\n");
         out.append("• Score target: ").append(targetScore).append("/720\n\n");
 
         out.append("TOPIC RISK MODEL\n");
