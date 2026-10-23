@@ -893,12 +893,12 @@ public class MainActivity extends Activity {
         p.addView(actions, actionsLp);
         TextView add = primaryButton("+ Add question");
         actions.addView(add, new LinearLayout.LayoutParams(0, dp(47), 1f));
-        TextView import = secondaryButton("Import CSV / JSON");
+        TextView importButton = secondaryButton("Import CSV / JSON");
         LinearLayout.LayoutParams importLp = new LinearLayout.LayoutParams(0, dp(47), 1f);
         importLp.leftMargin = dp(8);
-        actions.addView(import, importLp);
+        actions.addView(importButton, importLp);
         add.setOnClickListener(v -> showQuestionDialog(null));
-        import.setOnClickListener(v -> startImportWorkspace());
+        importButton.setOnClickListener(v -> startImportWorkspace());
 
         TextView inspect = secondaryButton("Analyse my saved data  →");
         p.addView(inspect, margin(0, 9, 0, 0));
