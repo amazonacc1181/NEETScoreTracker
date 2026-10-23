@@ -945,9 +945,10 @@ public class MainActivity extends Activity {
             prompt.setPadding(0, dp(10), 0, dp(5));
             item.addView(prompt);
             if (q.answered()) {
-                String verdict = q.correct() ? "Your answer: " + q.userAnswer + " · Correct" :
+                String verdict = !q.hasAnswerKey() ? "Your answer: " + q.userAnswer + " · Not checked yet" :
+                        q.correct() ? "Your answer: " + q.userAnswer + " · Correct" :
                         "Your answer: " + q.userAnswer + " · Saved answer: " + q.correctAnswer + " · Review";
-                item.addView(txt(verdict, 11, q.correct() ? TEAL : AMBER, true));
+                item.addView(txt(verdict, 11, !q.hasAnswerKey() ? MUTED : q.correct() ? TEAL : AMBER, true));
             } else if (!q.correctAnswer.isEmpty()) {
                 item.addView(txt("Saved answer: " + q.correctAnswer + " · Not attempted", 11, MUTED, true));
             }
@@ -1038,7 +1039,6 @@ public class MainActivity extends Activity {
             String correctValue = correct.getText().toString().trim();
             if (chapterValue.isEmpty()) { chapter.setError("Add the chapter or topic."); return; }
             if (promptValue.isEmpty()) { prompt.setError("Paste the question text."); return; }
-            if (correctValue.isEmpty()) { correct.setError("Add the correct answer or option label."); return; }
             NeetLocalModel.Question q = new NeetLocalModel.Question();
             q.id = existing == null ? String.valueOf(System.currentTimeMillis()) : existing.id;
             q.subject = String.valueOf(subject.getSelectedItem());
@@ -1083,12 +1083,21 @@ public class MainActivity extends Activity {
         q.subject = o.optString("subject", "Other");
         q.chapter = o.optString("chapter", o.optString("topic", "Unsorted"));
         q.prompt = o.optString("question", o.optString("prompt", o.optString("text", "")));
-        q.optionA = o.optString("optionA", o.optString("option_a", o.optString("A", "")));
-        q.optionB = o.optString("optionB", o.optString("option_b", o.optString("B", "")));
-        q.optionC = o.optString("optionC", o.optString("option_c", o.optString("C", "")));
-        q.optionD = o.optString("optionD", o.optString("option_d", o.optString("D", "")));
-        q.correctAnswer = o.optString("correctAnswer", o.optString("correct_answer", o.optString("answer", "")));
-        q.userAnswer = o.optString("userAnswer", o.optString("user_answer", o.optString("selectedAnswer", "")));
+        JSONObject choices = o.optJSONObject("choices");
+        JSONArray options = o.optJSONArray("options");
+        q.optionA = o.optString("optionA", o.optString("option_a", o.optString("A", choices == null ? "" : choices.optString("A", ""))));
+        q.optionB = o.optString("optionB", o.optString("option_b", o.optString("B", choices == null ? "" : choices.optString("B", ""))));
+        q.optionC = o.optString("optionC", o.optString("option_c", o.optString("C", choices == null ? "" : choices.optString("C", ""))));
+        q.optionD = o.optString("optionD", o.optString("option_d", o.optString("D", choices == null ? "" : choices.optString("D", ""))));
+        if (options != null) {
+            if (q.optionA.isEmpty() && options.length()>0) q.optionA=options.optString(0,"");
+            if (q.optionB.isEmpty() && options.length()>1) q.optionB=options.optString(1,"");
+            if (q.optionC.isEmpty() && options.length()>2) q.optionC=options.optString(2,"");
+            if (q.optionD.isEmpty() && options.length()>3) q.optionD=options.optString(3,"");
+        }
+        q.correctAnswer = o.optString("correctAnswer", o.optString("correct_answer",
+                o.optString("correctOption", o.optString("correct_option", o.optString("answer", "")))));
+        q.userAnswer = o.optString("userAnswer", o.optString("user_answer", o.optString("selectedAnswer", o.optString("studentAnswer", ""))));
         q.difficulty = o.optString("difficulty", "Medium");
         q.explanation = o.optString("explanation", o.optString("solution", ""));
         q.note = o.optString("note", o.optString("notes", ""));
@@ -1251,7 +1260,7 @@ public class MainActivity extends Activity {
             JSONObject o = qs.optJSONObject(i);
             if (o == null) continue;
             NeetLocalModel.Question q = questionFromJson(o);
-            if (q.prompt.trim().isEmpty() || q.correctAnswer.trim().isEmpty()) continue;
+            if (q.prompt.trim().isEmpty()) continue;
             q.id = String.valueOf(System.currentTimeMillis()) + "_" + i;
             if (q.timestamp <= 0) q.timestamp = System.currentTimeMillis();
             prefs.edit().putString("q:" + q.id, questionToJson(q).toString()).apply();
@@ -1364,7 +1373,9 @@ public class MainActivity extends Activity {
             String[] values={q.subject,q.chapter,q.prompt,q.optionA,q.optionB,q.optionC,q.optionD,q.correctAnswer,q.userAnswer,q.difficulty,q.explanation,q.note};
             for(int i=0;i<values.length;i++) {
                 if(i>0)csv.append(',');
-                csv.append('"').append((values[i]==null?"":values[i]).replace("\\"", "\\"\\"")).append('"');
+                String value = values[i] == null ? "" : values[i];
+                String quote = String.valueOf((char) 34);
+                csv.append(quote).append(value.replace(quote, quote + quote)).append(quote);
             }
             csv.append('\n');
         }
