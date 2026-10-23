@@ -1,0 +1,10 @@
+{
+  "model_name": "NEET Topic Risk Model",
+  "version": 1,
+  "method": "Bayesian-smoothed topic error estimate with difficulty and repeated-error signals",
+  "prior_error_rate": 0.28,
+  "prior_attempts": 4.0,
+  "difficulty_weight": 0.18,
+  "repeat_error_weight": 0.12,
+  "note": "Offline baseline parameters. Topic probabilities are updated from the user's answered questions on-device; these are not pretrained medical or exam-answer weights."
+}
