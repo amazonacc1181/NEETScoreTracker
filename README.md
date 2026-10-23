@@ -1,41 +1,43 @@
 # NEET IQ — Android NEET preparation workspace
 
-NEET IQ 2.0 is a native Android app with a minimalist interface, a local-first data store, question-level analysis, an adaptive topic-risk model, and optional online LLM reasoning.
+NEET IQ AI 3.0 adds an optional real on-device generative language model to the existing local-first NEET workspace. The app remains useful without a downloaded model.
 
-## App features
-- **Mock test tracker:** NEET marking (+4 / −1), validation of Physics (45), Chemistry (45) and Biology (90) question limits, score history, per-subject marks, average and best score.
-- **Question Lab:** save the exact question stem, four options, correct key (optional), your selected answer (optional), chapter, subject, difficulty, explanation and personal notes. Search the library and edit or delete entries.
-- **Question imports:** import a CSV or JSON question array, or a full exported workspace. CSV accepts headers such as `subject,chapter,question,optionA,optionB,optionC,optionD,correctAnswer,userAnswer,difficulty,explanation,note`.
-- **Full-workspace backup:** export tests, question bank, mistakes, checklist progress, target settings and AI conversation as JSON. API secrets are intentionally excluded. Re-import merges into local storage.
-- **Offline intelligence:** on-device analysis from saved data, question retrieval, topic-level risk estimates, accuracy statistics, suggested revision blocks and mistake patterns. Works with no internet and no API key.
-- **Online Ask AI:** user-configured OpenAI API key for step-by-step reasoning about a question, options, solution and saved performance patterns. The model choice is configurable in Settings.
-- **Study tools:** mock-score analytics, trend chart, six-task checklist, focus timer, searchable formula vault, mistake journal, shareable score report, question CSV export and full workspace backup.
-- **Navigation:** scrollable main drawer, scrollable quick-tools drawer, and bottom navigation. All screens read from the same local preferences store.
+## What's new in 3.0
+- Local generative AI: JNI integration with llama.cpp for GGUF inference on Android arm64-v8a. Ask AI no longer uses cloud inference or an API key.
+- Model manager: download and store Qwen3 GGUF weights in app-private storage, check GGUF header/size, show progress, and run an actual generation test from the phone.
+- Qwen3 1.7B Q4_K_M (~1.28 GB) is the safer default; Qwen3 4B Q4_K_M (~2.50 GB) is offered only on phones reporting at least 6 GB total RAM. Performance depends on free RAM, chipset, thermal state and OS.
+- Retrieval-augmented prompts: Ask AI supplies bounded local context from saved questions, explanations, test summaries, mistake journal and topic-risk analysis.
+- Fine-tuning pipeline: ai-models/finetune prepares supervised chat data and runs LoRA fine-tuning. A trained adapter must be evaluated, merged/exported, converted to GGUF and tested before shipping.
+- Offline evaluation assets under ai-models/eval.
 
-## Offline model and model calibration
-The app loads baseline parameters from `app/src/main/assets/neet_topic_risk_model.json`. `NeetLocalModel.java` applies Bayesian-smoothed topic error estimates with difficulty and repeated-error signals, ranks at-risk topics, and retrieves relevant stored questions using local term matching. This is an adaptive statistical model, not a pretrained general-purpose LLM or an official answer key.
+## Important model status
+The APK contains the inference runtime, not the model weights. After installation, open Ask AI → Install offline AI model and download a model once (Wi-Fi recommended). After download, the model can generate responses without internet. Model weights are not committed to this GitHub repository or embedded in the APK.
 
-The repository includes `ai-models/train_topic_risk.py`, a dependency-free calibration script for a labelled question-attempt CSV with these columns:
+A successful Android build proves that the native runtime compiled and packaged; it does not prove inference works on every phone. Open the model manager and run Run an actual local inference test on the target device. The app must display generated text before local LLM inference is considered verified.
 
-```csv
-subject,chapter,difficulty,correct
-Physics,Electrostatics,Hard,0
-Biology,Genetics,Easy,1
-```
+## Model and licenses
+- Qwen3 base model family: Apache-2.0. Model card: https://huggingface.co/Qwen/Qwen3-1.7B-GGUF
+- Quantized files used by the downloader: https://huggingface.co/bartowski/Qwen_Qwen3-1.7B-GGUF and https://huggingface.co/bartowski/Qwen_Qwen3-4B-GGUF. Quantized weights are third-party artifacts; inspect model cards and file licenses before redistribution.
+- llama.cpp: MIT license; source is fetched by CMake from https://github.com/ggml-org/llama.cpp.
+- This repository intentionally does not redistribute model weights.
 
-Run it from the repository root:
-```bash
-python ai-models/train_topic_risk.py question_attempts.csv app/src/main/assets/neet_topic_risk_model.json
-```
+## Android hardware and storage
+- Native build targets arm64-v8a. The app uses a 2,048-token context and caps generation to reduce peak RAM.
+- Qwen3 1.7B Q4_K_M requires about 1.28 GB for weights plus runtime/context overhead; keep at least 1.5 GB free before download.
+- Qwen3 4B Q4_K_M is about 2.50 GB and needs substantially more free RAM; a 6 GB total-RAM gate is only a heuristic.
+- If model loading fails, close background apps, try the smaller model and ensure the file is complete. This implementation uses CPU inference; speed varies by device.
 
-Use correctly labelled data only. The trained parameter file can be committed so the Android app uses the updated baseline the next time it is built.
+## Fine-tuning
+See ai-models/finetune/README.md. Start with licensed, verified educational examples. The training script is a pipeline scaffold; no fine-tuned model is claimed to have been trained or included.
 
-## LLM and privacy
-The general-purpose LLM runs through OpenAI's API after the user adds their own API key. The key is encrypted using Android Keystore and never included in the repository or exported backups. Only when a user submits an online Ask AI question does the app send that prompt plus bounded context from saved mock results, question examples, aggregate topic-risk data, mistake notes and planner status. A single request is bounded to avoid unexpectedly sending unlimited data. OpenAI API usage may be charged separately from a ChatGPT subscription.
+## Build
+GitHub Actions installs Android NDK/CMake, builds the JNI library and APK, validates training data and uploads NEET-IQ-AI-3.0-APK. Native CMake fetches llama.cpp during CI, so the first build requires network access.
 
-Without an API key, Ask AI falls back to the on-device analyst. The offline mode can retrieve stored questions and analyse patterns, but it cannot solve arbitrary unseen question text with the linguistic ability of a large generative model. To ask the online LLM about a specific question, save it in Question Lab or paste the question into Ask AI and configure a key.
+## Existing features
+Mock test tracker with +4/-1 scoring, subject score history, analytics, target score, Question Lab with imports, full-workspace backup/import, mistake journal, planner, focus timer, formula vault and local topic-risk statistics. Saved data stays local; the Ask AI local path does not send chat data to a remote model.
 
-## Build and download
-GitHub Actions validates the calibration script, builds the Android debug APK, and uploads the artifact `NEET-IQ-AI-2.0-APK` on pushes to `main`, pull requests, or manual workflow runs.
-
-No API key or training dataset is committed to this repository.
+## Limitations
+- No OCR or automatic PDF/image ingestion is implemented by this change.
+- The LLM may hallucinate; verify high-stakes answers against NCERT and official sources.
+- A 1.7B model is materially less capable than cloud frontier models. Best local reasoning is constrained by phone RAM, speed and storage.
+- No physical device is attached to GitHub Actions; on-device inference must be verified manually with the model manager test.

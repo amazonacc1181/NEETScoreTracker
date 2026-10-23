@@ -1,0 +1,3 @@
+{"id":"chem_redox_001","subject":"Chemistry","prompt":"In a galvanic cell, oxidation occurs at which electrode? Answer in one sentence.","expected_concepts":["anode","oxidation"],"scoring":"manual"}
+{"id":"physics_units_001","subject":"Physics","prompt":"A body travels 20 m in 4 s at constant speed. Calculate its speed with units.","expected_concepts":["5 m/s"],"scoring":"manual"}
+{"id":"biology_osmosis_001","subject":"Biology","prompt":"Define osmosis in a concise NCERT-aligned sentence.","expected_concepts":["movement of water","selectively permeable membrane"],"scoring":"manual"}
