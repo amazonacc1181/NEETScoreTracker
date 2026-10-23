@@ -1148,14 +1148,18 @@ public class MainActivity extends Activity {
         LinearLayout p = pageContent(s);
         pageHeading(p, "Offline intelligence", "Analyses your stored questions, answers, chapters, mistakes and mock scores without internet or an API key.");
         ArrayList<NeetLocalModel.Question> qs = getQuestionItems();
-        int answered = 0, correct = 0, wrong = 0;
-        for (NeetLocalModel.Question q : qs) if (q.answered()) { answered++; if (q.correct()) correct++; else wrong++; }
+        int answered = 0, correct = 0, wrong = 0, graded = 0;
+        for (NeetLocalModel.Question q : qs) if (q.answered()) {
+            answered++;
+            if (q.correct()) { correct++; graded++; }
+            else if (q.wrong()) { wrong++; graded++; }
+        }
         LinearLayout stats = new LinearLayout(this);
         stats.setOrientation(LinearLayout.HORIZONTAL);
         p.addView(stats);
         addMetric(stats, "Questions", String.valueOf(qs.size()), "Saved locally", BLUE, true);
-        addMetric(stats, "Accuracy", answered == 0 ? "—" : Math.round(100f * correct / answered) + "%",
-                answered == 0 ? "Record answers to learn" : wrong + " incorrect", answered > 0 && wrong > correct ? AMBER : TEAL, false);
+        addMetric(stats, "Accuracy", graded == 0 ? "—" : Math.round(100f * correct / graded) + "%",
+                graded == 0 ? "Add answer keys" : wrong + " incorrect", graded > 0 && wrong > correct ? AMBER : TEAL, false);
 
         LinearLayout reportCard = card();
         reportCard.setPadding(dp(15), dp(15), dp(15), dp(15));
@@ -1235,6 +1239,7 @@ public class MainActivity extends Activity {
         }
         if (root.has("targetScore")) prefs.edit().putInt("target_score", Math.max(100, Math.min(720, root.optInt("targetScore", getTargetScore())))).apply();
         if (root.has("targetDate")) prefs.edit().putString("target_date", root.optString("targetDate", "")).apply();
+        if (root.has("llmModel")) prefs.edit().putString("llm_model", root.optString("llmModel", "gpt-4.1-mini")).apply();
         JSONArray chat = root.optJSONArray("chat");
         if (chat != null) {
             chatMessages.clear();
@@ -1333,6 +1338,7 @@ public class MainActivity extends Activity {
             root.put("exportedAt", System.currentTimeMillis());
             root.put("targetScore", getTargetScore());
             root.put("targetDate", prefs.getString("target_date", ""));
+            root.put("llmModel", prefs.getString("llm_model", "gpt-4.1-mini"));
             JSONArray tests = new JSONArray();
             for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
                 if (e.getKey().matches("t\\d+") && e.getValue() instanceof String) {
