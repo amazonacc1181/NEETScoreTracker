@@ -1810,6 +1810,41 @@ public class MainActivity extends Activity {
                     renderScreen("settings");
                     showToast("Mock history cleared");
                 }).show());
+        TextView exportWorkspace = secondaryButton("Save full workspace backup (JSON)");
+        p.addView(exportWorkspace, margin(0, 9, 0, 0));
+        exportWorkspace.setOnClickListener(v -> shareFullWorkspace());
+        TextView importWorkspace = secondaryButton("Import questions or workspace file");
+        p.addView(importWorkspace, margin(0, 9, 0, 0));
+        importWorkspace.setOnClickListener(v -> startImportWorkspace());
+        TextView exportQuestions = secondaryButton("Share question bank as CSV");
+        p.addView(exportQuestions, margin(0, 9, 0, 0));
+        exportQuestions.setOnClickListener(v -> shareQuestionCsv());
+        TextView questionLab = secondaryButton("Open Question Lab");
+        p.addView(questionLab, margin(0, 9, 0, 0));
+        questionLab.setOnClickListener(v -> renderScreen("questions"));
+        TextView offlineInsights = secondaryButton("Run offline AI / ML analysis");
+        p.addView(offlineInsights, margin(0, 9, 0, 0));
+        offlineInsights.setOnClickListener(v -> renderScreen("insights"));
+
+        TextView clearEverything = secondaryButton("Reset all local study data");
+        p.addView(clearEverything, margin(0, 9, 0, 0));
+        clearEverything.setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setTitle("Reset all local study data?")
+                .setMessage("This deletes saved tests, questions, mistake notes, checklist progress and AI chat history. Your encrypted API key is kept.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Reset", (d, w) -> {
+                    android.content.SharedPreferences.Editor editor = prefs.edit();
+                    for (String key : new ArrayList<>(prefs.getAll().keySet())) {
+                        if (key.matches("t\\d+") || key.startsWith("q:") || key.startsWith("m:") ||
+                                key.startsWith("task:") || key.equals("chat_history")) editor.remove(key);
+                    }
+                    editor.apply();
+                    chatMessages.clear();
+                    persistChatHistory();
+                    renderScreen("home");
+                    showToast("Local study data reset");
+                }).show());
+
         TextView clearJournal = secondaryButton("Clear all mistake journal entries");
         p.addView(clearJournal, margin(0, 9, 0, 0));
         clearJournal.setOnClickListener(v -> new AlertDialog.Builder(this)
