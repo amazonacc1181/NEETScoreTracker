@@ -21,7 +21,6 @@ Java_com_example_neetscoretracker_LocalLlmEngine_nativeGenerate(JNIEnv* env, jcl
     env->ReleaseStringUTFChars(jModelPath, modelChars); env->ReleaseStringUTFChars(jPrompt, promptChars);
     llama_backend_init();
     llama_model_params mp = llama_model_default_params();
-    mp.use_mmap = true;
     llama_model* model = llama_model_load_from_file(modelPath.c_str(), mp);
     if (!model) { llama_backend_free(); return env->NewStringUTF("ERROR: Model could not be loaded. Check GGUF file and free RAM."); }
     llama_context_params cp = llama_context_default_params();
