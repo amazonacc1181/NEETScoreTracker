@@ -1,4 +1,4 @@
-name: Build NEET IQ APK
+name: Build NEET IQ AI 2.0 APK
 on:
   workflow_dispatch:
   push:
@@ -19,11 +19,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Validate model calibration script
+        run: |
+          python -m py_compile ai-models/train_topic_risk.py
+          tmp_dir="$(mktemp -d)"
+          printf 'subject,chapter,difficulty,correct\nPhysics,Electrostatics,Hard,0\nPhysics,Electrostatics,Medium,1\nBiology,Genetics,Easy,1\n' > "$tmp_dir/sample.csv"
+          python ai-models/train_topic_risk.py "$tmp_dir/sample.csv" "$tmp_dir/model.json"
+          python -c 'import json,sys; d=json.load(open(sys.argv[1])); assert 0.05 <= d["prior_error_rate"] <= 0.75; print("Model calibration smoke test passed")' "$tmp_dir/model.json"
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: NEET-IQ-Professional-APK
+          name: NEET-IQ-AI-2.0-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
