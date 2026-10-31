@@ -373,3 +373,26 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
  .aiims-logo-viewport{overflow-x:auto;mask-image:none;-webkit-mask-image:none}
  .aiims-logo-track{animation:none}
 }
+
+/* AIIMS institute logo ticker spans the homepage width, not just the hero copy. */
+.aiims-logo-strip{width:calc(100vw - max(32px, (100vw - var(--max))/2) - 32px);max-width:none}
+@media(max-width:760px){.aiims-logo-strip{width:calc(100vw - 40px)}}
+/* Dedicated study-session tab: page-sized canvas, not browser fullscreen. */
+.study-session-page{min-height:100svh;overflow:hidden;background:#0d1510}
+.study-session-page .study-session-screen{position:relative;inset:auto;min-height:100svh;height:100svh;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom))}
+.study-session-page .study-session-content{min-height:min(760px,calc(100svh - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));justify-content:space-around}
+.session-home-link{color:var(--lime);text-decoration:none}
+.study-done-screen{min-height:100svh;padding:15vh max(24px,calc((100vw - 800px)/2));display:flex;flex-direction:column;justify-content:center;align-items:flex-start;background:radial-gradient(circle at 80% 15%,#263c2c,#101713 58%)}
+.study-done-screen[hidden]{display:none}
+.study-done-screen h1{margin:18px 0;font-size:clamp(52px,9vw,90px)}
+.study-done-screen h1 em{color:var(--lime);font:500 1.02em var(--serif)}
+.study-done-screen p{color:var(--muted);margin-bottom:25px}
+.study-session-page .music-fab{z-index:100;bottom:20px;right:20px}
+.study-session-page .music-backdrop{z-index:110}
+.study-session-page .music-drawer{z-index:120}
+.study-session-page .study-math-gate{z-index:90}
+@media(max-width:760px){
+ .study-session-page .study-session-screen{padding:calc(16px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom))}
+ .study-session-page .study-session-content{min-height:calc(100svh - 54px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+ .study-session-page .music-fab{right:14px;bottom:calc(14px + env(safe-area-inset-bottom))}
+}
