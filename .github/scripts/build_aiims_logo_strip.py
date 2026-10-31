@@ -41,7 +41,7 @@ def read_campuses():
     return rows
 def get_bytes(url):
     try:
-        r=SESSION.get(url,timeout=(6,14),allow_redirects=True)
+        r=SESSION.get(url,timeout=(4,8),allow_redirects=True)
         r.raise_for_status()
         if not r.headers.get("Content-Type","").lower().startswith("image/"):
             return None
@@ -61,7 +61,7 @@ def store_image(data,path):
     except Exception:return False
 def homepage_candidates(url):
     try:
-        r=SESSION.get(url,timeout=(6,14),allow_redirects=True)
+        r=SESSION.get(url,timeout=(4,8),allow_redirects=True)
         r.raise_for_status()
         soup=BeautifulSoup(r.text,"html.parser")
         candidates=[]
@@ -132,9 +132,9 @@ def main():
         sources=[]
         if name in SEEDS:
             sources.extend((u,"seeded logo source") for u in SEEDS[name])
-        sources.extend((u,"official institute homepage") for u in homepage_candidates(site)[:5])
+        sources.extend((u,"official institute homepage") for u in homepage_candidates(site)[:2])
         commons=commons_candidates(name)
-        sources.extend((u,src or "Wikimedia Commons file page") for u,src in commons[:2])
+        sources.extend((u,src or "Wikimedia Commons file page") for u,src in [])
         chosen=None
         seen=set()
         for url,source in sources:
