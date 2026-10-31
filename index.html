@@ -12,10 +12,10 @@
   <div class="grain" aria-hidden="true"></div>
   <header class="topbar">
     <a class="brand" href="#home" aria-label="The Last Mile home"><span class="brand-mark">✳</span><span class="brand-copy"><b>THE LAST MILE</b><small>NEET 2027 · PRIVATE STUDY SPACE</small></span></a>
-    <nav class="desktop-nav" aria-label="Main navigation"><a href="#today">Today</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#journal">Journal</a></nav>
+    <nav class="desktop-nav" aria-label="Main navigation"><a href="#today">Today</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#all-aiims">All AIIMS</a><a href="#journal">Journal</a></nav>
     <div class="top-actions"><span class="live-tag"><i></i> YOUR FINAL CHAPTER</span><button id="themeToggle" class="icon-button" aria-label="Toggle light and dark theme" title="Toggle theme">☼</button><button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">☰</button></div>
   </header>
-  <div class="mobile-nav" id="mobileNav"><a href="#today">Today's plan</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#journal">Journal</a><a href="#sound">Sound room</a></div>
+  <div class="mobile-nav" id="mobileNav"><a href="#today">Today's plan</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#all-aiims">All AIIMS</a><a href="#journal">Journal</a><a href="#sound">Sound room</a></div>
 
   <main id="home">
     <section class="hero shell">
@@ -98,6 +98,28 @@
       <div class="future-strip"><span class="future-mark">✳</span><p>One day, the hard part will be over.<br><em>Make sure you are proud of how you got there.</em></p><span class="future-sign">— FUTURE YOU</span></div>
     </section>
 
+    <section class="section shell aiims-section" id="all-aiims">
+      <div class="section-heading">
+        <div><div class="section-index">05 / THE INSTITUTE MAP</div><h2>23 institutes.<br><em>One national dream.</em></h2></div>
+        <div class="heading-aside"><span class="aiims-total">23 AIIMS IN INDIA</span><span class="micro-copy">THE ORIGINAL INSTITUTE + 22 UNDER PMSSY</span></div>
+      </div>
+      <p class="aiims-intro">Explore the AIIMS network across India. Deoghar stays highlighted as your north star—but every institute belongs on this map.</p>
+      <div class="aiims-toolbar">
+        <label class="aiims-search"><span aria-hidden="true">⌕</span><input id="aiimsSearch" type="search" placeholder="Search institute, city or state…" autocomplete="off" aria-label="Search AIIMS institutes"></label>
+        <div class="aiims-filters" role="group" aria-label="Filter AIIMS by current status">
+          <button class="aiims-filter active" type="button" data-aiims-filter="all" aria-pressed="true">ALL 23</button>
+          <button class="aiims-filter" type="button" data-aiims-filter="functional" aria-pressed="false">FULLY FUNCTIONAL</button>
+          <button class="aiims-filter" type="button" data-aiims-filter="clinical" aria-pressed="false">MBBS + OPD/IPD</button>
+          <button class="aiims-filter" type="button" data-aiims-filter="mbbs" aria-pressed="false">MBBS CLASSES</button>
+          <button class="aiims-filter" type="button" data-aiims-filter="building" aria-pressed="false">UNDER CONSTRUCTION</button>
+        </div>
+      </div>
+      <div class="aiims-result-line"><span id="aiimsResultCount">23 institutes</span><span>SELECT A CARD TO OPEN ITS INSTITUTE / PROJECT WEBSITE</span></div>
+      <div class="aiims-grid" id="aiimsGrid" aria-live="polite"></div>
+      <p class="aiims-empty" id="aiimsEmpty" hidden>No AIIMS matched that search. Try another city or state.</p>
+      <div class="aiims-source"><span>STATUS SNAPSHOT · GOVERNMENT OF INDIA PMSSY DASHBOARD</span><a href="https://pmssy.mohfw.gov.in/" target="_blank" rel="noopener">VERIFY CURRENT INSTITUTE STATUS ↗</a></div>
+    </section>
+
     <section class="section journal-section" id="journal"><div class="shell journal-grid">
       <div class="journal-intro"><div class="section-index">05 / THE INNER VOICE</div><h2>Leave a note<br>for the person<br><em>you're becoming.</em></h2><p>Some days will be heavy. Write it down. Let tomorrow begin with a clearer mind.</p><div class="journal-decoration">“You do not have to see the whole staircase. Just take the next step.”</div></div>
       <div class="journal-card panel"><div class="journal-card-head"><span class="panel-kicker">YOUR PRIVATE PAGE</span><span class="journal-date" id="journalDate"></span></div><label class="journal-label" for="journalText">WHAT'S ON YOUR MIND TODAY?</label><textarea id="journalText" rows="7" maxlength="1800" placeholder="Today I showed up because...&#10;&#10;One thing I understood better...&#10;&#10;Tomorrow I will..."></textarea>
@@ -112,7 +134,8 @@
         <div class="player-meta"><span class="panel-kicker">NOW PLAYING</span><strong id="trackTitle">A QUIET PLACE TO FOCUS</strong><small id="trackSubtitle">NO TRACKS ADDED YET</small></div><audio id="audioPlayer" preload="metadata"></audio>
         <div class="audio-progress"><span id="audioCurrent">0:00</span><input type="range" id="audioSeek" min="0" max="100" value="0" aria-label="Track progress"><span id="audioDuration">0:00</span></div>
         <div class="player-controls"><button id="prevTrack" aria-label="Previous track">|◀</button><button id="playTrack" class="play-button" aria-label="Play music">▶</button><button id="nextTrack" aria-label="Next track">▶|</button><button id="muteTrack" aria-label="Mute music">♫</button></div>
-        <div class="music-empty" id="musicEmpty">The player is built. The playlist is still yours to add.<br><small>When you share audio you own or are licensed to use, we'll add it here.</small></div>
+        <div class="music-empty" id="musicEmpty">No tracks in your playlist yet.<br><small>Send your MP3 files as attachments in this chat. I can add them to the site's music folder and connect them to this player. Only upload music you have permission to distribute.</small></div>
+      <div class="music-upload-help"><span>YOUR MUSIC, YOUR PLAYER</span><p>Attach MP3 files in this chat and tell me the track titles. I’ll place them in <code>music/</code> and update the playlist so they appear here.</p><small>This repository is public, so uploaded audio files will be publicly accessible.</small></div>
       </div>
     </section>
 
