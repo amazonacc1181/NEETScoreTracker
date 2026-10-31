@@ -83,10 +83,26 @@ function renderCampuses(list){
  campusGrid.innerHTML=list.map(function(item,index){
   var chosen=item.name===selectedDream;
   var special=chosen?'<span class="dream-chip">YOUR DREAM AIIMS</span>':'';
-  var fallback=item.fallbackPhoto||'';
-  return '<article class="campus-card'+(chosen?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" data-fallback="'+fallback+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="if(this.dataset.fallback){var fallback=this.dataset.fallback;this.dataset.fallback=\'\';this.src=fallback;}else{this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');}"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
+  var photos=(item.photos&&item.photos.length?item.photos:[item.photo]).filter(Boolean);
+  var photoData=JSON.stringify(photos).replace(/&/g,'&amp;').replace(/'/g,'&#39;');
+  return '<article class="campus-card'+(chosen?' featured':'')+'"><div class="campus-image"><img src="'+photos[0]+'" data-photos=\''+photoData+'\' data-photo-index="0" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
  }).join('');
 }
+function rotateRandomCampusPhotos(){
+ var candidates=Array.from(campusGrid.querySelectorAll('.campus-image img[data-photos]')).filter(function(img){
+  try{return JSON.parse(img.dataset.photos).length>1;}catch(e){return false;}
+ });
+ for(var i=candidates.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=candidates[i];candidates[i]=candidates[j];candidates[j]=temp;}
+ candidates.slice(0,3).forEach(function(img){
+  var photos=JSON.parse(img.dataset.photos),current=Number(img.dataset.photoIndex)||0,next=current;
+  while(next===current&&photos.length>1)next=Math.floor(Math.random()*photos.length);
+  img.classList.add('photo-changing');
+  img.onload=function(){img.classList.remove('photo-changing');};
+  img.onerror=function(){img.classList.remove('photo-changing');img.onerror=null;};
+  img.src=photos[next];img.dataset.photoIndex=String(next);
+ });
+}
+setInterval(rotateRandomCampusPhotos,5000);
 function setHeroCampusImage(item){
  var image=$('heroCampusImage'),usedFallback=false;
  image.classList.remove('image-fallback');
