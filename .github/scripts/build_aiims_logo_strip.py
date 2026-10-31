@@ -133,7 +133,7 @@ def main():
         if name in SEEDS:
             sources.extend((u,"seeded logo source") for u in SEEDS[name])
         sources.extend((u,"official institute homepage") for u in homepage_candidates(site)[:2])
-        commons=commons_candidates(name)
+        commons=[]
         sources.extend((u,src or "Wikimedia Commons file page") for u,src in [])
         chosen=None
         seen=set()
