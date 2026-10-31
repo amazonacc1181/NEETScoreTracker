@@ -298,6 +298,7 @@ function startNewStudySession(){
   var now=Date.now(),campus=campuses.find(function(item){return item.name===profile.dreamCollege;})||campuses[0],target=profileTarget();
   activeStudySession={id:String(now)+'-'+Math.random().toString(36).slice(2,8),startedAt:now,segmentStartedAt:now,elapsedMs:0,paused:false,profile:{name:profile.name,dreamCollege:profile.dreamCollege,category:profile.category},photo:(campus.photos&&campus.photos.length?campus.photos[0]:campus.photo),targetRank:target?target.targetRank:null};
   store.set(ACTIVE_STUDY_KEY,activeStudySession);
+  store.set('studyHomeClosedAt',null);
  }
  var sessionTab=window.open('study-session.html','_blank');
  if(!sessionTab){
@@ -324,7 +325,7 @@ window.addEventListener('storage',function(event){
 var studyHomeChannel=('BroadcastChannel' in window)?new BroadcastChannel('tlm-study-session'):null;
 window.addEventListener('pagehide',function(){
  var current=store.get(ACTIVE_STUDY_KEY,null);
- if(current&&studyHomeChannel)studyHomeChannel.postMessage({type:'home-closed',sessionId:current.id,at:Date.now()});
+ if(current){store.set('studyHomeClosedAt',{sessionId:current.id,at:Date.now()});if(studyHomeChannel)studyHomeChannel.postMessage({type:'home-closed',sessionId:current.id,at:Date.now()});}
 });
 renderStudyHistory();
 /* Slide-out music drawer */
