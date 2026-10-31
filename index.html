@@ -23,7 +23,7 @@
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">☰</button>
   </header>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
-    <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos & Shorts</a><a href="#study">Study timer</a><a href="#music">Music</a>
+    <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos & Shorts</a><a href="#study">Study timer</a><a href="#musicDrawer" id="musicNavLink">♫ Music</a>
   </nav>
 
   <main id="home">
@@ -113,23 +113,37 @@
       </div>
     </section>
 
-    <section class="music-section page-section" id="music">
-      <div class="section-topline"><span>05 / YOUR SOUNDTRACK</span><span>LET THE MUSIC CARRY THE MOMENT</span></div>
-      <div class="music-layout">
-        <div class="music-copy"><h2>A song for<br><em>the long road.</em></h2><p>Your favourite tracks, right here. Music will try to start when the page opens. Some browsers require one tap before they allow sound.</p><span class="music-state" id="musicState">WAITING FOR YOUR PLAYLIST</span></div>
-        <div class="music-player">
-          <div class="vinyl"><span>✳</span></div>
-          <div class="track-info"><small>NOW PLAYING</small><strong id="trackTitle">YOUR FIRST TRACK GOES HERE</strong><span id="trackPosition">NO TRACKS ADDED YET</span></div>
-          <audio id="musicAudio" preload="auto" autoplay playsinline></audio>
-          <div class="music-progress"><span id="musicElapsed">0:00</span><input type="range" id="musicSeek" min="0" max="100" value="0" aria-label="Music progress"><span id="musicDuration">0:00</span></div>
-          <div class="music-controls"><button type="button" id="previousTrack" aria-label="Previous track">|◀</button><button type="button" id="toggleMusic" class="music-play" aria-label="Play music">▶</button><button type="button" id="nextTrack" aria-label="Next track">▶|</button><button type="button" id="muteMusic" aria-label="Mute music">♫</button></div>
-          <div class="music-help" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist.</div>
-        </div>
-      </div>
-    </section>
+
   </main>
 
   <footer class="site-footer"><a class="brand" href="#home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027</small></span></a><span>Made for the future you're working towards.</span><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a></footer>
+  <button class="music-fab" id="musicFab" type="button" aria-controls="musicDrawer" aria-expanded="false"><span>♫</span><small>MUSIC</small></button>
+  <button class="music-backdrop" id="musicBackdrop" type="button" aria-label="Close music drawer" tabindex="-1"></button>
+  <aside class="music-drawer" id="musicDrawer" aria-hidden="true" aria-labelledby="musicDrawerTitle" inert>
+    <div class="drawer-grab" aria-hidden="true"></div>
+    <div class="drawer-header">
+      <div><span class="drawer-kicker">THE LAST MILE · SOUNDTRACK</span><h2 id="musicDrawerTitle">Your music <em>room.</em></h2></div>
+      <button class="drawer-close" id="musicClose" type="button" aria-label="Close music drawer">✕</button>
+    </div>
+    <div class="drawer-now-playing">
+      <div class="drawer-art"><span class="drawer-art-star">✳</span><span class="drawer-art-word">LAST<br>MILE</span><span class="drawer-art-ring"></span></div>
+      <div class="drawer-track-copy"><small>NOW PLAYING</small><strong id="trackTitle">YOUR FIRST TRACK GOES HERE</strong><span id="trackPosition">NO TRACKS ADDED YET</span></div>
+      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div>
+      <audio id="musicAudio" preload="auto" autoplay playsinline></audio>
+      <div class="drawer-progress"><span id="musicElapsed">0:00</span><input type="range" id="musicSeek" min="0" max="100" value="0" aria-label="Music progress"><span id="musicDuration">0:00</span></div>
+      <div class="drawer-controls">
+        <button type="button" id="shuffleMusic" aria-label="Toggle shuffle" title="Shuffle">⤨</button>
+        <button type="button" id="previousTrack" aria-label="Previous track">|◀</button>
+        <button type="button" id="toggleMusic" class="drawer-play" aria-label="Play music">▶</button>
+        <button type="button" id="nextTrack" aria-label="Next track">▶|</button>
+        <button type="button" id="repeatMusic" aria-label="Toggle repeat" title="Repeat">↻</button>
+      </div>
+      <div class="drawer-volume"><span>VOLUME</span><input type="range" id="musicVolume" min="0" max="100" value="75" aria-label="Music volume"><button type="button" id="muteMusic" aria-label="Mute music">♫</button></div>
+    </div>
+    <div class="drawer-queue-head"><span>UP NEXT</span><span id="queueCount">0 TRACKS</span></div>
+    <div class="drawer-queue" id="musicQueue"><div class="queue-empty">Your playlist will appear here once MP3 files are added.</div></div>
+    <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
+  </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="assets/app.js"></script>
 </body>
