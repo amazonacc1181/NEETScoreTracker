@@ -400,3 +400,78 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .aiims-logo-item .aiims-logo-placeholder{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;padding:0;border-radius:50%;background:var(--lime);color:#18221a;font:700 21px/1 var(--head)}
 .aiims-logo-item .aiims-logo-name{max-width:105px}
 @media(max-width:760px){.aiims-logo-item .aiims-logo-placeholder{width:31px;height:31px;flex-basis:31px;font-size:18px}}
+
+/* Study-session layout refinement: keep the focus clock in the visual center */
+.study-session-page .study-session-screen{
+ align-items:center;
+ justify-content:center;
+ overflow-y:auto;
+ padding:calc(18px + env(safe-area-inset-top)) 24px calc(22px + env(safe-area-inset-bottom));
+}
+.study-session-page .study-session-content{
+ width:min(900px,100%);
+ min-height:0;
+ height:auto;
+ justify-content:center;
+ gap:clamp(14px,2.6vh,26px);
+ margin:auto;
+}
+.study-session-page .session-identity{
+ margin:0;
+ padding-top:0;
+}
+.study-session-page .session-clock-block{
+ width:min(610px,100%);
+ padding:clamp(16px,2vw,22px) clamp(17px,2.5vw,25px);
+}
+.study-session-page .session-clock{
+ margin:7px 0 3px;
+ font-size:clamp(48px,8.5vw,84px);
+}
+.study-session-page .session-controls{margin-top:0}
+.study-session-page .session-encouragement{margin:0;max-width:600px}
+.study-session-page .music-fab{
+ top:50%;
+ bottom:auto;
+ right:clamp(14px,2vw,24px);
+ transform:translateY(-50%);
+}
+.study-session-page .music-fab:hover{transform:translateY(calc(-50% - 3px))}
+@media(max-width:760px){
+ .study-session-page .study-session-screen{
+  align-items:center;
+  justify-content:center;
+  padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+ }
+ .study-session-page .study-session-content{
+  min-height:0;
+  gap:clamp(12px,2.2vh,19px);
+  width:100%;
+ }
+ .study-session-page .session-topline{font-size:6.5px}
+ .study-session-page .session-identity{margin:0;padding-top:0}
+ .study-session-page .session-identity h1{font-size:clamp(43px,10vw,70px);margin:9px 0 5px}
+ .study-session-page .session-rank-pill{margin-top:13px;padding:9px 11px}
+ .study-session-page .session-clock-block{padding:15px 16px 14px}
+ .study-session-page .session-clock{font-size:clamp(43px,11vw,66px);margin:6px 0 3px}
+ .study-session-page .session-controls{gap:8px}
+ .study-session-page .session-control-button,.study-session-page .session-end-button{min-height:44px}
+ .study-session-page .session-encouragement{font-size:11px;line-height:1.4}
+ .study-session-page .music-fab{
+  top:50%;
+  bottom:auto;
+  right:10px;
+  padding:9px 11px;
+  transform:translateY(-50%);
+ }
+ .study-session-page .music-fab:hover{transform:translateY(calc(-50% - 3px))}
+}
+@media(max-height:700px){
+ .study-session-page .study-session-content{gap:12px}
+ .study-session-page .session-identity h1{font-size:clamp(42px,7vw,64px)}
+ .study-session-page .session-rank-pill{margin-top:10px}
+ .study-session-page .session-clock-block{padding:13px 16px}
+ .study-session-page .session-clock{font-size:clamp(42px,7vw,64px)}
+ .study-session-page .session-controls{margin-top:0}
+}
+
