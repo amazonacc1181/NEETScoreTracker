@@ -53,32 +53,52 @@ var campuses=[
 {name:'AIIMS Gorakhpur',place:'Kunraghat · Uttar Pradesh',url:'https://aiimsgorakhpur.edu.in/',photo:'assets/campuses/aiims-gorakhpur.webp',credit:'https://www.collegebatch.com/20874-all-india-institute-of-medical-sciences-campus-tour-gorakhpur-fs05',photos:["assets/campuses/aiims-gorakhpur.webp"]},
 {name:'AIIMS Kalyani',place:'Kalyani · West Bengal',url:'https://aiimskalyani.edu.in/',photo:'assets/campuses/aiims-kalyani.webp',credit:'https://www.anandabazar.com/education-career/aiims-kalyani-starts-admission-process-for-diploma-in-dental-hygiene-and-diploma-in-dental-mechanics-dgtl/cid/1543654',photos:["assets/campuses/aiims-kalyani.webp"]}
 ];
-
-var dreamCollegeTrigger=$('dreamCollegeTrigger');
-var dreamCollegeLabel=$('dreamCollegeLabel');
-var dreamCollegeMenu=$('dreamCollegeMenu');
-var dreamCollegeList=$('dreamCollegeList');
-var dreamCollegeSearch=$('dreamCollegeSearch');
-var dreamCollegeNoResults=$('dreamCollegeNoResults');
-var selectedDream=store.get('dreamCollege','');
+/* 2026 MCC Round 1 category-wise AIIMS MBBS closing AIRs. */
+var cutoffData={
+'AIIMS New Delhi':[51,292,192,793,987],
+'AIIMS Bhopal':[567,1220,1084,7782,8673],
+'AIIMS Bhubaneswar':[664,1660,1233,5396,10926],
+'AIIMS Jodhpur':[343,879,714,3941,4457],
+'AIIMS Patna':[1593,2675,2054,16709,24984],
+'AIIMS Raipur':[1008,2323,1683,12796,16950],
+'AIIMS Rishikesh':[537,1089,979,6429,8532],
+'AIIMS Nagpur':[792,1839,1350,8360,13431],
+'AIIMS Bathinda':[1630,2910,2190,18819,26664],
+'AIIMS Mangalagiri':[1314,3021,2079,16901,21776],
+'AIIMS Bibinagar':[1705,3180,2592,17543,28792],
+'AIIMS Deoghar':[3090,4569,3771,25371,40599],
+'AIIMS Gorakhpur':[2114,3085,2443,19159,33950],
+'AIIMS Kalyani':[2188,3955,3049,18440,37522],
+'AIIMS Raebareli':[2634,3586,3160,22455,35875],
+'AIIMS Rajkot':[2039,2889,2892,20222,31646],
+'AIIMS Vijaypur (Jammu)':[3327,4748,3834,27322,34696],
+'AIIMS Guwahati':[2997,4802,3823,27539,37116],
+'AIIMS Bilaspur':[2260,3287,2786,20129,30805],
+'AIIMS Madurai':[3421,5416,4281,27253,44940],
+'AIIMS Rewari':[3810,5492,4382,28615,39811]
+};
+var categoryNames={General:'General',EWS:'EWS',OBC:'OBC-NCL',SC:'SC',ST:'ST'};
+var categoryIndex={General:0,EWS:1,OBC:2,SC:3,ST:4};
+var rankScoreAnchors=[[1,715],[2,715],[4,710],[8,705],[19,700],[46,696],[253,681],[883,660],[1277,653],[2100,641],[2235,640],[3318,631],[4667,622],[6151,615],[6428,613],[7700,608],[8580,605],[10469,600],[13608,590],[14464,588],[17000,582],[20000,575],[22826,571],[25600,566],[27000,564],[29500,560],[33600,555],[37500,549],[44000,542],[45200,540],[48000,538],[50000,535],[62000,523],[77000,510],[90000,500]];
+function scoreForRank(rank){
+ var points=rankScoreAnchors;
+ if(rank<=points[0][0])return 720;
+ for(var i=1;i<points.length;i++){
+  var left=points[i-1],right=points[i];
+  if(rank<=right[0]){
+   var ratio=(rank-left[0])/(right[0]-left[0]);
+   return left[1]+ratio*(right[1]-left[1]);
+  }
+ }
+ return Math.max(300,points[points.length-1][1]-(rank-points[points.length-1][0])/10000*12);
+}
+function formatRank(rank){return Number(rank).toLocaleString('en-IN');}
+var profile=store.get('profile',null);
+var selectedDream=profile&&profile.dreamCollege||'';
 var currentCampusOrder=campuses.slice();
-function closeDreamMenu(){
- dreamCollegeMenu.hidden=true;
- dreamCollegeTrigger.setAttribute('aria-expanded','false');
-}
-function openDreamMenu(){
- dreamCollegeMenu.hidden=false;
- dreamCollegeTrigger.setAttribute('aria-expanded','true');
- dreamCollegeSearch.value='';
- dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){option.hidden=false;});
- dreamCollegeNoResults.hidden=true;
- dreamCollegeSearch.focus();
-}
-function toggleDreamMenu(){
- if(dreamCollegeMenu.hidden)openDreamMenu();else closeDreamMenu();
-}
 var campusGrid=$('campusGrid');
 function renderCampuses(list){
+ if(!campusGrid)return;
  currentCampusOrder=list.slice();
  campusGrid.innerHTML=list.map(function(item,index){
   var chosen=item.name===selectedDream;
@@ -89,6 +109,7 @@ function renderCampuses(list){
  }).join('');
 }
 function rotateRandomCampusPhotos(){
+ if(!campusGrid||!document.getElementById('screen-home').classList.contains('active'))return;
  var candidates=Array.from(campusGrid.querySelectorAll('.campus-image img[data-photos]')).filter(function(img){
   try{return JSON.parse(img.dataset.photos).length>1;}catch(e){return false;}
  });
@@ -104,59 +125,116 @@ function rotateRandomCampusPhotos(){
 }
 setInterval(rotateRandomCampusPhotos,5000);
 function setHeroCampusImage(item){
- var image=$('heroCampusImage'),usedFallback=false;
+ var image=$('heroCampusImage'),photos=item.photos&&item.photos.length?item.photos:[item.photo];
  image.classList.remove('image-fallback');
- image.onerror=function(){
-  if(!usedFallback&&item.fallbackPhoto){usedFallback=true;image.src=item.fallbackPhoto;}
-  else{image.onerror=null;image.src='assets/lastmile-icon.svg';image.classList.add('image-fallback');}
- };
- image.src=item.photo;
+ image.onerror=function(){image.onerror=null;image.src='assets/lastmile-icon.svg';image.classList.add('image-fallback');};
+ image.src=photos[0];
+ image.alt=item.name+' campus';
+ $('heroPhotoLabel').textContent='YOUR DREAM CAMPUS';
+ $('heroPhotoCredit').textContent=item.name.toUpperCase()+' · '+item.place.toUpperCase();
 }
-function updateDreamCollege(name){
- var item=campuses.find(function(campus){return campus.name===name;});
- selectedDream=item?item.name:'';
- store.set('dreamCollege',selectedDream);
- var visual=item||campuses[0];
- dreamCollegeLabel.textContent=item?item.name+' — '+item.place:'SELECT YOUR DREAM INSTITUTE';
- dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){
-  var chosen=option.getAttribute('data-college')===selectedDream;
-  option.setAttribute('aria-selected',String(chosen));
-  option.classList.toggle('selected',chosen);
+function populateCampusSelect(select,selected){
+ if(!select)return;
+ select.innerHTML='';
+ campuses.forEach(function(item){
+  var option=document.createElement('option');
+  option.value=item.name;option.textContent=item.name+' — '+item.place;
+  select.appendChild(option);
  });
- setHeroCampusImage(visual);
- $('heroCampusImage').alt=item?item.name+' campus, '+item.place:visual.name+' campus';
- $('heroPhotoLabel').textContent=item?'YOUR DREAM CAMPUS':'THE AIIMS DREAM ACROSS INDIA';
- $('heroPhotoCredit').textContent=item?item.name.toUpperCase()+' · '+item.place.toUpperCase():'CHOOSE YOUR DREAM AIIMS';
- $('dreamCollegeNote').textContent=item?'YOUR DREAM IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME':'CHOOSE ANY AIIMS TO PERSONALISE YOUR WALL';
+ if(selected)select.value=selected;
+}
+function renderCutoffs(){
+ var body=$('cutoffTableBody');if(!body)return;
+ var activeCategory=$('cutoffCategory')?$('cutoffCategory').value:'General';
+ body.innerHTML=campuses.map(function(item){
+  var values=cutoffData[item.name];
+  var cells=values?values.map(function(value){return '<td class="'+(activeCategory===Object.keys(categoryIndex).find(function(k){return categoryIndex[k]===values.indexOf(value);})?'active-cutoff':'')+'">'+formatRank(value)+'</td>';}).join(''):'<td colspan="5" class="cutoff-unavailable">No 2026 Round 1 cutoff published / seat not in the round</td>';
+  return '<tr><td><strong>'+item.name+'</strong><small>'+item.place+'</small></td>'+(values?values.map(function(value,index){return '<td class="'+(index===categoryIndex[activeCategory]?'active-cutoff':'')+'">'+formatRank(value)+'</td>';}).join(''):cells)+'</tr>';
+ }).join('');
+}
+function profileTarget(){
+ if(!profile)return null;
+ var values=cutoffData[profile.dreamCollege],idx=categoryIndex[profile.category]||0;
+ if(!values)return null;
+ var closing=values[idx],targetRank=Math.max(1,Math.floor(closing*.8));
+ var markEstimate=Math.min(720,Math.ceil(scoreForRank(targetRank)+7));
+ return {closing:closing,targetRank:targetRank,marks:markEstimate,category:categoryNames[profile.category]||profile.category};
+}
+function refreshProfileUI(){
+ if(!profile)return;
+ selectedDream=profile.dreamCollege;
+ var item=campuses.find(function(c){return c.name===selectedDream;});
+ if(!item)return;
+ $('welcomeTitle').innerHTML='Welcome,<br><em>Dr. '+String(profile.name).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];})+'</em>';
+ $('homeDreamLine').textContent='Your dream is '+item.name+'. Build your way there, one focused day at a time.';
+ $('homeCategoryLabel').textContent=(categoryNames[profile.category]||profile.category)+' CATEGORY';
+ $('heroPhotoCredit').textContent=item.name.toUpperCase()+' · '+item.place.toUpperCase();
+ $('homeDreamLine').setAttribute('title',item.place);
+ setHeroCampusImage(item);
+ var target=profileTarget();
+ if(target){
+  $('homeHistoricalRank').textContent='#'+formatRank(target.closing);
+  $('homeTargetRank').textContent='TOP '+formatRank(target.targetRank);
+  $('homeTargetMarks').textContent=target.marks+'+';
+ }else{
+  $('homeHistoricalRank').textContent='—';$('homeTargetRank').textContent='—';$('homeTargetMarks').textContent='Not set';
+ }
+ $('settingsName').value=profile.name;
+ $('settingsCategory').value=profile.category;
+ $('settingsDreamCollege').value=profile.dreamCollege;
+ $('settingsAvatar').textContent=(profile.name.trim().charAt(0)||'✳').toUpperCase();
  renderCampuses(currentCampusOrder);
- closeDreamMenu();
+ renderCutoffs();
 }
-dreamCollegeTrigger.addEventListener('click',toggleDreamMenu);
-dreamCollegeList.addEventListener('click',function(event){
- var option=event.target.closest('.dream-college-option');
- if(option)updateDreamCollege(option.getAttribute('data-college'));
-});
-dreamCollegeSearch.addEventListener('input',function(){
- var query=this.value.trim().toLowerCase(),visible=0;
- dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){
-  var match=option.textContent.toLowerCase().indexOf(query)!==-1;
-  option.hidden=!match;
-  if(match)visible++;
- });
- dreamCollegeNoResults.hidden=visible>0;
-});
-document.addEventListener('click',function(event){
- if(!event.target.closest('#dreamSelectWrap'))closeDreamMenu();
-});
-document.addEventListener('keydown',function(event){
- if(event.key==='Escape'&&!dreamCollegeMenu.hidden){closeDreamMenu();dreamCollegeTrigger.focus();}
-});
-if(!campuses.some(function(item){return item.name===selectedDream;}))selectedDream='';
+function showLogin(){
+ $('loginOverlay').classList.add('open');
+ $('loginOverlay').setAttribute('aria-hidden','false');
+ $('profileName').value=profile&&profile.name||'';
+ $('profileDreamCollege').value=profile&&profile.dreamCollege||campuses[0].name;
+ $('profileCategory').value=profile&&profile.category||'General';
+}
+function saveProfile(name,dream,category){
+ profile={name:name.trim(),dreamCollege:dream,category:category};
+ store.set('profile',profile);
+ refreshProfileUI();
+ $('loginOverlay').classList.remove('open');
+ $('loginOverlay').setAttribute('aria-hidden','true');
+}
+function switchScreen(screen){
+ if(!document.querySelector('.app-screen[data-screen="'+screen+'"]'))return;
+ document.querySelectorAll('.app-screen').forEach(function(node){node.classList.toggle('active',node.dataset.screen===screen);});
+ document.querySelectorAll('.dock-item').forEach(function(node){node.classList.toggle('active',node.dataset.screen===screen);});
+ window.scrollTo({top:0,behavior:'smooth'});
+ closeMusicDrawerForScreenChange();
+}
+function closeMusicDrawerForScreenChange(){}
 function shuffle(items){var array=items.slice();for(var i=array.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp;}return array;}
+populateCampusSelect($('profileDreamCollege'),profile&&profile.dreamCollege);
+populateCampusSelect($('settingsDreamCollege'),profile&&profile.dreamCollege);
 renderCampuses(campuses);
-updateDreamCollege(selectedDream);
+renderCutoffs();
+document.querySelectorAll('.dock-item').forEach(function(button){button.addEventListener('click',function(){switchScreen(button.dataset.screen);});});
+document.querySelectorAll('[data-go]').forEach(function(button){button.addEventListener('click',function(){switchScreen(button.dataset.go);});});
+$('cutoffCategory').addEventListener('change',renderCutoffs);
+$('profileSetupForm').addEventListener('submit',function(event){
+ event.preventDefault();
+ var name=$('profileName').value.trim(),dream=$('profileDreamCollege').value,category=$('profileCategory').value;
+ if(!name){$('profileName').focus();return;}
+ saveProfile(name,dream,category);
+ switchScreen('home');
+});
+$('profileSettingsForm').addEventListener('submit',function(event){
+ event.preventDefault();
+ saveProfile($('settingsName').value,$('settingsDreamCollege').value,$('settingsCategory').value);
+ toast('Your profile has been updated.');
+});
+$('logoutButton').addEventListener('click',function(){
+ localStorage.removeItem('tlm:profile');profile=null;showLogin();switchScreen('home');
+});
+if(profile&&profile.name&&profile.dreamCollege&&profile.category){refreshProfileUI();$('loginOverlay').classList.remove('open');$('loginOverlay').setAttribute('aria-hidden','true');}
+else{showLogin();}
 $('shuffleCampuses').addEventListener('click',function(){renderCampuses(shuffle(campuses));toast('The AIIMS wall has been reshuffled.');});
-
+$('refreshShorts').addEventListener('click',function(){renderVideos();toast('Fresh Shorts selected.');});
 /* A refreshable, curated set of YouTube campus videos and Shorts. */
 var videos=[
 {id:'vHKnyKhTuHU',title:'AIIMS Delhi — complete campus tour',by:'Bharti Prajapati · AIIMS Delhi',note:'Hostels, college blocks and student spaces'},
@@ -187,7 +265,7 @@ function renderVideos(){
  $('shortsGrid').innerHTML=selectedShorts.map(function(item){return '<article class="short-card"><div class="short-frame"><iframe src="https://www.youtube-nocookie.com/embed/'+item.id+'?rel=0" title="'+item.title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="short-info"><h3>'+item.title+'</h3><small>'+item.by+'</small></div></article>';}).join('');
 }
 renderVideos();
-$('refreshVideos').addEventListener('click',function(){renderVideos();toast('Fresh videos and Shorts selected.');});
+$('refreshVideos').addEventListener('click',function(){renderVideos();toast('Fresh videos selected.');});
 
 /* Self-study countdown */
 var timerTotal=50*60,timerRemaining=timerTotal,timerInterval=null,timerRunning=false,ringCirc=2*Math.PI*96;
