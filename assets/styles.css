@@ -114,3 +114,37 @@ body.drawer-open{overflow:hidden}
 .drawer-controls button.active{color:var(--lime);background:rgba(217,241,141,.08)}
 .drawer-controls .drawer-play{grid-column:3;justify-self:center;width:50px!important;height:50px!important;border-radius:50%;background:var(--lime)!important;color:#172018!important;font-size:17px!important;box-shadow:0 7px 18px rgba(0,0,0,.2)}
 @media(max-width:760px){.dream-picker{max-width:100%;margin-bottom:18px;padding:12px}.dream-select-wrap select{min-height:46px;font-size:9px}.drawer-controls{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px!important}.drawer-controls button{height:44px!important;font-size:18px}}
+
+/* v11: custom dream-campus picker — fully styled, searchable and iPad-friendly */
+.dream-picker{position:relative;z-index:6;max-width:440px;margin:0 0 22px;padding:13px 14px 11px;background:rgba(25,37,29,.94);border:1px solid rgba(217,241,141,.32);backdrop-filter:blur(12px)}
+.dream-picker label{display:block;margin-bottom:8px;color:var(--lime);font:8px var(--mono);letter-spacing:.13em}
+.dream-select-wrap{position:relative}
+.dream-select-trigger{width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 13px;border:1px solid rgba(217,241,141,.36);border-radius:0;background:linear-gradient(110deg,#202e24,#18231c);color:var(--ink);text-align:left;font:10px var(--mono);letter-spacing:.055em;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.025);transition:border-color .18s,background .18s}
+.dream-select-trigger:hover,.dream-select-trigger[aria-expanded=true]{border-color:var(--lime);background:#243328}
+.dream-select-trigger>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dream-select-arrow{flex:0 0 auto;color:var(--lime);font:20px/1 var(--head);transition:transform .2s}
+.dream-select-trigger[aria-expanded=true] .dream-select-arrow{transform:rotate(180deg)}
+.dream-college-menu{position:absolute;z-index:25;top:calc(100% + 7px);left:0;right:0;padding:12px;background:#17231b;border:1px solid rgba(217,241,141,.42);box-shadow:0 18px 42px rgba(0,0,0,.5)}
+.dream-college-menu[hidden]{display:none}
+.dream-search-label{display:block;margin:0 0 6px;color:var(--lime);font:7px var(--mono);letter-spacing:.12em}
+.dream-college-search{width:100%;height:39px;padding:0 11px;border:1px solid var(--line);border-radius:0;outline:none;background:#101913;color:var(--ink);font:10px var(--sans);-webkit-appearance:none;appearance:none}
+.dream-college-search::placeholder{color:#879387}
+.dream-college-search:focus{border-color:var(--lime)}
+.dream-college-list{max-height:245px;margin-top:8px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-color:var(--lime) #1c2a20;scrollbar-width:thin}
+.dream-college-option{width:100%;min-height:45px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:7px 10px;border:0;border-bottom:1px solid rgba(233,240,222,.07);background:transparent;color:var(--ink);text-align:left;cursor:pointer}
+.dream-college-option span{font:600 10px var(--head)}
+.dream-college-option small{color:var(--muted);font:7px var(--mono);letter-spacing:.04em}
+.dream-college-option:hover,.dream-college-option:focus-visible{background:rgba(217,241,141,.09);outline:none}
+.dream-college-option.selected{background:rgba(217,241,141,.12);box-shadow:inset 2px 0 var(--lime)}
+.dream-college-option.selected span{color:var(--lime)}
+.dream-college-option[hidden]{display:none}
+.dream-no-results{margin:10px 4px 3px;color:var(--muted);font:9px var(--mono)}
+.dream-no-results[hidden]{display:none}
+.dream-picker>small{display:block;margin-top:8px;color:var(--muted);font:6px var(--mono);letter-spacing:.08em}
+.hero-photo img.image-fallback{object-fit:contain;padding:15%;background:#1d2a21;filter:none}
+@media(max-width:760px){
+ .dream-picker{max-width:100%;margin:0 0 18px;padding:12px}
+ .dream-select-trigger{min-height:49px;font-size:9px}
+ .dream-college-menu{left:-1px;right:-1px}
+ .dream-college-list{max-height:min(34vh,230px)}
+}
