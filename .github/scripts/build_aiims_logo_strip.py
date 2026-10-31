@@ -37,6 +37,20 @@ EXTRA_SITES={
  "AIIMS Vijaypur (Jammu)":["https://exams.aiimsjammu.edu.in/"],
 }
 
+def slug(name):
+    return re.sub(r"[^a-z0-9]+","-",name.lower()).strip("-")
+
+def read_campuses():
+    text=APP.read_text(encoding="utf-8")
+    start=text.index("var campuses=[")
+    end=text.index("\\n];",start)
+    block=text[start:end]
+    pattern=re.compile(r"\\{name:'([^']+)'[^}]*?url:'([^']+)'")
+    rows=pattern.findall(block)
+    if len(rows)!=23:
+        raise RuntimeError(f"Expected 23 AIIMS entries; found {len(rows)}")
+    return rows
+
 def get_bytes(url):
     try:
         r=SESSION.get(url,timeout=(4,8),allow_redirects=True)
