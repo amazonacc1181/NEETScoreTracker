@@ -29,7 +29,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install logo processing tools
-        run: python -m pip install --disable-pip-version-check requests pillow beautifulsoup4
+        run: python -m pip install --disable-pip-version-check requests pillow beautifulsoup4 pymupdf
 
       - name: Download institute logo marks and build marquee
         run: python .github/scripts/build_aiims_logo_strip.py
