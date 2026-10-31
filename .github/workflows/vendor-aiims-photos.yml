@@ -30,13 +30,16 @@ jobs:
           python-version: "3.12"
 
       - name: Install image tools
-        run: python -m pip install --disable-pip-version-check requests pillow
+        run: python -m pip install --disable-pip-version-check requests pillow beautifulsoup4
 
       - name: Download AIIMS photos and update site references
         run: python .github/scripts/vendor_aiims_photos.py
 
       - name: Build ten-photo rotating gallery for each AIIMS
         run: python .github/scripts/build_aiims_gallery.py
+
+      - name: Download AIIMS institute logos and build homepage marquee
+        run: python .github/scripts/build_aiims_logo_strip.py
 
       - name: Commit local campus images
         run: |
