@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=11">
 </head>
 <body>
   <header class="site-header">
@@ -29,7 +29,7 @@
   <main id="home">
     <section class="hero">
       <div class="hero-photo">
-        <img src="https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg" id="heroCampusImage" alt="AIIMS campus in India" fetchpriority="high">
+        <img src="https://akm-img-a-in.tosshub.com/businesstoday/images/photo_gallery/202601/cold-1.jpg?size=686%3A%2A" id="heroCampusImage" alt="AIIMS New Delhi campus" fetchpriority="high">
         <div class="hero-photo-shade"></div>
         <span class="hero-photo-label" id="heroPhotoLabel">THE AIIMS DREAM ACROSS INDIA</span>
         <span class="hero-photo-credit" id="heroPhotoCredit">EXPLORE 23 CAMPUSES</span>
@@ -40,7 +40,19 @@
         <p class="hero-lede">Whether your dream is AIIMS Delhi, Deoghar, Bhopal or another campus across India, let this be your daily reminder: the future is built one focused day at a time.</p>
         <div class="dream-picker" id="dream-picker">
           <label for="dreamCollege">CHOOSE YOUR DREAM AIIMS</label>
-          <div class="dream-select-wrap"><select id="dreamCollege"><option value="">SELECT YOUR DREAM INSTITUTE</option></select><span aria-hidden="true">⌄</span></div>
+          <div class="dream-select-wrap" id="dreamSelectWrap">
+          <button class="dream-select-trigger" id="dreamCollegeTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="dreamCollegeMenu">
+            <span id="dreamCollegeLabel">SELECT YOUR DREAM INSTITUTE</span><span class="dream-select-arrow" aria-hidden="true">⌄</span>
+          </button>
+          <div class="dream-college-menu" id="dreamCollegeMenu" hidden>
+            <label class="dream-search-label" for="dreamCollegeSearch">FIND YOUR CAMPUS</label>
+            <input id="dreamCollegeSearch" class="dream-college-search" type="search" placeholder="Search by AIIMS or city…" autocomplete="off">
+            <div class="dream-college-list" id="dreamCollegeList" role="listbox" aria-label="AIIMS campuses">
+              <button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS New Delhi"><span>AIIMS New Delhi</span><small>Ansari Nagar · Delhi</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bhopal"><span>AIIMS Bhopal</span><small>Saket Nagar · Madhya Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bhubaneswar"><span>AIIMS Bhubaneswar</span><small>Sijua · Odisha</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Jodhpur"><span>AIIMS Jodhpur</span><small>Basni · Rajasthan</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Patna"><span>AIIMS Patna</span><small>Phulwarisharif · Bihar</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Raipur"><span>AIIMS Raipur</span><small>Tatibandh · Chhattisgarh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rishikesh"><span>AIIMS Rishikesh</span><small>Virbhadra Road · Uttarakhand</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Mangalagiri"><span>AIIMS Mangalagiri</span><small>Mangalagiri · Andhra Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Guwahati"><span>AIIMS Guwahati</span><small>Changsari · Assam</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Darbhanga"><span>AIIMS Darbhanga</span><small>Darbhanga · Bihar</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rajkot"><span>AIIMS Rajkot</span><small>Khandheri · Gujarat</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rewari"><span>AIIMS Rewari</span><small>Majra · Haryana</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bilaspur"><span>AIIMS Bilaspur</span><small>Kothipura · Himachal Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Vijaypur (Jammu)"><span>AIIMS Vijaypur (Jammu)</span><small>Vijaypur · Jammu & Kashmir</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Awantipora"><span>AIIMS Awantipora</span><small>Awantipora · Kashmir</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Deoghar"><span>AIIMS Deoghar</span><small>Devipur · Jharkhand</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Nagpur"><span>AIIMS Nagpur</span><small>MIHAN · Maharashtra</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bathinda"><span>AIIMS Bathinda</span><small>Bathinda · Punjab</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Madurai"><span>AIIMS Madurai</span><small>Madurai · Tamil Nadu</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bibinagar"><span>AIIMS Bibinagar</span><small>Bibinagar · Telangana</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Raebareli"><span>AIIMS Raebareli</span><small>Munshiganj · Uttar Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Gorakhpur"><span>AIIMS Gorakhpur</span><small>Kunraghat · Uttar Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Kalyani"><span>AIIMS Kalyani</span><small>Kalyani · West Bengal</small></button>
+            </div>
+            <p class="dream-no-results" id="dreamCollegeNoResults" hidden>No campus found. Try another name.</p>
+          </div>
+        </div>
           <small id="dreamCollegeNote">YOUR CHOICE IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME</small>
         </div>
         <div class="hero-actions"><a class="primary-button" href="#campuses">EXPLORE ALL AIIMS <span>↘</span></a><a class="quiet-link" href="#countdown">COUNT THE DAYS ↓</a></div>
@@ -150,6 +162,6 @@
     <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
   </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/app.js"></script>
+  <script src="assets/app.js?v=11"></script>
 </body>
 </html>
