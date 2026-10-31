@@ -74,7 +74,7 @@ $('studyMathForm').addEventListener('submit',function(event){event.preventDefaul
 function checkHomeClosed(){var marker=get('studyHomeClosedAt',null);if(marker&&session&&marker.sessionId===session.id)autoEnd('home-closed',true);}
 if(channel)channel.addEventListener('message',function(event){if(event.data&&event.data.type==='home-closed'&&session&&event.data.sessionId===session.id)autoEnd('home-closed',true);});
 window.addEventListener('storage',function(event){if(event.key==='tlm:studyHomeClosedAt')checkHomeClosed();});
-document.addEventListener('visibilitychange',function(){if(!document.hidden)checkHomeClosed();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden){checkHomeClosed();paint();persist();}});
 checkHomeClosed();
 window.addEventListener('pagehide',onPageHide);
 window.addEventListener('storage',function(event){if(event.key==='tlm:activeStudySession'&&event.newValue==='null')autoEnd('ended-elsewhere',false);});
