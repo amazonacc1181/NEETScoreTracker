@@ -181,7 +181,7 @@ def main():
 }
 renderAiimsLogoStrip();
 '''
-    a=a+ "\n"+array_text+render
+    a=a.rsplit("})();",1)[0]+ "\\n"+array_text+render+"\\n})();"
     APP.write_text(a,encoding="utf-8")
     (OUT/"logo-manifest.json").write_text(json.dumps(results,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Make all logos part of the service-worker cache and bump page asset versions.
