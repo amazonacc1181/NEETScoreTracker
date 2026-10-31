@@ -245,3 +245,5 @@ button,a{ -webkit-tap-highlight-color:transparent}
  .aiims-source{flex-direction:column;font-size:6px;line-height:1.6}
 }
 @media(max-width:360px){.aiims-grid{grid-template-columns:minmax(0,1fr)}.aiims-card-art{height:108px}}
+
+@media(min-width:901px) and (max-width:1120px){.desktop-nav{gap:clamp(9px,1.1vw,14px)}.desktop-nav a{font-size:10px}.topbar{padding-inline:22px}.brand{gap:8px}.brand-copy b{font-size:10px}}
