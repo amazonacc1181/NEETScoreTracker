@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=15">
+  <link rel="stylesheet" href="assets/styles.css?v=16">
 </head>
 <body>
   <header class="site-header">
@@ -26,8 +26,7 @@
     <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos & Shorts</a><a href="#study">Study timer</a><a href="#musicDrawer" id="musicNavLink">♫ Music</a>
   </nav>
 
-  <main id="home">
-    <section class="hero">
+  <main id="home" class="app-main"><section class="app-screen active" id="screen-home" data-screen="home"><section class="hero">
       <div class="hero-photo">
         <img src="assets/aiims-delhi.webp" id="heroCampusImage" alt="AIIMS New Delhi campus" fetchpriority="high">
         <div class="hero-photo-shade"></div>
@@ -35,33 +34,36 @@
         <span class="hero-photo-credit" id="heroPhotoCredit">EXPLORE 23 CAMPUSES</span>
       </div>
       <div class="hero-content">
-        <div class="eyebrow"><span></span> FOR EVERY NEET ASPIRANT WITH A DREAM.</div>
-        <h1>One day,<br>you'll <em>belong</em><br>here.</h1>
-        <p class="hero-lede">Whether your dream is AIIMS Delhi, Deoghar, Bhopal or another campus across India, let this be your daily reminder: the future is built one focused day at a time.</p>
-        <div class="dream-picker" id="dream-picker">
-          <label for="dreamCollege">CHOOSE YOUR DREAM AIIMS</label>
-          <div class="dream-select-wrap" id="dreamSelectWrap">
-          <button class="dream-select-trigger" id="dreamCollegeTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="dreamCollegeMenu">
-            <span id="dreamCollegeLabel">SELECT YOUR DREAM INSTITUTE</span><span class="dream-select-arrow" aria-hidden="true">⌄</span>
-          </button>
-          <div class="dream-college-menu" id="dreamCollegeMenu" hidden>
-            <label class="dream-search-label" for="dreamCollegeSearch">FIND YOUR CAMPUS</label>
-            <input id="dreamCollegeSearch" class="dream-college-search" type="search" placeholder="Search by AIIMS or city…" autocomplete="off">
-            <div class="dream-college-list" id="dreamCollegeList" role="listbox" aria-label="AIIMS campuses">
-              <button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS New Delhi"><span>AIIMS New Delhi</span><small>Ansari Nagar · Delhi</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bhopal"><span>AIIMS Bhopal</span><small>Saket Nagar · Madhya Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bhubaneswar"><span>AIIMS Bhubaneswar</span><small>Sijua · Odisha</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Jodhpur"><span>AIIMS Jodhpur</span><small>Basni · Rajasthan</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Patna"><span>AIIMS Patna</span><small>Phulwarisharif · Bihar</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Raipur"><span>AIIMS Raipur</span><small>Tatibandh · Chhattisgarh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rishikesh"><span>AIIMS Rishikesh</span><small>Virbhadra Road · Uttarakhand</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Mangalagiri"><span>AIIMS Mangalagiri</span><small>Mangalagiri · Andhra Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Guwahati"><span>AIIMS Guwahati</span><small>Changsari · Assam</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Darbhanga"><span>AIIMS Darbhanga</span><small>Darbhanga · Bihar</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rajkot"><span>AIIMS Rajkot</span><small>Khandheri · Gujarat</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Rewari"><span>AIIMS Rewari</span><small>Majra · Haryana</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bilaspur"><span>AIIMS Bilaspur</span><small>Kothipura · Himachal Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Vijaypur (Jammu)"><span>AIIMS Vijaypur (Jammu)</span><small>Vijaypur · Jammu & Kashmir</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Awantipora"><span>AIIMS Awantipora</span><small>Awantipora · Kashmir</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Deoghar"><span>AIIMS Deoghar</span><small>Devipur · Jharkhand</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Nagpur"><span>AIIMS Nagpur</span><small>MIHAN · Maharashtra</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bathinda"><span>AIIMS Bathinda</span><small>Bathinda · Punjab</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Madurai"><span>AIIMS Madurai</span><small>Madurai · Tamil Nadu</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Bibinagar"><span>AIIMS Bibinagar</span><small>Bibinagar · Telangana</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Raebareli"><span>AIIMS Raebareli</span><small>Munshiganj · Uttar Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Gorakhpur"><span>AIIMS Gorakhpur</span><small>Kunraghat · Uttar Pradesh</small></button><button class="dream-college-option" type="button" role="option" aria-selected="false" data-college="AIIMS Kalyani"><span>AIIMS Kalyani</span><small>Kalyani · West Bengal</small></button>
-            </div>
-            <p class="dream-no-results" id="dreamCollegeNoResults" hidden>No campus found. Try another name.</p>
-          </div>
+        <div class="eyebrow"><span></span> YOUR DREAM. YOUR DAILY REMINDER.</div>
+        <h1 id="welcomeTitle">Welcome,<br><em>Dr. Aspirant</em></h1>
+        <p class="hero-lede" id="homeDreamLine">Your dream campus is waiting. Make today count.</p>
+        <div class="home-targets">
+          <article class="home-target-card"><small>2026 ROUND 1 CLOSING RANK</small><strong id="homeHistoricalRank">—</strong><span id="homeCategoryLabel">YOUR CATEGORY</span></article>
+          <article class="home-target-card"><small>2027 SAFE RANK TARGET</small><strong id="homeTargetRank">—</strong><span>20% tighter than the 2026 cutoff</span></article>
+          <article class="home-target-card home-target-lime"><small>2027 MARKS TO AIM FOR</small><strong id="homeTargetMarks">—</strong><span>out of 720 · planning estimate</span></article>
         </div>
-          <small id="dreamCollegeNote">YOUR CHOICE IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME</small>
-        </div>
-        <div class="hero-actions"><a class="primary-button" href="#campuses">EXPLORE ALL AIIMS <span>↘</span></a><a class="quiet-link" href="#countdown">COUNT THE DAYS ↓</a></div>
-        <div class="hero-note"><span>✳</span><p>Not just a dream college.<br><em>A future you're building, one study session at a time.</em></p></div>
+        <div class="hero-actions"><button class="primary-button" type="button" data-go="cutoffs">VIEW AIIMS CUTOFFS <span>↘</span></button><button class="quiet-link" type="button" data-go="countdown">COUNT THE DAYS ↓</button></div>
+        <div class="hero-note"><span>✳</span><p id="homeMotivation">Not just a dream college.<br><em>A future you are building, one study session at a time.</em></p></div>
       </div>
       <div class="hero-bottom"><span>THE LAST MILE · NEET 2027</span><span>FOR EVERY DREAMER. ONE DAY AT A TIME.</span></div>
-    </section>
-
-    <section class="countdown-section page-section" id="countdown">
+    </section><section class="campus-section page-section" id="campuses">
+      <div class="section-topline"><span>02 / THE DREAM WALL</span><span>THE AIIMS NETWORK · INDIA</span></div>
+      <div class="section-heading">
+        <div><h2>23 campuses.<br><em>One reason to keep going.</em></h2><p>Take a look at the places your hard work can lead. Find your favourite. Picture your first day there.</p></div>
+        <button class="refresh-button" id="shuffleCampuses" type="button"><span>⟳</span> SHUFFLE THE WALL</button>
+      </div>
+      <div class="campus-grid" id="campusGrid" aria-live="polite"></div>
+      <div class="gallery-foot"><span>22 AIIMS APPROVED UNDER PMSSY + AIIMS NEW DELHI</span><a href="https://pmssy.mohfw.gov.in/" target="_blank" rel="noopener">GOVERNMENT AIIMS PROJECT GALLERY ↗</a></div>
+    </section></section><section class="app-screen" id="screen-cutoffs" data-screen="cutoffs"><section class="cutoff-section page-section">
+  <div class="section-topline"><span>02 / THE NUMBERS</span><span>AIIMS MBBS · ALL INDIA QUOTA</span></div>
+  <div class="section-heading">
+    <div><h2>Know the cutoff.<br><em>Set your target.</em></h2><p>Compare the 2026 Round 1 closing ranks for all AIIMS campuses, category by category.</p></div>
+    <div class="cutoff-filter"><label for="cutoffCategory">CATEGORY</label><select id="cutoffCategory"><option value="General">General</option><option value="EWS">EWS</option><option value="OBC">OBC-NCL</option><option value="SC">SC</option><option value="ST">ST</option></select></div>
+  </div>
+  <div class="cutoff-note"><span class="cutoff-note-dot"></span><span>Historical 2026 Round 1 closing AIR · not a 2027 guarantee.</span></div>
+  <div class="cutoff-table-wrap"><table class="cutoff-table"><thead><tr><th>AIIMS CAMPUS</th><th>GENERAL</th><th>EWS</th><th>OBC-NCL</th><th>SC</th><th>ST</th></tr></thead><tbody id="cutoffTableBody"></tbody></table></div>
+  <div class="cutoff-sources">Sources: <a href="https://mcc.nic.in/document/final-allotment-result-for-round-1-of-ug-counselling-2026/" target="_blank" rel="noopener">MCC 2026 Round 1 final allotment</a> · <a href="https://medicine.careers360.com/articles/neet-counselling-seat-allotment-result-2026-aiims-mbbs-round-1-category-wise-closing-rank" target="_blank" rel="noopener">Institute-wise category closing-rank summary</a>.</div>
+</section></section><section class="app-screen" id="screen-countdown" data-screen="countdown"><section class="countdown-section page-section" id="countdown">
       <div class="section-topline"><span>01 / THE DATE</span><span>THE GOAL IS GETTING CLOSER</span></div>
       <div class="countdown-layout">
         <div class="section-copy">
@@ -82,32 +84,7 @@
           <div class="countdown-foot"><span>NO MAGIC. JUST CONSISTENCY.</span><b id="examDateLabel">02 MAY 2027</b></div>
         </div>
       </div>
-    </section>
-
-    <section class="campus-section page-section" id="campuses">
-      <div class="section-topline"><span>02 / THE DREAM WALL</span><span>THE AIIMS NETWORK · INDIA</span></div>
-      <div class="section-heading">
-        <div><h2>23 campuses.<br><em>One reason to keep going.</em></h2><p>Take a look at the places your hard work can lead. Find your favourite. Picture your first day there.</p></div>
-        <button class="refresh-button" id="shuffleCampuses" type="button"><span>⟳</span> SHUFFLE THE WALL</button>
-      </div>
-      <div class="campus-grid" id="campusGrid" aria-live="polite"></div>
-      <div class="gallery-foot"><span>22 AIIMS APPROVED UNDER PMSSY + AIIMS NEW DELHI</span><a href="https://pmssy.mohfw.gov.in/" target="_blank" rel="noopener">GOVERNMENT AIIMS PROJECT GALLERY ↗</a></div>
-    </section>
-
-    <section class="stories-section page-section" id="stories">
-      <div class="section-topline"><span>03 / A GLIMPSE OF THAT LIFE</span><span>REAL CAMPUSES · REAL STUDENTS</span></div>
-      <div class="section-heading">
-        <div><h2>See the life<br><em>you're studying for.</em></h2><p>Campus tours, hostel life, student routines and a little reminder of why you started.</p></div>
-        <button class="refresh-button" id="refreshVideos" type="button"><span>⟳</span> REFRESH VIDEOS</button>
-      </div>
-      <div class="media-heading"><span>FEATURED CAMPUS VIDEOS</span><small>LONG-FORM CAMPUS TOURS & VLOGS</small></div>
-      <div class="video-grid" id="videoGrid"></div>
-      <div class="media-heading shorts-heading"><span>AIIMS SHORTS</span><small>QUICK DOSES OF MOTIVATION</small></div>
-      <div class="shorts-grid" id="shortsGrid"></div>
-      <div class="video-note">Videos are hosted by their original creators on YouTube. Use the refresh button to see another selection.</div>
-    </section>
-
-    <section class="study-section page-section" id="study">
+    </section><section class="study-section page-section" id="study">
       <div class="section-topline"><span>04 / RIGHT NOW</span><span>MAKE THIS SESSION COUNT</span></div>
       <div class="study-layout">
         <div class="study-copy">
@@ -128,12 +105,51 @@
           <p class="timer-hint" id="timerHint">One focused session. No distractions.</p>
         </div>
       </div>
-    </section>
+    </section></section><section class="app-screen" id="screen-videos" data-screen="videos"><section class="stories-section page-section"><div class="section-topline"><span>04 / REAL CAMPUS LIFE</span><span>WATCH · LEARN · GET INSPIRED</span></div><div class="section-heading"><div><h2>See the life<br><em>you are studying for.</em></h2><p>Campus tours, hostel life and student routines from AIIMS creators.</p></div><button class="refresh-button" id="refreshVideos" type="button"><span>⟳</span> REFRESH VIDEOS</button></div><div class="media-heading"><span>FEATURED CAMPUS VIDEOS</span><small>LONG-FORM CAMPUS TOURS & VLOGS</small></div>
+      <div class="video-grid" id="videoGrid"></div>
+      <div class="video-note">Videos are hosted by their original creators on YouTube. Use the refresh button to see another selection.</div>
+    </section></section></section><section class="app-screen" id="screen-shorts" data-screen="shorts"><section class="stories-section page-section"><div class="section-topline"><span>05 / QUICK INSPIRATION</span><span>REAL STUDENTS · REAL JOURNEYS</span></div><div class="section-heading"><div><h2>A little spark.<br><em>Then back to work.</em></h2><p>Short campus moments and reminders to keep showing up.</p></div><button class="refresh-button" id="refreshShorts" type="button"><span>⟳</span> REFRESH SHORTS</button></div><div class="media-heading shorts-heading"><span>AIIMS SHORTS</span><small>QUICK DOSES OF MOTIVATION</small></div>
+      <div class="shorts-grid" id="shortsGrid"></div>
+      </section></section><section class="app-screen" id="screen-settings" data-screen="settings"><section class="settings-section page-section">
+  <div class="section-topline"><span>06 / YOUR PROFILE</span><span>THIS DEVICE</span></div>
+  <div class="section-heading"><div><h2>Your journey.<br><em>Your settings.</em></h2><p>Change your name, category or dream campus whenever your goal changes.</p></div></div>
+  <form class="profile-settings-card" id="profileSettingsForm">
+    <div class="profile-avatar" id="settingsAvatar">✳</div>
+    <div class="settings-grid">
+      <label>YOUR NAME<input id="settingsName" type="text" maxlength="32" required placeholder="Enter your name"></label>
+      <label>YOUR CATEGORY<select id="settingsCategory" required><option value="General">General</option><option value="EWS">EWS</option><option value="OBC">OBC-NCL</option><option value="SC">SC</option><option value="ST">ST</option></select></label>
+      <label class="settings-full">DREAM AIIMS CAMPUS<select id="settingsDreamCollege" required></select></label>
+    </div>
+    <button class="primary-button" type="submit">SAVE PROFILE <span>↗</span></button>
+  </form>
+  <div class="settings-privacy"><span>LOCAL PROFILE</span><p>Your name and preferences are saved only in this browser on this device. There is no password or cloud account.</p></div>
+  <button class="logout-button" id="logoutButton" type="button"><span>↪</span> LOG OUT</button>
+  <a class="settings-official" href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a>
+</section></section></main>
 
-
-  </main>
-
-  <footer class="site-footer"><a class="brand" href="#home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027</small></span></a><span>Made for the future you're working towards.</span><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a></footer>
+  <footer class="site-footer app-footer"><a class="brand" href="#home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027</small></span></a><span>Made for the future you're working towards.</span><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a></footer>
+  <nav class="bottom-dock" id="bottomDock" aria-label="Main sections">
+  <button type="button" class="dock-item active" data-screen="home" aria-label="Home"><span class="dock-icon">⌂</span><small>Home</small></button>
+  <button type="button" class="dock-item" data-screen="cutoffs" aria-label="All AIIMS cutoff"><span class="dock-icon">▤</span><small>Cutoffs</small></button>
+  <button type="button" class="dock-item" data-screen="countdown" aria-label="Countdown"><span class="dock-icon">◷</span><small>Countdown</small></button>
+  <button type="button" class="dock-item" data-screen="videos" aria-label="Videos"><span class="dock-icon">▷</span><small>Videos</small></button>
+  <button type="button" class="dock-item" data-screen="shorts" aria-label="Shorts"><span class="dock-icon">▣</span><small>Shorts</small></button>
+  <button type="button" class="dock-item" data-screen="settings" aria-label="Settings"><span class="dock-icon">⚙</span><small>Settings</small></button>
+</nav>
+<div class="login-overlay" id="loginOverlay" aria-hidden="true">
+  <div class="login-backdrop"></div>
+  <form class="login-card" id="profileSetupForm">
+    <div class="brand-mark login-mark">✳</div>
+    <span class="login-kicker">THE LAST MILE · NEET 2027</span>
+    <h1>Every dream<br>starts with <em>a name.</em></h1>
+    <p>Set your profile and choose the AIIMS campus you are working towards.</p>
+    <label>YOUR NAME<input id="profileName" type="text" maxlength="32" placeholder="What should we call you?" autocomplete="given-name" required></label>
+    <label>YOUR DREAM AIIMS<select id="profileDreamCollege" required></select></label>
+    <label>YOUR CATEGORY<select id="profileCategory" required><option value="General">General</option><option value="EWS">EWS</option><option value="OBC">OBC-NCL</option><option value="SC">SC</option><option value="ST">ST</option></select></label>
+    <button class="primary-button login-submit" type="submit">ENTER MY DASHBOARD <span>↗</span></button>
+    <small>Your profile is saved on this device. No password or account required.</small>
+  </form>
+</div>
   <button class="music-fab" id="musicFab" type="button" aria-controls="musicDrawer" aria-expanded="false"><span>♫</span><small>MUSIC</small></button>
   <button class="music-backdrop" id="musicBackdrop" type="button" aria-label="Close music drawer" tabindex="-1"></button>
   <aside class="music-drawer" id="musicDrawer" aria-hidden="true" aria-labelledby="musicDrawerTitle" inert>
@@ -162,6 +178,6 @@
     <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
   </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/app.js?v=15"></script>
+  <script src="assets/app.js?v=16"></script>
 </body>
 </html>
