@@ -269,143 +269,17 @@ function renderVideos(){
 renderVideos();
 $('refreshVideos').addEventListener('click',function(){renderVideos();toast('Fresh videos selected.');});
 
-/* Immersive study sessions, local history, and maths-gated completion. */
+/* Study-session launcher and shared local history. */
 var ACTIVE_STUDY_KEY='activeStudySession';
 var STUDY_HISTORY_KEY='studyHistory';
 var activeStudySession=store.get(ACTIVE_STUDY_KEY,null);
-var studySessionTicker=null;
-var studyMathAnswer=null;
 function readStudyHistory(){
  var data=store.get(STUDY_HISTORY_KEY,[]);
  return Array.isArray(data)?data:[];
 }
-function elapsedStudyMs(session){
- if(!session)return 0;
- return Math.max(0,Number(session.elapsedMs)||0)+(!session.paused&&session.segmentStartedAt?Math.max(0,Date.now()-session.segmentStartedAt):0);
-}
-function formatStudyClock(ms){
- var seconds=Math.floor(Math.max(0,ms)/1000);
- var hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60),remaining=seconds%60;
- return [hours,minutes,remaining].map(function(n){return String(n).padStart(2,'0');}).join(':');
-}
 function formatStudyHoursMinutes(ms){
  var minutes=Math.floor(Math.max(0,ms)/60000);
  return String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
-}
-function paintStudySession(){
- if(!activeStudySession)return;
- $('studySessionClock').textContent=formatStudyClock(elapsedStudyMs(activeStudySession));
-}
-function stopStudySessionTicker(){
- if(studySessionTicker){clearInterval(studySessionTicker);studySessionTicker=null;}
-}
-function startStudySessionTicker(){
- stopStudySessionTicker();
- paintStudySession();
- studySessionTicker=setInterval(paintStudySession,500);
-}
-function setSessionProfile(){
- if(!profile)return;
- var campus=campuses.find(function(item){return item.name===profile.dreamCollege;})||campuses[0];
- var target=profileTarget();
- var photo=campus.photos&&campus.photos.length?campus.photos[0]:campus.photo;
- $('sessionCampusImage').src=photo;
- $('sessionCampusImage').alt=campus.name+' campus';
- $('sessionDoctorName').textContent='Dr. '+profile.name;
- $('sessionDreamCampus').textContent=campus.name+' · '+campus.place;
- $('sessionRequiredRank').textContent=target?'AIR ≤ '+formatRank(target.targetRank):'TARGET AIR UNAVAILABLE';
-}
-function requestStudyFullscreen(){
- var element=$('studySessionScreen');
- if(element&&element.requestFullscreen){
-  try{var result=element.requestFullscreen();if(result&&result.catch)result.catch(function(){});}catch(e){}
- }
-}
-function enterStudySession(shouldRequestFullscreen){
- if(!activeStudySession||!profile)return;
- setSessionProfile();
- $('studySessionScreen').classList.add('active');
- $('studySessionScreen').setAttribute('aria-hidden','false');
- $('studyMathGate').classList.remove('open');
- $('studyMathGate').setAttribute('aria-hidden','true');
- document.body.classList.add('study-session-open');
- $('pauseStudySession').hidden=!!activeStudySession.paused;
- $('resumeStudySession').hidden=!activeStudySession.paused;
- $('studySessionState').textContent=activeStudySession.paused?'SESSION PAUSED':'FOCUS IN PROGRESS';
- startStudySessionTicker();
- window.scrollTo(0,0);
- if(shouldRequestFullscreen)requestStudyFullscreen();
-}
-function startNewStudySession(){
- if(!profile){showLogin();return;}
- if(activeStudySession){enterStudySession(true);return;}
- var now=Date.now();
- activeStudySession={id:String(now),startedAt:now,segmentStartedAt:now,elapsedMs:0,paused:false};
- store.set(ACTIVE_STUDY_KEY,activeStudySession);
- enterStudySession(true);
-}
-function pauseStudySession(){
- if(!activeStudySession||activeStudySession.paused)return;
- activeStudySession.elapsedMs=elapsedStudyMs(activeStudySession);
- activeStudySession.paused=true;
- activeStudySession.segmentStartedAt=null;
- store.set(ACTIVE_STUDY_KEY,activeStudySession);
- $('pauseStudySession').hidden=true;
- $('resumeStudySession').hidden=false;
- $('studySessionState').textContent='SESSION PAUSED';
- startStudySessionTicker();
-}
-function resumeStudySession(){
- if(!activeStudySession||!activeStudySession.paused)return;
- activeStudySession.paused=false;
- activeStudySession.segmentStartedAt=Date.now();
- store.set(ACTIVE_STUDY_KEY,activeStudySession);
- $('pauseStudySession').hidden=false;
- $('resumeStudySession').hidden=true;
- $('studySessionState').textContent='FOCUS IN PROGRESS';
- startStudySessionTicker();
-}
-function makeStudyMathProblem(){
- var ops=['+','−','×'],op=ops[Math.floor(Math.random()*ops.length)],a,b,answer;
- if(op==='+'){a=4+Math.floor(Math.random()*17);b=3+Math.floor(Math.random()*16);answer=a+b;}
- else if(op==='−'){a=12+Math.floor(Math.random()*19);b=2+Math.floor(Math.random()*Math.min(11,a-1));answer=a-b;}
- else{a=2+Math.floor(Math.random()*8);b=2+Math.floor(Math.random()*8);answer=a*b;}
- studyMathAnswer=answer;
- $('studyMathQuestion').textContent=a+' '+op+' '+b+' = ?';
- $('studyMathAnswer').value='';
- $('studyMathFeedback').textContent='';
-}
-function askMathToEndStudy(){
- if(!activeStudySession)return;
- makeStudyMathProblem();
- $('studyMathGate').classList.add('open');
- $('studyMathGate').setAttribute('aria-hidden','false');
- $('studyMathAnswer').focus();
-}
-function closeStudySessionScreen(){
- stopStudySessionTicker();
- $('studySessionScreen').classList.remove('active');
- $('studySessionScreen').setAttribute('aria-hidden','true');
- $('studyMathGate').classList.remove('open');
- $('studyMathGate').setAttribute('aria-hidden','true');
- document.body.classList.remove('study-session-open');
- if(document.fullscreenElement&&document.exitFullscreen){
-  try{var result=document.exitFullscreen();if(result&&result.catch)result.catch(function(){});}catch(e){}
- }
-}
-function finishStudySession(){
- if(!activeStudySession)return;
- var endedAt=Date.now(),duration=elapsedStudyMs(activeStudySession);
- var completed={id:activeStudySession.id,startedAt:activeStudySession.startedAt,endedAt:endedAt,durationMs:duration};
- var history=readStudyHistory();
- history.unshift(completed);
- store.set(STUDY_HISTORY_KEY,history);
- activeStudySession=null;
- store.set(ACTIVE_STUDY_KEY,null);
- closeStudySessionScreen();
- renderStudyHistory();
- switchScreen('countdown');
- toast('Study session saved to your history.');
 }
 function renderStudyHistory(){
  var history=readStudyHistory();
@@ -417,41 +291,42 @@ function renderStudyHistory(){
   return '<article class="study-history-row"><div class="history-date-mark"><strong>'+String(date.getDate()).padStart(2,'0')+'</strong><small>'+date.toLocaleDateString('en-IN',{month:'short'}).toUpperCase()+'</small></div><div class="history-session-copy"><strong>'+dateLabel+'</strong><small>STUDY SESSION · '+date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+'</small></div><div class="history-duration"><strong>'+formatStudyHoursMinutes(item.durationMs)+'</strong><small>HOURS : MINUTES</small></div><button type="button" class="history-delete-button" data-delete-session="'+item.id+'" aria-label="Delete study session from '+dateLabel+'">×</button></article>';
  }).join('');
 }
-$('startNewStudySession').addEventListener('click',startNewStudySession);
-$('pauseStudySession').addEventListener('click',pauseStudySession);
-$('resumeStudySession').addEventListener('click',resumeStudySession);
-$('endStudySession').addEventListener('click',askMathToEndStudy);
-$('cancelStudyEnd').addEventListener('click',function(){
- $('studyMathGate').classList.remove('open');
- $('studyMathGate').setAttribute('aria-hidden','true');
- $('studyMathAnswer').value='';
-});
-$('studyMathForm').addEventListener('submit',function(event){
- event.preventDefault();
- var value=Number($('studyMathAnswer').value);
- if(!Number.isInteger(value)||value!==studyMathAnswer){
-  $('studyMathFeedback').textContent='That is not quite right. Try once more.';
-  $('studyMathAnswer').select();
+function startNewStudySession(){
+ if(!profile){showLogin();return;}
+ activeStudySession=store.get(ACTIVE_STUDY_KEY,null);
+ if(!activeStudySession){
+  var now=Date.now(),campus=campuses.find(function(item){return item.name===profile.dreamCollege;})||campuses[0],target=profileTarget();
+  activeStudySession={id:String(now)+'-'+Math.random().toString(36).slice(2,8),startedAt:now,segmentStartedAt:now,elapsedMs:0,paused:false,profile:{name:profile.name,dreamCollege:profile.dreamCollege,category:profile.category},photo:(campus.photos&&campus.photos.length?campus.photos[0]:campus.photo),targetRank:target?target.targetRank:null};
+  store.set(ACTIVE_STUDY_KEY,activeStudySession);
+ }
+ var sessionTab=window.open('study-session.html','_blank');
+ if(!sessionTab){
+  store.set(ACTIVE_STUDY_KEY,null);activeStudySession=null;
+  toast('Allow pop-ups for this site to open a separate study session.');
   return;
  }
- finishStudySession();
-});
+}
+$('startNewStudySession').addEventListener('click',startNewStudySession);
 $('studyHistoryList').addEventListener('click',function(event){
  var button=event.target.closest('[data-delete-session]');
  if(!button)return;
  store.set(STUDY_HISTORY_KEY,readStudyHistory().filter(function(item){return item.id!==button.getAttribute('data-delete-session');}));
- renderStudyHistory();
- toast('Study session deleted.');
+ renderStudyHistory();toast('Study session deleted.');
 });
 $('resetStudyHistory').addEventListener('click',function(){
  if(!readStudyHistory().length){toast('There is no study history to reset.');return;}
  if(!window.confirm('Delete all completed study sessions from every day? This cannot be undone.'))return;
- store.set(STUDY_HISTORY_KEY,[]);
- renderStudyHistory();
- toast('All study history has been reset.');
+ store.set(STUDY_HISTORY_KEY,[]);renderStudyHistory();toast('All study history has been reset.');
+});
+window.addEventListener('storage',function(event){
+ if(event.key==='tlm:'+STUDY_HISTORY_KEY)renderStudyHistory();
+});
+var studyHomeChannel=('BroadcastChannel' in window)?new BroadcastChannel('tlm-study-session'):null;
+window.addEventListener('pagehide',function(){
+ var current=store.get(ACTIVE_STUDY_KEY,null);
+ if(current&&studyHomeChannel)studyHomeChannel.postMessage({type:'home-closed',sessionId:current.id,at:Date.now()});
 });
 renderStudyHistory();
-if(activeStudySession&&profile)enterStudySession(false);
 /* Slide-out music drawer */
 var musicDrawer=$('musicDrawer'),musicBackdrop=$('musicBackdrop'),musicOpenButton=$('musicOpen'),musicFab=$('musicFab'),musicCloseButton=$('musicClose'),musicNavLink=$('musicNavLink'),drawerReturnFocus=null;
 function openMusicDrawer(){
