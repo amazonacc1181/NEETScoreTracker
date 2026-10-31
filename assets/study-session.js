@@ -25,8 +25,8 @@ function persist(){
  set('activeStudySession',session);
 }
 function paint(){if(session)$('studySessionClock').textContent=format(elapsed());}
-function startTicker(){stopTicker();paint();ticker=setInterval(function(){paint();persist();},5000);}
-function stopTicker(){if(ticker){clearInterval(ticker);ticker=null;}}
+function startTicker(){stopTicker();paint();ticker=setInterval(paint,1000);persistTicker=setInterval(persist,5000);}
+function stopTicker(){if(ticker){clearInterval(ticker);ticker=null;}if(persistTicker){clearInterval(persistTicker);persistTicker=null;}}
 function saveHistory(reason){
  if(!session||finished)return false;
  persist();
