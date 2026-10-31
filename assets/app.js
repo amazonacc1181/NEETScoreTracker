@@ -331,6 +331,7 @@ renderStudyHistory();
 /* Slide-out music drawer */
 var musicDrawer=$('musicDrawer'),musicBackdrop=$('musicBackdrop'),musicOpenButton=$('musicOpen'),musicFab=$('musicFab'),musicCloseButton=$('musicClose'),musicNavLink=$('musicNavLink'),drawerReturnFocus=null;
 function openMusicDrawer(){
+ if(typeof themeDrawer!=='undefined'&&themeDrawer&&themeDrawer.classList.contains('open'))closeThemeDrawer();
  drawerReturnFocus=document.activeElement;
  musicDrawer.classList.add('open');musicBackdrop.classList.add('open');musicDrawer.setAttribute('aria-hidden','false');musicDrawer.removeAttribute('inert');document.body.classList.add('drawer-open');
  [musicOpenButton,musicFab].forEach(function(button){if(button)button.setAttribute('aria-expanded','true');});
