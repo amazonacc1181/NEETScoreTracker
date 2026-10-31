@@ -19,7 +19,10 @@ HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome
 SESSION=requests.Session()
 SESSION.headers.update(HEADERS)
 SEEDS={
- "AIIMS New Delhi":["https://upload.wikimedia.org/wikipedia/commons/7/7e/AIIMS_New_Delhi.png"],
+ "AIIMS New Delhi":["https://upload.wikimedia.org/wikipedia/commons/e/ee/AIIMS_New_Delhi.png"],
+ "AIIMS Bhopal":["https://cdn.shopify.com/s/files/1/0880/1560/1965/files/AIIMS_Bhopal.webp?v=1753707695"],
+ "AIIMS Jodhpur":["https://cdn.theorg.com/c79af230-94db-4eb3-b25b-902d482b7ade_medium.jpg"],
+ "AIIMS Patna":["https://image.preptive.in/aiims-patna-logo.webp"],
  "AIIMS Raipur":["https://website.aiimsraipur.edu.in/web_image/lg1.png"],
  "AIIMS Guwahati":["https://www.aiimsguwahati.ac.in/uploads/department/1720163384aiimslogo_1080p.png"],
  "AIIMS Deoghar":["https://pub-3bd144a409f940998afd367af1dcde44.r2.dev/migrated/colleges/1765988535078-02072f1a-xhonq0frnc50hu8d68nl.jpg"],
@@ -27,18 +30,13 @@ SEEDS={
  "AIIMS Rajkot":["https://pbs.twimg.com/media/E6q4qrpVEAEw-l1.jpg"],
  "AIIMS Mangalagiri":["https://d107tomoq7qta0.cloudfront.net/images/universities-logos/3i6HX2TOgMOicsFKArT9d4Omm5MWS2CN0qDXTdXw.jpg"],
 }
-def slug(name):
-    return re.sub(r"[^a-z0-9]+","-",name.lower()).strip("-")
-def read_campuses():
-    text=APP.read_text(encoding="utf-8")
-    start=text.index("var campuses=[")
-    end=text.index("\n];",start)
-    block=text[start:end]
-    pattern=re.compile(r"\{name:'([^']+)'[^}]*?url:'([^']+)'")
-    rows=pattern.findall(block)
-    if len(rows)!=23:
-        raise RuntimeError(f"Expected 23 AIIMS entries; found {len(rows)}")
-    return rows
+EXTRA_SITES={
+ "AIIMS Bhubaneswar":["https://aiimsbhubaneswar.nic.in/"],
+ "AIIMS Guwahati":["https://aaimsguat.unitrackonline.com/page/institute_logo"],
+ "AIIMS Patna":["https://aiimspatna.edu.in/logo"],
+ "AIIMS Vijaypur (Jammu)":["https://exams.aiimsjammu.edu.in/"],
+}
+
 def get_bytes(url):
     try:
         r=SESSION.get(url,timeout=(4,8),allow_redirects=True)
@@ -132,7 +130,8 @@ def main():
         sources=[]
         if name in SEEDS:
             sources.extend((u,"seeded logo source") for u in SEEDS[name])
-        sources.extend((u,"official institute homepage") for u in homepage_candidates(site)[:2])
+        for site_url in [site]+EXTRA_SITES.get(name,[]):
+            sources.extend((u,"official institute homepage") for u in homepage_candidates(site_url)[:3])
         commons=[]
         sources.extend((u,src or "Wikimedia Commons file page") for u,src in [])
         chosen=None
