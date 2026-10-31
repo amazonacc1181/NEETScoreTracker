@@ -15,7 +15,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="#home" aria-label="The Last Mile home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027 · ONE FINAL ATTEMPT</small></span></a>
+    <a class="brand" href="#home" aria-label="The Last Mile home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027 · EVERY ASPIRANT, EVERY DREAM</small></span></a>
     <nav class="main-nav" aria-label="Main navigation">
       <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos</a><a href="#study">Study timer</a>
     </nav>
@@ -29,19 +29,24 @@
   <main id="home">
     <section class="hero">
       <div class="hero-photo">
-        <img src="https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg" alt="AIIMS Deoghar campus building" fetchpriority="high">
+        <img src="https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg" id="heroCampusImage" alt="AIIMS campus in India" fetchpriority="high">
         <div class="hero-photo-shade"></div>
-        <span class="hero-photo-label">THE PLACE YOU'RE WORKING FOR</span>
-        <span class="hero-photo-credit">AIIMS DEOGHAR · CAMPUS</span>
+        <span class="hero-photo-label" id="heroPhotoLabel">THE AIIMS DREAM ACROSS INDIA</span>
+        <span class="hero-photo-credit" id="heroPhotoCredit">EXPLORE 23 CAMPUSES</span>
       </div>
       <div class="hero-content">
-        <div class="eyebrow"><span></span> YOUR FOURTH ATTEMPT. YOUR FINAL CHAPTER.</div>
+        <div class="eyebrow"><span></span> FOR EVERY NEET ASPIRANT WITH A DREAM.</div>
         <h1>One day,<br>you'll <em>belong</em><br>here.</h1>
-        <p class="hero-lede">The campus. The white coat. The people who will become your second family. Keep the picture close—and keep doing the work.</p>
+        <p class="hero-lede">Whether your dream is AIIMS Delhi, Deoghar, Bhopal or another campus across India, let this be your daily reminder: the future is built one focused day at a time.</p>
+        <div class="dream-picker" id="dream-picker">
+          <label for="dreamCollege">CHOOSE YOUR DREAM AIIMS</label>
+          <div class="dream-select-wrap"><select id="dreamCollege"><option value="">SELECT YOUR DREAM INSTITUTE</option></select><span aria-hidden="true">⌄</span></div>
+          <small id="dreamCollegeNote">YOUR CHOICE IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME</small>
+        </div>
         <div class="hero-actions"><a class="primary-button" href="#campuses">EXPLORE ALL AIIMS <span>↘</span></a><a class="quiet-link" href="#countdown">COUNT THE DAYS ↓</a></div>
         <div class="hero-note"><span>✳</span><p>Not just a dream college.<br><em>A future you're building, one study session at a time.</em></p></div>
       </div>
-      <div class="hero-bottom"><span>THE LAST MILE · NEET 2027</span><span>SHOW UP TODAY. AGAIN TOMORROW.</span></div>
+      <div class="hero-bottom"><span>THE LAST MILE · NEET 2027</span><span>FOR EVERY DREAMER. ONE DAY AT A TIME.</span></div>
     </section>
 
     <section class="countdown-section page-section" id="countdown">
