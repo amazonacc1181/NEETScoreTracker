@@ -390,6 +390,48 @@ function loadTrack(index,play){
  audio.src=tracks[trackIndex].src;audio.load();updateTrackMeta();
  if(play)startMusic();
 }
+
+var themeInfo={love:{label:'Love Study',name:'LOVE STUDY',color:'#f3a6c8'},joy:{label:'Joy Study',name:'JOY STUDY',color:'#ffd36e'},retro:{label:'Retro Study',name:'RETRO STUDY',color:'#e4b36c'},sad:{label:'Sad Study',name:'SAD STUDY',color:'#aeb9f5'},hectic:{label:'Hectic Study',name:'HECTIC STUDY',color:'#ff9d7e'}};
+var activeTheme=store.get('studyTheme','love');if(!themeInfo[activeTheme])activeTheme='love';
+document.documentElement.setAttribute('data-study-theme',activeTheme);if(store.get('studyTheme',null)===null)store.set('studyTheme',activeTheme);
+var themePlaylistCache={},themePlaylistLoads={},themeMusicTicket=0;
+function getMoodPlaylist(theme){
+ if(Object.prototype.hasOwnProperty.call(themePlaylistCache,theme))return Promise.resolve(themePlaylistCache[theme]);
+ if(themePlaylistLoads[theme])return themePlaylistLoads[theme];
+ themePlaylistLoads[theme]=fetch('music/'+theme+'/playlist.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Mood playlist unavailable');return r.json();}).then(function(list){
+  var safe=Array.isArray(list)?list.filter(function(t){return t&&typeof t.src==='string';}):[];themePlaylistCache[theme]=safe;delete themePlaylistLoads[theme];return safe;
+ }).catch(function(error){delete themePlaylistLoads[theme];throw error;});
+ return themePlaylistLoads[theme];
+}
+function setThemeChoiceUI(theme){
+ var info=themeInfo[theme];if(!info)return;var current=$('themeCurrentName');if(current)current.textContent=info.name;
+ document.querySelectorAll('[data-theme-choice]').forEach(function(button){var selected=button.getAttribute('data-theme-choice')===theme;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));});
+ var moodLabel=$('musicMoodLabel');if(moodLabel)moodLabel.textContent=info.name+' · MOOD PLAYLIST';
+}
+function applyThemeVisual(theme,animate){
+ if(!themeInfo[theme])return;var wash=$('themeWash');
+ if(animate&&wash&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){wash.classList.remove('run');void wash.offsetWidth;wash.classList.add('run');clearTimeout(applyThemeVisual.timer);applyThemeVisual.timer=setTimeout(function(){wash.classList.remove('run');},850);}
+ document.documentElement.setAttribute('data-study-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',themeInfo[theme].color);setThemeChoiceUI(theme);
+}
+function activateMoodPlaylist(theme,list,shouldPlay){
+ if(theme!==activeTheme)return;tracks=list;trackIndex=0;renderMusicQueue();
+ if(!tracks.length){audio.pause();audio.removeAttribute('src');audio.load();$('trackTitle').textContent=themeInfo[theme].name+' SOUNDTRACK';$('trackPosition').textContent='NO TRACKS IN THIS MOOD YET';$('toggleMusic').textContent='▶';$('toggleMusic').setAttribute('aria-label','Play music');updateMusicStatus('NO SONGS ADDED YET');$('musicHelp').textContent='Add MP3 files to music/'+theme+'/ and list their paths in that folder playlist.json.';return;}
+ $('musicHelp').textContent='Your '+themeInfo[theme].label+' soundtrack. Choose a track or let the queue continue.';loadTrack(0,shouldPlay);
+}
+function switchMoodPlaylist(theme,shouldPlay){
+ if(!themeInfo[theme])return;var ticket=++themeMusicTicket;var moodLabel=$('musicMoodLabel');if(moodLabel)moodLabel.textContent=themeInfo[theme].name+' · MOOD PLAYLIST';
+ audio.pause();audio.removeAttribute('src');audio.load();updateMusicStatus('LOADING '+themeInfo[theme].name);
+ getMoodPlaylist(theme).then(function(list){if(ticket===themeMusicTicket)activateMoodPlaylist(theme,list,shouldPlay);}).catch(function(){if(ticket!==themeMusicTicket)return;tracks=[];trackIndex=0;renderMusicQueue();updateMusicStatus('PLAYLIST NOT FOUND');$('musicHelp').textContent='Could not load music/'+theme+'/playlist.json. Refresh the page and try again.';});
+}
+var themeDrawer=$('themeDrawer'),themeBackdrop=$('themeBackdrop'),themeClose=$('themeClose'),themeOpen=$('themeOpen'),themeFab=$('themeFab'),themeNavLink=$('themeNavLink'),themeReturnFocus=null;
+function openThemeDrawer(){if(musicDrawer.classList.contains('open'))closeMusicDrawer();themeReturnFocus=document.activeElement;themeDrawer.classList.add('open');themeBackdrop.classList.add('open');themeDrawer.setAttribute('aria-hidden','false');themeDrawer.removeAttribute('inert');document.body.classList.add('drawer-open');[themeOpen,themeFab].forEach(function(b){if(b)b.setAttribute('aria-expanded','true');});themeClose.focus();}
+function closeThemeDrawer(){themeDrawer.classList.remove('open');themeBackdrop.classList.remove('open');themeDrawer.setAttribute('aria-hidden','true');themeDrawer.setAttribute('inert','');document.body.classList.remove('drawer-open');[themeOpen,themeFab].forEach(function(b){if(b)b.setAttribute('aria-expanded','false');});if(themeReturnFocus&&themeReturnFocus.focus)themeReturnFocus.focus();}
+[themeOpen,themeFab].forEach(function(b){if(b)b.addEventListener('click',openThemeDrawer);});themeClose.addEventListener('click',closeThemeDrawer);themeBackdrop.addEventListener('click',closeThemeDrawer);
+if(themeNavLink)themeNavLink.addEventListener('click',function(e){e.preventDefault();setMenu(false);openThemeDrawer();});
+document.querySelectorAll('[data-theme-choice]').forEach(function(button){button.addEventListener('click',function(){var next=this.getAttribute('data-theme-choice');if(!themeInfo[next])return;if(next===activeTheme){closeThemeDrawer();return;}activeTheme=next;store.set('studyTheme',next);applyThemeVisual(next,true);closeThemeDrawer();switchMoodPlaylist(next,true);toast(themeInfo[next].label+' mood applied.');});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&themeDrawer.classList.contains('open'))closeThemeDrawer();});
+window.addEventListener('storage',function(e){if(e.key!=='tlm:studyTheme')return;var next='love';try{next=JSON.parse(e.newValue)||'love';}catch(err){}if(!themeInfo[next])next='love';if(next!==activeTheme){activeTheme=next;applyThemeVisual(next,true);switchMoodPlaylist(next,true);}});
+
 function playNext(){
  if(!tracks.length)return;
  if(repeatOne){audio.currentTime=0;startMusic();return;}
@@ -419,12 +461,7 @@ $('musicSeek').addEventListener('input',function(){if(audio.duration)audio.curre
 audio.addEventListener('ended',playNext);
 audio.addEventListener('play',function(){musicStarted=true;$('toggleMusic').textContent='Ⅱ';$('toggleMusic').setAttribute('aria-label','Pause music');});
 audio.addEventListener('pause',function(){musicStarted=false;$('toggleMusic').textContent='▶';$('toggleMusic').setAttribute('aria-label','Play music');});
-fetch('music/playlist.json',{cache:'no-store'}).then(function(response){if(!response.ok)throw new Error('Playlist not available');return response.json();}).then(function(list){
- tracks=Array.isArray(list)?list.filter(function(track){return track&&typeof track.src==='string';}):[];
- renderMusicQueue();
- if(!tracks.length){updateMusicStatus('WAITING FOR YOUR PLAYLIST');$('musicHelp').textContent='Attach your MP3 files in this chat. I can put them in music/ and add them to the queue.';return;}
- $('musicHelp').textContent='Trying to start your playlist…';loadTrack(0,true);
-}).catch(function(){updateMusicStatus('PLAYLIST NOT FOUND');$('musicHelp').textContent='The playlist could not be loaded. Refresh the page and try again.';});
+Object.keys(themeInfo).forEach(function(theme){getMoodPlaylist(theme).catch(function(){});});setThemeChoiceUI(activeTheme);switchMoodPlaylist(activeTheme,true);
 
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 
