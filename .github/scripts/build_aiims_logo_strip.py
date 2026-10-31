@@ -167,12 +167,38 @@ def download_pdf_logo(name,url,destination):
         print(f"  PDF logo extraction failed for {name}: {error}")
         return False
 
+def create_campus_fallback(name,destination):
+    try:
+        from PIL import ImageDraw, ImageFont
+        image=Image.new("RGBA",(512,512),(16,23,19,255))
+        draw=ImageDraw.Draw(image)
+        draw.ellipse((24,24,488,488),fill=(242,242,233,255),outline=(217,241,141,255),width=15)
+        draw.ellipse((48,48,464,464),outline=(42,67,48,255),width=5)
+        bold="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        regular="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        f1=ImageFont.truetype(bold,78); f2=ImageFont.truetype(bold,38); f3=ImageFont.truetype(regular,22)
+        city=name.replace("AIIMS ","").replace(" (Jammu)","").upper()
+        city=city[:17]
+        def center(text,font,y,fill):
+            box=draw.textbbox((0,0),text,font=font)
+            draw.text(((512-(box[2]-box[0]))/2,y),text,font=font,fill=fill)
+        center("AIIMS",f1,130,(23,39,27,255))
+        center(city,f2,235,(37,63,42,255))
+        center("INSTITUTE OF MEDICAL SCIENCES",f3,302,(75,91,77,255))
+        center("NEET 2027 · THE LAST MILE",f3,354,(75,91,77,255))
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        image.save(destination,"WEBP",quality=94,method=6)
+        return destination.stat().st_size>1500
+    except Exception as error:
+        print(f"  campus marker creation failed for {name}: {error}")
+        return False
+
 def main():
     rows=read_campuses()
     results=[]
     generic=None
     # A common AIIMS emblem is kept as an honest visual fallback, not relabelled as a campus-specific logo.
-    for url in ["https://aiimsexams.ac.in/images/logo.png","https://upload.wikimedia.org/wikipedia/commons/7/7e/AIIMS_New_Delhi.png"]:
+    for url in ["https://aiimsexams.ac.in/_next/image?q=75&url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256"]:
         data=get_bytes(url)
         if data:
             fallback=OUT/"aiims-common-emblem.webp"
@@ -207,9 +233,17 @@ def main():
             print("  SAVED",chosen["file"])
             results.append(chosen)
         else:
-            print("  NO campus-specific logo located; using common AIIMS emblem with name label")
-            results.append({"name":name,"file":generic["file"] if generic else "","source":generic["source"] if generic else "",
-                            "fallback":True})
+            if generic:
+                print("  NO campus-specific logo located; using the shared official AIIMS emblem")
+                results.append({"name":name,"file":generic["file"],"source":generic["source"],"fallback":True})
+            else:
+                fallback_file=OUT/(slug(name)+"-marker.webp")
+                if not create_campus_fallback(name,fallback_file):
+                    raise RuntimeError(f"Could not make a visible ticker mark for {name}")
+                print("  NO institute logo source found; created a labelled campus marker")
+                results.append({"name":name,"file":fallback_file.relative_to(ROOT).as_posix(),
+                                "source":"locally generated typographic marker; not an official institute logo",
+                                "fallback":True})
     # Add the scrolling strip below the quote, inside the homepage hero.
     h=HTML.read_text(encoding="utf-8")
     marker='        <div class="hero-note"><span>✳</span><p id="homeMotivation">Not just a dream college.<br><em>A future you are building, one study session at a time.</em></p></div>'
