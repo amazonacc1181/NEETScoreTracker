@@ -174,7 +174,7 @@ function refreshProfileUI(){
  var target=profileTarget();
  if(target){
   $('homeHistoricalRank').textContent='#'+formatRank(target.closing);
-  $('homeTargetRank').textContent='TOP '+formatRank(target.targetRank);
+  $('homeTargetRank').textContent='AIR ≤ '+formatRank(target.targetRank);
   $('homeTargetMarks').textContent=target.marks+'+';
  }else{
   $('homeHistoricalRank').textContent='—';$('homeTargetRank').textContent='—';$('homeTargetMarks').textContent='Not set';
