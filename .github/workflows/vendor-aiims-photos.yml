@@ -8,7 +8,6 @@ on:
       - .github/workflows/vendor-aiims-photos.yml
       - .github/scripts/vendor_aiims_photos.py
       - .github/scripts/build_aiims_gallery.py
-      - .github/scripts/build_aiims_logo_strip.py
   workflow_dispatch:
 
 permissions:
@@ -38,9 +37,6 @@ jobs:
 
       - name: Build ten-photo rotating gallery for each AIIMS
         run: python .github/scripts/build_aiims_gallery.py
-
-      - name: Download AIIMS institute logos and build homepage marquee
-        run: python .github/scripts/build_aiims_logo_strip.py
 
       - name: Commit local campus images
         run: |
