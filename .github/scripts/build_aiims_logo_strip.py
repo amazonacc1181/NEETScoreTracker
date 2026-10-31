@@ -14,6 +14,10 @@ HTML=ROOT/"index.html"
 SW=ROOT/"sw.js"
 OUT=ROOT/"assets/aiims-logos"
 OUT.mkdir(parents=True,exist_ok=True)
+PDF_LOGO_SOURCES={
+ "AIIMS Vijaypur (Jammu)":"https://www.aiimsjammu.edu.in/wp-content/uploads/2025/08/UG-Prospectus.pdf",
+ "AIIMS Bibinagar":"https://aiimsbibinagar.edu.in/pdf/magazines/Glance.pdf",
+}
 HEADERS={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36",
          "Accept":"image/avif,image/webp,image/png,image/jpeg,image/*,*/*;q=0.8"}
 SESSION=requests.Session()
@@ -22,9 +26,9 @@ SEEDS={
  "AIIMS New Delhi":["https://upload.wikimedia.org/wikipedia/commons/e/ee/AIIMS_New_Delhi.png"],
  "AIIMS Bhopal":["https://cdn.shopify.com/s/files/1/0880/1560/1965/files/AIIMS_Bhopal.webp?v=1753707695"],
  "AIIMS Jodhpur":["https://cdn.theorg.com/c79af230-94db-4eb3-b25b-902d482b7ade_medium.jpg"],
- "AIIMS Patna":["https://image.preptive.in/aiims-patna-logo.webp"],
+ "AIIMS Patna":["https://www.preptive.in/_next/image?q=75&url=https%3A%2F%2Fimage.preptive.in%2Faiims-patna-logo.webp&w=3840"],
  "AIIMS Raipur":["https://website.aiimsraipur.edu.in/web_image/lg1.png"],
- "AIIMS Guwahati":["https://www.aiimsguwahati.ac.in/uploads/department/1720163384aiimslogo_1080p.png"],
+ "AIIMS Guwahati":["https://www.aiimsguwahati.ac.in/uploads/logo.png"],
  "AIIMS Deoghar":["https://pub-3bd144a409f940998afd367af1dcde44.r2.dev/migrated/colleges/1765988535078-02072f1a-xhonq0frnc50hu8d68nl.jpg"],
  "AIIMS Kalyani":["https://cdn.brandfetch.io/domain/aiimskalyani.edu.in/fallback/lettermark/theme/dark/h/400/w/400/icon?c=1bfwsmEH20zzEfSNTed"],
  "AIIMS Rajkot":["https://pbs.twimg.com/media/E6q4qrpVEAEw-l1.jpg"],
@@ -126,6 +130,43 @@ def commons_candidates(name):
         except Exception as e:print(f"  Commons lookup issue {name}: {e}")
         time.sleep(.08)
     return found[:2]
+def download_pdf_logo(name,url,destination):
+    try:
+        import fitz
+        response=SESSION.get(url,timeout=(12,45),allow_redirects=True)
+        response.raise_for_status()
+        document=fitz.open(stream=response.content,filetype="pdf")
+        if name=="AIIMS Vijaypur (Jammu)":
+            page=document[0]
+            rect=fitz.Rect(page.rect.width*.35,page.rect.height*.015,page.rect.width*.65,page.rect.height*.205)
+            pix=page.get_pixmap(matrix=fitz.Matrix(2.2,2.2),clip=rect,alpha=False)
+            data=pix.tobytes("png")
+            return store_image(data,destination)
+        # Bibinagar's official cover contains its circular institute seal. Prefer
+        # an embedded near-square image, not a campus photograph or portrait.
+        candidates=[]
+        for page in document[:3]:
+            for image in page.get_images(full=True):
+                xref=image[0]
+                extracted=document.extract_image(xref)
+                width,height=extracted.get("width",0),extracted.get("height",0)
+                if width<150 or height<150:continue
+                ratio=width/max(1,height)
+                if .72<=ratio<=1.38:
+                    candidates.append((width*height,extracted["image"]))
+        if candidates:
+            candidates.sort(key=lambda item:item[0],reverse=True)
+            for _,data in candidates:
+                if store_image(data,destination):return True
+        # Last resort: crop the upper half of the first page where the cover seal sits.
+        page=document[0]
+        rect=fitz.Rect(page.rect.width*.02,page.rect.height*.015,page.rect.width*.55,page.rect.height*.40)
+        pix=page.get_pixmap(matrix=fitz.Matrix(1.8,1.8),clip=rect,alpha=False)
+        return store_image(pix.tobytes("png"),destination)
+    except Exception as error:
+        print(f"  PDF logo extraction failed for {name}: {error}")
+        return False
+
 def main():
     rows=read_campuses()
     results=[]
@@ -157,6 +198,11 @@ def main():
             if data and store_image(data,dest):
                 chosen={"name":name,"file":dest.relative_to(ROOT).as_posix(),"source":source,"official_or_commons":source}
                 break
+        if not chosen and name in PDF_LOGO_SOURCES:
+            pdf_url=PDF_LOGO_SOURCES[name]
+            if download_pdf_logo(name,pdf_url,dest):
+                chosen={"name":name,"file":dest.relative_to(ROOT).as_posix(),"source":pdf_url,"official_or_commons":"official institute PDF logo"}
+                print("  SAVED",chosen["file"],"(extracted from official prospectus/publication)")
         if chosen:
             print("  SAVED",chosen["file"])
             results.append(chosen)
