@@ -1,117 +1,488 @@
 [
   {
     "campus": "AIIMS New Delhi",
-    "file": "assets/aiims-delhi.webp",
-    "source": "https://www.aiims.edu/"
+    "photos": [
+      {
+        "file": "assets/aiims-delhi.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS New Delhi (existing lead image)"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-02.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_-New_Delhi%27s_Ward_Block.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Vishnoi M",
+        "title": "File:AIIMS -New Delhi's Ward Block.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-03.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_CDER.jpg",
+        "license": "Public domain",
+        "artist": "Hellfire20 (talk)",
+        "title": "File:AIIMS CDER.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-04.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_central_lawn.jpg",
+        "license": "Public domain",
+        "artist": "Dr.saptarshi",
+        "title": "File:AIIMS central lawn.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-05.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:All_India_Institute_of_Medical_Sciences_(foundation_stone).jpg",
+        "license": "Public domain",
+        "artist": "Hellfire20 (talk)",
+        "title": "File:All India Institute of Medical Sciences (foundation stone).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-06.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Cardiothoracic_and_Neurosciences_Centre_AIIMS_(C._N._Centre),_Delhi_during_COVID-19_pandemic_in_Delhi_IMG_20210316_112004.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Sumita Roy Dutta",
+        "title": "File:Cardiothoracic and Neurosciences Centre AIIMS (C. N. Centre), Delhi during COVID-19 pandemic in Delhi IMG 20210316 112004.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-07.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Delhi_Haat_INA_RAPIDX-RRTS_station.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Kpaul24",
+        "title": "File:Delhi Haat INA RAPIDX-RRTS station.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-08.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Geriatric_OPD_at_new_building_of_Rajkumari_Amrit_Kaur_OPD_block_of_AIIMS_during_COVID-19_pandemic_in_Delhi_IMG_20210316_093619_02.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Sumita Roy Dutta",
+        "title": "File:Geriatric OPD at new building of Rajkumari Amrit Kaur OPD block of AIIMS during COVID-19 pandemic in Delhi IMG 20210316 093619 02.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-09.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Geriatric_OPD_at_new_building_of_Rajkumari_Amrit_Kaur_OPD_block_of_AIIMS_during_COVID-19_pandemic_in_Delhi_IMG_20210316_093619_03.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Sumita Roy Dutta",
+        "title": "File:Geriatric OPD at new building of Rajkumari Amrit Kaur OPD block of AIIMS during COVID-19 pandemic in Delhi IMG 20210316 093619 03.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-new-delhi-10.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Jwaharlal_auditorium,_AIIMS_-New_Delhi.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Vishnoi M",
+        "title": "File:Jwaharlal auditorium, AIIMS -New Delhi.jpg"
+      }
+    ]
   },
   {
     "campus": "AIIMS Bhopal",
-    "file": "assets/campuses/aiims-bhopal.webp",
-    "source": "https://www.abplive.com/states/madhya-pradesh/bhopal-aiims-purchasing-2-robots-worth-60-crore-rupees-to-treat-patient-in-hospital-ann-2755671"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-bhopal.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Bhopal (existing lead image)"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-02.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_BHOPAL.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Archies2804",
+        "title": "File:AIIMS BHOPAL.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-03.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Ambulance.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Ambulance.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-04.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_Front_(1).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building Front (1).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-05.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_Front_(2).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building Front (2).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-06.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_Front_(3).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building Front (3).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-07.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_Front_(5).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building Front (5).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-08.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_Front_(6).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building Front (6).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-09.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Building_OPD_Entrance_(4).jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Building OPD Entrance (4).jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhopal-10.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhopal_Foundation_Stone.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Bhopal Foundation Stone.jpg"
+      }
+    ]
   },
   {
     "campus": "AIIMS Bhubaneswar",
-    "file": "assets/campuses/aiims-bhubaneswar.webp",
-    "source": "https://college360.co.in/university/AIIMS-Bhubaneswar-All-India-Institute-of-Medical-Sciences-Bhubaneswar-4616/gallery"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-bhubaneswar.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Bhubaneswar (existing lead image)"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-02.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar,_Odisha.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Debiprasad",
+        "title": "File:AIIMS Bhubaneswar, Odisha.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-03.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_01.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 01.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-04.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_02.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 02.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-05.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_03.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 03.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-06.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_04.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 04.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-07.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_05.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 05.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-08.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_06.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Krupasindhu Muduli",
+        "title": "File:AIIMS Bhubaneswar 06.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-09.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_CHIASMA2K16.JPG",
+        "license": "CC BY-SA 4.0",
+        "artist": "DESCRATES",
+        "title": "File:AIIMS Bhubaneswar CHIASMA2K16.JPG"
+      },
+      {
+        "file": "assets/campuses/aiims-bhubaneswar-10.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_Former_Registrar_at_Inauguration_Ceremony.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Adhitya2048",
+        "title": "File:AIIMS Bhubaneswar Former Registrar at Inauguration Ceremony.jpg"
+      }
+    ]
   },
   {
     "campus": "AIIMS Jodhpur",
-    "file": "assets/campuses/aiims-jodhpur.webp",
-    "source": "https://www.linkedin.com/pulse/aiims-jodhpur-has-introduced-new-dm-programs-medical-genetics-"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-jodhpur.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Jodhpur (existing lead image)"
+      },
+      {
+        "file": "assets/campuses/aiims-jodhpur-02.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Jodhpur.png",
+        "license": "CC BY-SA 4.0",
+        "artist": "Razer2115",
+        "title": "File:AIIMS Jodhpur.png"
+      }
+    ]
   },
   {
     "campus": "AIIMS Patna",
-    "file": "assets/campuses/aiims-patna.webp",
-    "source": "https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-aiims-patna-cid-25410"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-patna.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Patna (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Raipur",
-    "file": "assets/campuses/aiims-raipur.webp",
-    "source": "https://www.edexlive.com/news/aiims-raipur-hosts-lecture-on-climate-change-launches-7th-edition-of-community-medicine-textbook"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-raipur.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Raipur (existing lead image)"
+      },
+      {
+        "file": "assets/campuses/aiims-raipur-02.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:AIIMS_Raipur_Residencial_area_001.jpg",
+        "license": "CC BY-SA 4.0",
+        "artist": "Suyash Dwivedi",
+        "title": "File:AIIMS Raipur Residencial area 001.jpg"
+      },
+      {
+        "file": "assets/campuses/aiims-raipur-03.webp",
+        "source": "https://commons.wikimedia.org/wiki/File:Side_view_of_aiims_raipur_college.jpg",
+        "license": "CC BY-SA 3.0",
+        "artist": "Ronbabu",
+        "title": "File:Side view of aiims raipur college.jpg"
+      }
+    ]
   },
   {
     "campus": "AIIMS Rishikesh",
-    "file": "assets/campuses/aiims-rishikesh.webp",
-    "source": "https://jp.pinterest.com/pin/737957088973286605/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-rishikesh.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Rishikesh (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Mangalagiri",
-    "file": "assets/campuses/aiims-mangalagiri.webp",
-    "source": "https://www.amsamaiims.in/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-mangalagiri.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Mangalagiri (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Guwahati",
-    "file": "assets/campuses/aiims-guwahati.webp",
-    "source": "https://health.economictimes.indiatimes.com/news/hospitals/clinical-trial-unit-inaugurated-at-guwahati-aiims/124618135"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-guwahati.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Guwahati (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Darbhanga",
-    "file": "assets/campuses/aiims-darbhanga.webp",
-    "source": "https://www.prabhatkhabar.com/state/bihar/darbhanga/darbhanga-aiims-dpr-e-ready-in-next-two-months-bihar-news"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-darbhanga.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Darbhanga (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Rajkot",
-    "file": "assets/campuses/aiims-rajkot.webp",
-    "source": "https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-aiims-rajkot-cid-63937"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-rajkot.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Rajkot (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Rewari",
-    "file": "assets/campuses/aiims-rewari.webp",
-    "source": "https://www.bhaskar.com/local/haryana/rewari/bawal/news/rewari-aiims-majra-bhalkhi-opd-ipd-services-infrastructure-development-update-135033171.html"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-rewari.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Rewari (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Bilaspur",
-    "file": "assets/campuses/aiims-bilaspur.webp",
-    "source": "https://www.livemint.com/news/india/pm-modi-inaugurates-green-hospital-aiims-bilaspur-in-himachal-pradesh-11664961534107.html"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-bilaspur.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Bilaspur (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Vijaypur (Jammu)",
-    "file": "assets/campuses/aiims-vijaypur-jammu.webp",
-    "source": "https://www.outlookindia.com/announcements/news-media-wire/aiims-vijaypur-jammu-honoured-with-achievement-award-for-best-construction-projects-at-cidc-vishwakarma-awards-2025"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-vijaypur-jammu.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Vijaypur (Jammu) (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Awantipora",
-    "file": "assets/campuses/aiims-awantipora.webp",
-    "source": "https://lakecitytimes.com/2025/08/24/aiims-awantipora-likely-to-miss-november-2025-deadline/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-awantipora.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Awantipora (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Deoghar",
-    "file": "assets/campuses/aiims-deoghar.webp",
-    "source": "https://aiimsdeoghar.edu.in/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-deoghar.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Deoghar (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Nagpur",
-    "file": "assets/campuses/aiims-nagpur.webp",
-    "source": "https://www.findmycollege.com/colleges/all-india-institute-of-medical-sciences-aiims-nagpur-2052/gallery"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-nagpur.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Nagpur (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Bathinda",
-    "file": "assets/campuses/aiims-bathinda.webp",
-    "source": "https://aiimsbathinda.edu.in/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-bathinda.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Bathinda (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Madurai",
-    "file": "assets/campuses/aiims-madurai.webp",
-    "source": "https://aiimsmadurai.edu.in/pPnDrdXN/"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-madurai.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Madurai (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Bibinagar",
-    "file": "assets/campuses/aiims-bibinagar.webp",
-    "source": "https://x.com/kishanreddybjp/status/2008038853656125848"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-bibinagar.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Bibinagar (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Raebareli",
-    "file": "assets/campuses/aiims-raebareli.webp",
-    "source": "https://www.prabhatkhabar.com/state/uttar-pradesh/raebareli-aiims-virtually-inaugurate-today-by-pm-modi-smk"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-raebareli.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Raebareli (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Gorakhpur",
-    "file": "assets/campuses/aiims-gorakhpur.webp",
-    "source": "https://www.collegebatch.com/20874-all-india-institute-of-medical-sciences-campus-tour-gorakhpur-fs05"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-gorakhpur.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Gorakhpur (existing lead image)"
+      }
+    ]
   },
   {
     "campus": "AIIMS Kalyani",
-    "file": "assets/campuses/aiims-kalyani.webp",
-    "source": "https://www.anandabazar.com/education-career/aiims-kalyani-starts-admission-process-for-diploma-in-dental-hygiene-and-diploma-in-dental-mechanics-dgtl/cid/1543654"
+    "photos": [
+      {
+        "file": "assets/campuses/aiims-kalyani.webp",
+        "source": "",
+        "license": "Existing site image",
+        "artist": "",
+        "title": "AIIMS Kalyani (existing lead image)"
+      }
+    ]
   }
 ]
