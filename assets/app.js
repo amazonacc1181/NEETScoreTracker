@@ -181,6 +181,7 @@ function refreshProfileUI(){
  }
  $('settingsName').value=profile.name;
  $('settingsCategory').value=profile.category;
+ if($('cutoffCategory'))$('cutoffCategory').value=profile.category;
  $('settingsDreamCollege').value=profile.dreamCollege;
  $('settingsAvatar').textContent=(profile.name.trim().charAt(0)||'✳').toUpperCase();
  renderCampuses(currentCampusOrder);
