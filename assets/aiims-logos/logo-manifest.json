@@ -1,0 +1,140 @@
+[
+  {
+    "name": "AIIMS New Delhi",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Bhopal",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Bhubaneswar",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Jodhpur",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Patna",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Raipur",
+    "file": "assets/aiims-logos/aiims-raipur.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
+  },
+  {
+    "name": "AIIMS Rishikesh",
+    "file": "assets/aiims-logos/aiims-rishikesh.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Mangalagiri",
+    "file": "assets/aiims-logos/aiims-mangalagiri.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
+  },
+  {
+    "name": "AIIMS Guwahati",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Darbhanga",
+    "file": "assets/aiims-logos/aiims-darbhanga.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Rajkot",
+    "file": "assets/aiims-logos/aiims-rajkot.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
+  },
+  {
+    "name": "AIIMS Rewari",
+    "file": "assets/aiims-logos/aiims-rewari.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Bilaspur",
+    "file": "assets/aiims-logos/aiims-bilaspur.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Vijaypur (Jammu)",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Awantipora",
+    "file": "assets/aiims-logos/aiims-awantipora.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Deoghar",
+    "file": "assets/aiims-logos/aiims-deoghar.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
+  },
+  {
+    "name": "AIIMS Nagpur",
+    "file": "assets/aiims-logos/aiims-nagpur.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Bathinda",
+    "file": "assets/aiims-logos/aiims-bathinda.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Madurai",
+    "file": "assets/aiims-logos/aiims-madurai.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Bibinagar",
+    "file": "",
+    "source": "",
+    "fallback": true
+  },
+  {
+    "name": "AIIMS Raebareli",
+    "file": "assets/aiims-logos/aiims-raebareli.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Gorakhpur",
+    "file": "assets/aiims-logos/aiims-gorakhpur.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
+  },
+  {
+    "name": "AIIMS Kalyani",
+    "file": "assets/aiims-logos/aiims-kalyani.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
+  }
+]
