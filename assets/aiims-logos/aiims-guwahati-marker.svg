@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="AIIMS Guwahati campus mark">
+  <rect width="512" height="512" rx="256" fill="#152219"/>
+  <circle cx="256" cy="256" r="222" fill="#f2f2e9" stroke="#d9f18d" stroke-width="18"/>
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#34503a" stroke-width="5"/>
+  <path d="M256 80v56M228 110h56" stroke="#d9f18d" stroke-width="8" stroke-linecap="round"/>
+  <text x="256" y="226" text-anchor="middle" fill="#17271c" font-family="Arial,sans-serif" font-size="72" font-weight="700">AIIMS</text>
+  <path d="M116 254h280" stroke="#b3c77b" stroke-width="5"/>
+  <text x="256" y="316" text-anchor="middle" fill="#34503a" font-family="Arial,sans-serif" font-size="33" font-weight="700" letter-spacing="2">GUWAHATI</text>
+  <text x="256" y="368" text-anchor="middle" fill="#5a6b5c" font-family="Arial,sans-serif" font-size="18" letter-spacing="2">INSTITUTE OF MEDICAL SCIENCES</text>
+  <circle cx="256" cy="421" r="8" fill="#d9f18d"/>
+ </svg>
