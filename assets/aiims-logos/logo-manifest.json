@@ -25,8 +25,8 @@
   },
   {
     "name": "AIIMS Patna",
-    "file": "",
-    "source": "",
+    "file": "assets/aiims-logos/aiims-patna-marker.svg",
+    "source": "locally designed campus marker; not an official institute logo",
     "fallback": true
   },
   {
@@ -49,8 +49,8 @@
   },
   {
     "name": "AIIMS Guwahati",
-    "file": "",
-    "source": "",
+    "file": "assets/aiims-logos/aiims-guwahati-marker.svg",
+    "source": "locally designed campus marker; not an official institute logo",
     "fallback": true
   },
   {
@@ -79,8 +79,8 @@
   },
   {
     "name": "AIIMS Vijaypur (Jammu)",
-    "file": "",
-    "source": "",
+    "file": "assets/aiims-logos/aiims-vijaypur-jammu-marker.svg",
+    "source": "locally designed campus marker; not an official institute logo",
     "fallback": true
   },
   {
@@ -115,8 +115,8 @@
   },
   {
     "name": "AIIMS Bibinagar",
-    "file": "",
-    "source": "",
+    "file": "assets/aiims-logos/aiims-bibinagar-marker.svg",
+    "source": "locally designed campus marker; not an official institute logo",
     "fallback": true
   },
   {
