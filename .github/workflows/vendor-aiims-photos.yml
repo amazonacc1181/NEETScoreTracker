@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/vendor-aiims-photos.yml
       - .github/scripts/vendor_aiims_photos.py
+      - .github/scripts/build_aiims_gallery.py
   workflow_dispatch:
 
 permissions:
@@ -33,6 +34,9 @@ jobs:
 
       - name: Download AIIMS photos and update site references
         run: python .github/scripts/vendor_aiims_photos.py
+
+      - name: Build ten-photo rotating gallery for each AIIMS
+        run: python .github/scripts/build_aiims_gallery.py
 
       - name: Commit local campus images
         run: |
