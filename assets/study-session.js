@@ -3,6 +3,9 @@
 var $=function(id){return document.getElementById(id);},PREFIX='tlm:';
 var get=function(key,fallback){try{var raw=localStorage.getItem(PREFIX+key);return raw===null?fallback:JSON.parse(raw);}catch(e){return fallback;}};
 var set=function(key,value){try{localStorage.setItem(PREFIX+key,JSON.stringify(value));}catch(e){}};
+var themeColors={love:'#f3a6c8',joy:'#ffd36e',retro:'#e4b36c',sad:'#aeb9f5',hectic:'#ff9d7e'};
+var activeTheme=get('studyTheme','love');if(!themeColors[activeTheme])activeTheme='love';document.documentElement.setAttribute('data-study-theme',activeTheme);
+var themeName=function(t){return ({love:'LOVE STUDY',joy:'JOY STUDY',retro:'RETRO STUDY',sad:'SAD STUDY',hectic:'HECTIC STUDY'})[t]||'LOVE STUDY';};
 var profile=get('profile',null),session=get('activeStudySession',null),ticker=null,persistTicker=null,mathAnswer=null,finished=false;
 var channel=('BroadcastChannel' in window)?new BroadcastChannel('tlm-study-session'):null;
 var categoryIndex={General:0,EWS:1,OBC:2,SC:3,ST:4};
@@ -102,6 +105,30 @@ function playMusic(){
  if(promise&&promise.then)promise.then(function(){autoplayBlocked=false;$('toggleMusic').textContent='Ⅱ';$('toggleMusic').setAttribute('aria-label','Pause music');musicStatus('MUSIC PLAYING');}).catch(function(){autoplayBlocked=true;$('toggleMusic').textContent='▶';musicStatus('TAP TO PLAY');});
 }
 function loadTrack(i,play){if(!tracks.length)return;trackIndex=(i+tracks.length)%tracks.length;audio.src=tracks[trackIndex].src;audio.load();updateTrack();if(play)playMusic();}
+var playlistCache={},playlistLoads={},playlistTicket=0;
+
+function getMoodPlaylist(theme){
+ if(Object.prototype.hasOwnProperty.call(playlistCache,theme))return Promise.resolve(playlistCache[theme]);
+ if(playlistLoads[theme])return playlistLoads[theme];
+ playlistLoads[theme]=fetch('music/'+theme+'/playlist.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Playlist unavailable');return r.json();}).then(function(list){var safe=Array.isArray(list)?list.filter(function(t){return t&&typeof t.src==='string';}):[];playlistCache[theme]=safe;delete playlistLoads[theme];return safe;}).catch(function(e){delete playlistLoads[theme];throw e;});
+ return playlistLoads[theme];
+}
+function switchMoodPlaylist(theme,play){
+ var ticket=++playlistTicket,mood=$('musicMoodLabel');if(mood)mood.textContent=themeName(theme)+' · MOOD PLAYLIST';
+ audio.pause();audio.removeAttribute('src');audio.load();musicStatus('LOADING '+themeName(theme));
+ getMoodPlaylist(theme).then(function(list){
+  if(ticket!==playlistTicket||theme!==activeTheme)return;tracks=list;trackIndex=0;renderQueue();
+  if(!tracks.length){audio.pause();$('trackTitle').textContent=themeName(theme)+' SOUNDTRACK';$('trackPosition').textContent='NO TRACKS IN THIS MOOD YET';$('toggleMusic').textContent='▶';musicStatus('NO SONGS ADDED YET');$('musicHelp').textContent='Add MP3 files to music/'+theme+'/ and add their paths to that folder playlist.json.';return;}
+  $('musicHelp').textContent='Your '+themeName(theme)+' soundtrack.';loadTrack(0,play);
+ }).catch(function(){if(ticket!==playlistTicket)return;tracks=[];renderQueue();musicStatus('PLAYLIST NOT FOUND');});
+}
+Object.keys(themeColors).forEach(function(t){getMoodPlaylist(t).catch(function(){});});
+window.addEventListener('storage',function(e){
+ if(e.key!==PREFIX+'studyTheme')return;var next='love';try{next=JSON.parse(e.newValue)||'love';}catch(err){}
+ if(!themeColors[next])next='love';
+ if(next!==activeTheme){activeTheme=next;document.documentElement.setAttribute('data-study-theme',next);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',themeColors[next]);switchMoodPlaylist(next,true);}
+});
+
 function next(){if(!tracks.length)return;if(repeat){audio.currentTime=0;playMusic();return;}var i=trackIndex+1;if(shuffle&&tracks.length>1){do{i=Math.floor(Math.random()*tracks.length);}while(i===trackIndex);}loadTrack(i,true);}
 function previous(){if(!tracks.length)return;if(audio.currentTime>3){audio.currentTime=0;return;}loadTrack(trackIndex-1,true);}
 $('toggleMusic').addEventListener('click',function(){if(!tracks.length){toast('Your MP3 playlist will appear here once added.');return;}if(audio.paused){autoplayBlocked=false;playMusic();}else{audio.pause();$('toggleMusic').textContent='▶';musicStatus('MUSIC PAUSED');}});
@@ -116,7 +143,7 @@ $('musicSeek').addEventListener('input',function(){if(audio.duration)audio.curre
 audio.addEventListener('ended',next);
 audio.addEventListener('play',function(){$('toggleMusic').textContent='Ⅱ';$('toggleMusic').setAttribute('aria-label','Pause music');});
 audio.addEventListener('pause',function(){$('toggleMusic').textContent='▶';$('toggleMusic').setAttribute('aria-label','Play music');});
-fetch('music/playlist.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Playlist unavailable');return r.json();}).then(function(list){tracks=Array.isArray(list)?list.filter(function(t){return t&&typeof t.src==='string';}):[];renderQueue();if(!tracks.length){musicStatus('WAITING FOR YOUR PLAYLIST');return;}loadTrack(0,true);}).catch(function(){musicStatus('PLAYLIST NOT FOUND');});
+switchMoodPlaylist(activeTheme,true);
 if('mediaSession'in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:'The Last Mile study session',artist:'NEET 2027',album:'Focus Mode'});navigator.mediaSession.setActionHandler('play',playMusic);navigator.mediaSession.setActionHandler('pause',function(){audio.pause();});navigator.mediaSession.setActionHandler('previoustrack',previous);navigator.mediaSession.setActionHandler('nexttrack',next);}catch(e){}}
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 })();
