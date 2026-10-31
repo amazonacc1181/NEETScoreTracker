@@ -1,27 +1,27 @@
 [
   {
     "name": "AIIMS New Delhi",
-    "file": "",
-    "source": "",
-    "fallback": true
+    "file": "assets/aiims-logos/aiims-new-delhi.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
   },
   {
     "name": "AIIMS Bhopal",
-    "file": "",
-    "source": "",
-    "fallback": true
+    "file": "assets/aiims-logos/aiims-bhopal.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
   },
   {
     "name": "AIIMS Bhubaneswar",
-    "file": "",
-    "source": "",
-    "fallback": true
+    "file": "assets/aiims-logos/aiims-bhubaneswar.webp",
+    "source": "official institute homepage",
+    "official_or_commons": "official institute homepage"
   },
   {
     "name": "AIIMS Jodhpur",
-    "file": "",
-    "source": "",
-    "fallback": true
+    "file": "assets/aiims-logos/aiims-jodhpur.webp",
+    "source": "seeded logo source",
+    "official_or_commons": "seeded logo source"
   },
   {
     "name": "AIIMS Patna",
