@@ -6,6 +6,7 @@ on:
       - the-last-mile
     paths:
       - .github/workflows/vendor-aiims-photos.yml
+      - .github/scripts/vendor_aiims_photos.py
   workflow_dispatch:
 
 permissions:
@@ -37,7 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/campuses assets/app.js sw.js
+          git add assets/campuses assets/app.js index.html sw.js
           if git diff --cached --quiet; then
             echo "No downloaded images or site changes to commit."
           else
