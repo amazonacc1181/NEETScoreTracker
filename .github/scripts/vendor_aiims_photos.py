@@ -7,7 +7,6 @@ import json
 import re
 import sys
 from pathlib import Path
-from urllib.parse import urlparse
 
 import requests
 from PIL import Image, ImageOps
@@ -17,6 +16,20 @@ APP = ROOT / "assets" / "app.js"
 SW = ROOT / "sw.js"
 OUT = ROOT / "assets" / "campuses"
 OUT.mkdir(parents=True, exist_ok=True)
+
+EXTRA_CANDIDATES = {
+    "AIIMS Bhubaneswar": [
+        "https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1769679511060.jpg",
+    ],
+    "AIIMS Rajkot": [
+        "https://ik.imagekit.io/syustaging/SYU_PREPROD/COVER-IMAGE_-PBofSBTQ-.webp?tr=w-3840",
+        "https://www.collegebatch.com/static/clg-gallery/all-india-institute-of-medical-sciences-rajkot-280299.jpg",
+    ],
+}
+CREDIT_OVERRIDES = {
+    "AIIMS Bhubaneswar": "https://college360.co.in/university/AIIMS-Bhubaneswar-All-India-Institute-of-Medical-Sciences-Bhubaneswar-4616/gallery",
+    "AIIMS Rajkot": "https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-aiims-rajkot-cid-63937",
+}
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -79,7 +92,7 @@ def main() -> int:
             continue
         primary = photo_match.group(1)
         fallback = fallback_match.group(1) if fallback_match else ""
-        credit = credit_match.group(1) if credit_match else ""
+        credit = CREDIT_OVERRIDES.get(name, credit_match.group(1) if credit_match else "")
         if primary.startswith("assets/"):
             local_path = ROOT / primary
             if local_path.exists():
@@ -91,6 +104,9 @@ def main() -> int:
         candidates = [primary]
         if fallback and fallback not in candidates:
             candidates.append(fallback)
+        for extra_url in EXTRA_CANDIDATES.get(name, []):
+            if extra_url not in candidates:
+                candidates.append(extra_url)
         downloaded = False
         reasons = []
         for url in candidates:
@@ -117,6 +133,8 @@ def main() -> int:
         object_text = match.group(0)
         new_object = re.sub(r"photo:'[^']+'", f"photo:'{local_url}'", object_text, count=1)
         new_object = re.sub(r",fallbackPhoto:'[^']+'", "", new_object, count=1)
+        if name in CREDIT_OVERRIDES:
+            new_object = re.sub(r"credit:'[^']+'", f"credit:'{CREDIT_OVERRIDES[name]}'", new_object, count=1)
         object_start = campus_block_start + match.start()
         object_end = campus_block_start + match.end()
         replacements.append((object_start, object_end, new_object))
@@ -129,12 +147,20 @@ def main() -> int:
     if replacements:
         APP.write_text(source, encoding="utf-8")
 
+    # Bump the HTML asset query strings to break browser caches too.
+    index_file = ROOT / "index.html"
+    if index_file.exists():
+        index_text = index_file.read_text(encoding="utf-8")
+        index_text = index_text.replace("styles.css?v=13", "styles.css?v=14")
+        index_text = index_text.replace("app.js?v=13", "app.js?v=14")
+        index_file.write_text(index_text, encoding="utf-8")
+
     # Add local campus images to the service-worker precache list.
     local_files = sorted({entry["file"] for entry in manifest if entry.get("file", "").startswith("assets/")})
     sw_text = SW.read_text(encoding="utf-8")
     core_match = re.search(r"const CORE=\[(.*?)\];", sw_text, flags=re.S)
     if core_match:
-        existing = re.findall(r"'([^']+)'", core_match.group(1))
+        existing = re.findall(r"""["']([^"']+)["']""", core_match.group(1))
         for file in local_files:
             token = "./" + file
             if token not in existing:
