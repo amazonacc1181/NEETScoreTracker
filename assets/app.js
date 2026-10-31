@@ -29,7 +29,7 @@ renderExamCountdown();setInterval(renderExamCountdown,1000);
 
 /* Campus wall — photo credits link to the originating pages. */
 var campuses=[
-{name:'AIIMS New Delhi',place:'Ansari Nagar · Delhi',url:'https://www.aiims.edu/',photo:'https://www.worldwidecolleges.com/wp-content/uploads/classified-listing/2023/04/All-India-Institute-of-Medical-Sciences-New-Delhi-AIIMS.jpg',credit:'https://www.worldwidecolleges.com/education/all-india-institute-of-medical-sciences-new-delhi/'},
+{name:'AIIMS New Delhi',place:'Ansari Nagar · Delhi',url:'https://www.aiims.edu/',photo:'https://akm-img-a-in.tosshub.com/businesstoday/images/photo_gallery/202601/cold-1.jpg?size=686%3A%2A',fallbackPhoto:'https://www.worldwidecolleges.com/wp-content/uploads/classified-listing/2023/04/All-India-Institute-of-Medical-Sciences-New-Delhi-AIIMS.jpg',credit:'https://www.businesstoday.in/latest/photo/delhi-freeze-why-doctors-are-worried-about-bp-breath-and-kidneys-510638-2026-01-13'},
 {name:'AIIMS Bhopal',place:'Saket Nagar · Madhya Pradesh',url:'https://aiimsbhopal.edu.in/',photo:'https://feeds.abplive.com/onecms/images/uploaded-images/2024/08/07/ae66f9251624f701a31f13cf10d31e1a1723026075984998_original.jpg',credit:'https://www.abplive.com/states/madhya-pradesh/bhopal-aiims-purchasing-2-robots-worth-60-crore-rupees-to-treat-patient-in-hospital-ann-2755671'},
 {name:'AIIMS Bhubaneswar',place:'Sijua · Odisha',url:'https://aiimsbhubaneswar.edu.in/',photo:'https://upload.wikimedia.org/wikipedia/commons/6/64/AIIMS_Bhubaneswar_01.jpg',credit:'https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_01.jpg'},
 {name:'AIIMS Jodhpur',place:'Basni · Rajasthan',url:'https://aiimsjodhpur.edu.in/',photo:'https://media.licdn.com/dms/image/v2/C5612AQGhtCinFWg_Zw/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1620047161173?e=2147483647&t=a3-nOgtU-n6_atv4YadMstRlOO7MVpBSvLAUUL-5Mrg&v=beta',credit:'https://www.linkedin.com/pulse/aiims-jodhpur-has-introduced-new-dm-programs-medical-genetics-'},
@@ -44,8 +44,8 @@ var campuses=[
 {name:'AIIMS Bilaspur',place:'Kothipura · Himachal Pradesh',url:'https://www.aiimsbilaspur.edu.in/',photo:'https://images.livemint.com/img/2022/10/05/1600x900/AIIMS_Bilaspur4_1664936079843_1664961750719_1664961750719.jpg',credit:'https://www.livemint.com/news/india/pm-modi-inaugurates-green-hospital-aiims-bilaspur-in-himachal-pradesh-11664961534107.html'},
 {name:'AIIMS Vijaypur (Jammu)',place:'Vijaypur · Jammu & Kashmir',url:'https://www.aiimsjammu.edu.in/',photo:'https://cf-images.assettype.com/outlookindia/2025-04-14/mn4wf6wc/IMG8344.PNG?auto=format%2Ccompress&dpr=1.0&fit=max&format=webp&w=801',credit:'https://www.outlookindia.com/announcements/news-media-wire/aiims-vijaypur-jammu-honoured-with-achievement-award-for-best-construction-projects-at-cidc-vishwakarma-awards-2025'},
 {name:'AIIMS Awantipora',place:'Awantipora · Kashmir',url:'https://pmssy.mohfw.gov.in/',photo:'https://i0.wp.com/lakecitytimes.com/wp-content/uploads/2025/03/AIIMS-Awantipora.jpg?fit=756%2C391&ssl=1',credit:'https://lakecitytimes.com/2025/08/24/aiims-awantipora-likely-to-miss-november-2025-deadline/'},
-{name:'AIIMS Deoghar',place:'Devipur · Jharkhand',url:'https://aiimsdeoghar.edu.in/',photo:'https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg',credit:'https://college360.co.in/university/AIIMS-Deoghar-All-India-Institute-Of-Medical-Science-Deoghar-4629/facility',featured:true},
-{name:'AIIMS Nagpur',place:'MIHAN · Maharashtra',url:'https://aiimsnagpur.edu.in/',photo:'https://ik.imagekit.io/syustaging/SYU_PREPROD/All-India-Institute-of-Medical-Sciences---_AIIMS_-_Nagpur-_Maharashtra_gRH6Nf2sS.webp',credit:'https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-nagpur-cid-59702'},
+{name:'AIIMS Deoghar',place:'Devipur · Jharkhand',url:'https://aiimsdeoghar.edu.in/',photo:'https://www.aiimsdeoghar.edu.in/content/images/slider/home1/sliderImg1.jpg',fallbackPhoto:'https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg',credit:'https://aiimsdeoghar.edu.in/',featured:true},
+{name:'AIIMS Nagpur',place:'MIHAN · Maharashtra',url:'https://aiimsnagpur.edu.in/',photo:'https://content.findmycollege.com/colleges/2052-all-india-institute-of-medical-sciences-nagpur-hostel-1773730225939-2cff47c0-61a8-4e33-b083-25f9c588bd34.jpg',fallbackPhoto:'https://ik.imagekit.io/syustaging/SYU_PREPROD/All-India-Institute-of-Medical-Sciences---_AIIMS_-_Nagpur-_Maharashtra_gRH6Nf2sS.webp?tr=w-3840',credit:'https://www.findmycollege.com/colleges/all-india-institute-of-medical-sciences-aiims-nagpur-2052/gallery'},
 {name:'AIIMS Bathinda',place:'Bathinda · Punjab',url:'https://aiimsbathinda.edu.in/',photo:'https://aiimsbathinda.edu.in/images/slides/20220723095916.jpeg',credit:'https://aiimsbathinda.edu.in/'},
 {name:'AIIMS Madurai',place:'Madurai · Tamil Nadu',url:'https://aiimsmadurai.edu.in/',photo:'https://aiimsmadurai.edu.in/pPnDrdXN/assets/images/Events/5.jpg',credit:'https://aiimsmadurai.edu.in/pPnDrdXN/'},
 {name:'AIIMS Bibinagar',place:'Bibinagar · Telangana',url:'https://aiimsbibinagar.edu.in/',photo:'https://pbs.twimg.com/media/G938rwObUAA0-BC.jpg',credit:'https://x.com/kishanreddybjp/status/2008038853656125848'},
@@ -54,41 +54,89 @@ var campuses=[
 {name:'AIIMS Kalyani',place:'Kalyani · West Bengal',url:'https://aiimskalyani.edu.in/',photo:'https://assets.telegraphindia.com/abp/2024/Sep/1725533743_untitled-design-2024-09-05t162557-424.jpg',credit:'https://www.anandabazar.com/education-career/aiims-kalyani-starts-admission-process-for-diploma-in-dental-hygiene-and-diploma-in-dental-mechanics-dgtl/cid/1543654'}
 ];
 
-var dreamCollegeSelect=$('dreamCollege');
+var dreamCollegeTrigger=$('dreamCollegeTrigger');
+var dreamCollegeLabel=$('dreamCollegeLabel');
+var dreamCollegeMenu=$('dreamCollegeMenu');
+var dreamCollegeList=$('dreamCollegeList');
+var dreamCollegeSearch=$('dreamCollegeSearch');
+var dreamCollegeNoResults=$('dreamCollegeNoResults');
 var selectedDream=store.get('dreamCollege','');
 var currentCampusOrder=campuses.slice();
-campuses.forEach(function(item){
- var option=document.createElement('option');
- option.value=item.name;
- option.textContent=item.name+' — '+item.place;
- dreamCollegeSelect.appendChild(option);
-});
-if(!campuses.some(function(item){return item.name===selectedDream;}))selectedDream='';
-dreamCollegeSelect.value=selectedDream;
+function closeDreamMenu(){
+ dreamCollegeMenu.hidden=true;
+ dreamCollegeTrigger.setAttribute('aria-expanded','false');
+}
+function openDreamMenu(){
+ dreamCollegeMenu.hidden=false;
+ dreamCollegeTrigger.setAttribute('aria-expanded','true');
+ dreamCollegeSearch.value='';
+ dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){option.hidden=false;});
+ dreamCollegeNoResults.hidden=true;
+ dreamCollegeSearch.focus();
+}
+function toggleDreamMenu(){
+ if(dreamCollegeMenu.hidden)openDreamMenu();else closeDreamMenu();
+}
 var campusGrid=$('campusGrid');
 function renderCampuses(list){
  currentCampusOrder=list.slice();
  campusGrid.innerHTML=list.map(function(item,index){
   var chosen=item.name===selectedDream;
   var special=chosen?'<span class="dream-chip">YOUR DREAM AIIMS</span>':'';
-  return '<article class="campus-card'+(chosen?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
+  var fallback=item.fallbackPhoto||'';
+  return '<article class="campus-card'+(chosen?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" data-fallback="'+fallback+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="if(this.dataset.fallback){var fallback=this.dataset.fallback;this.dataset.fallback=\'\';this.src=fallback;}else{this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');}"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
  }).join('');
+}
+function setHeroCampusImage(item){
+ var image=$('heroCampusImage'),usedFallback=false;
+ image.classList.remove('image-fallback');
+ image.onerror=function(){
+  if(!usedFallback&&item.fallbackPhoto){usedFallback=true;image.src=item.fallbackPhoto;}
+  else{image.onerror=null;image.src='assets/lastmile-icon.svg';image.classList.add('image-fallback');}
+ };
+ image.src=item.photo;
 }
 function updateDreamCollege(name){
  var item=campuses.find(function(campus){return campus.name===name;});
  selectedDream=item?item.name:'';
  store.set('dreamCollege',selectedDream);
- dreamCollegeSelect.value=selectedDream;
  var visual=item||campuses[0];
- $('heroCampusImage').src=visual.photo;
- $('heroCampusImage').alt=item?item.name+' campus, '+item.place:'AIIMS campus in India';
+ dreamCollegeLabel.textContent=item?item.name+' — '+item.place:'SELECT YOUR DREAM INSTITUTE';
+ dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){
+  var chosen=option.getAttribute('data-college')===selectedDream;
+  option.setAttribute('aria-selected',String(chosen));
+  option.classList.toggle('selected',chosen);
+ });
+ setHeroCampusImage(visual);
+ $('heroCampusImage').alt=item?item.name+' campus, '+item.place:visual.name+' campus';
  $('heroPhotoLabel').textContent=item?'YOUR DREAM CAMPUS':'THE AIIMS DREAM ACROSS INDIA';
  $('heroPhotoCredit').textContent=item?item.name.toUpperCase()+' · '+item.place.toUpperCase():'CHOOSE YOUR DREAM AIIMS';
  $('dreamCollegeNote').textContent=item?'YOUR DREAM IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME':'CHOOSE ANY AIIMS TO PERSONALISE YOUR WALL';
  renderCampuses(currentCampusOrder);
+ closeDreamMenu();
 }
+dreamCollegeTrigger.addEventListener('click',toggleDreamMenu);
+dreamCollegeList.addEventListener('click',function(event){
+ var option=event.target.closest('.dream-college-option');
+ if(option)updateDreamCollege(option.getAttribute('data-college'));
+});
+dreamCollegeSearch.addEventListener('input',function(){
+ var query=this.value.trim().toLowerCase(),visible=0;
+ dreamCollegeList.querySelectorAll('.dream-college-option').forEach(function(option){
+  var match=option.textContent.toLowerCase().indexOf(query)!==-1;
+  option.hidden=!match;
+  if(match)visible++;
+ });
+ dreamCollegeNoResults.hidden=visible>0;
+});
+document.addEventListener('click',function(event){
+ if(!event.target.closest('#dreamSelectWrap'))closeDreamMenu();
+});
+document.addEventListener('keydown',function(event){
+ if(event.key==='Escape'&&!dreamCollegeMenu.hidden){closeDreamMenu();dreamCollegeTrigger.focus();}
+});
+if(!campuses.some(function(item){return item.name===selectedDream;}))selectedDream='';
 function shuffle(items){var array=items.slice();for(var i=array.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp;}return array;}
-dreamCollegeSelect.addEventListener('change',function(){updateDreamCollege(this.value);});
 renderCampuses(campuses);
 updateDreamCollege(selectedDream);
 $('shuffleCampuses').addEventListener('click',function(){renderCampuses(shuffle(campuses));toast('The AIIMS wall has been reshuffled.');});
