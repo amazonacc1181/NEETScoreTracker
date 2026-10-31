@@ -7,7 +7,8 @@
   <meta name="description" content="A focused NEET 2027 study session for your dream AIIMS.">
   <title>Study Session — The Last Mile</title>
   <link rel="icon" href="assets/lastmile-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/styles.css?v=28">
+  <script>(function(){try{var t=JSON.parse(localStorage.getItem('tlm:studyTheme')||'"love"');if(!['love','joy','retro','sad','hectic'].includes(t))t='love';document.documentElement.setAttribute('data-study-theme',t);}catch(e){document.documentElement.setAttribute('data-study-theme','love');}})();</script>
+  <link rel="stylesheet" href="assets/styles.css?v=30">
 </head>
 <body class="study-session-page">
   <section class="study-session-screen active" id="studySessionScreen" aria-hidden="false">
@@ -59,7 +60,7 @@
     <div class="drawer-now-playing">
       <div class="drawer-art"><span class="drawer-art-star">✳</span><span class="drawer-art-word">LAST<br>MILE</span><span class="drawer-art-ring"></span></div>
       <div class="drawer-track-copy"><small>NOW PLAYING</small><strong id="trackTitle">YOUR FIRST TRACK GOES HERE</strong><span id="trackPosition">NO TRACKS ADDED YET</span></div>
-      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div>
+      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div><div class="drawer-mood-label" id="musicMoodLabel">LOVE STUDY · MOOD PLAYLIST</div>
       <audio id="musicAudio" preload="auto" autoplay playsinline></audio>
       <div class="drawer-progress"><span id="musicElapsed">0:00</span><input type="range" id="musicSeek" min="0" max="100" value="0" aria-label="Music progress"><span id="musicDuration">0:00</span></div>
       <div class="drawer-controls">
@@ -76,6 +77,6 @@
     <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
   </aside>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/study-session.js?v=28"></script>
+  <script src="assets/study-session.js?v=30"></script>
 </body>
 </html>
