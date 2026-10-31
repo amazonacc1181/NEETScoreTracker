@@ -11,7 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=27">
+  <script>(function(){try{var t=JSON.parse(localStorage.getItem('tlm:studyTheme')||'"love"');if(!['love','joy','retro','sad','hectic'].includes(t))t='love';document.documentElement.setAttribute('data-study-theme',t);}catch(e){document.documentElement.setAttribute('data-study-theme','love');}})();</script>
+  <link rel="stylesheet" href="assets/styles.css?v=30">
 </head>
 <body>
   <header class="site-header">
@@ -19,11 +20,11 @@
     <nav class="main-nav" aria-label="Main navigation">
       <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos</a><a href="#study">Study timer</a>
     </nav>
-    <button class="music-trigger" id="musicOpen" type="button" aria-controls="musicDrawer" aria-expanded="false">♫ <span>MUSIC</span></button><a class="header-cta" href="#study">START TODAY <span>↗</span></a>
+    <button class="theme-trigger" id="themeOpen" type="button" aria-controls="themeDrawer" aria-expanded="false">◐ <span>MOOD</span></button><button class="music-trigger" id="musicOpen" type="button" aria-controls="musicDrawer" aria-expanded="false">♫ <span>MUSIC</span></button><a class="header-cta" href="#study">START TODAY <span>↗</span></a>
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">☰</button>
   </header>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
-    <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos & Shorts</a><a href="#study">Study timer</a><a href="#musicDrawer" id="musicNavLink">♫ Music</a>
+    <a href="#countdown">Countdown</a><a href="#campuses">AIIMS wall</a><a href="#stories">Videos & Shorts</a><a href="#study">Study timer</a><a href="#themeDrawer" id="themeNavLink">◐ Study mood</a><a href="#musicDrawer" id="musicNavLink">♫ Music</a>
   </nav>
 
   <main id="home" class="app-main"><section class="app-screen active" id="screen-home" data-screen="home"><section class="hero">
@@ -149,6 +150,7 @@
     <small>Your profile is saved on this device. No password or account required.</small>
   </form>
 </div>
+  <button class="theme-fab" id="themeFab" type="button" aria-controls="themeDrawer" aria-expanded="false"><span>◐</span><small>MOOD</small></button>
   <button class="music-fab" id="musicFab" type="button" aria-controls="musicDrawer" aria-expanded="false"><span>♫</span><small>MUSIC</small></button>
   <button class="music-backdrop" id="musicBackdrop" type="button" aria-label="Close music drawer" tabindex="-1"></button>
   <aside class="music-drawer" id="musicDrawer" aria-hidden="true" aria-labelledby="musicDrawerTitle" inert>
@@ -160,7 +162,7 @@
     <div class="drawer-now-playing">
       <div class="drawer-art"><span class="drawer-art-star">✳</span><span class="drawer-art-word">LAST<br>MILE</span><span class="drawer-art-ring"></span></div>
       <div class="drawer-track-copy"><small>NOW PLAYING</small><strong id="trackTitle">YOUR FIRST TRACK GOES HERE</strong><span id="trackPosition">NO TRACKS ADDED YET</span></div>
-      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div>
+      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div><div class="drawer-mood-label" id="musicMoodLabel">LOVE STUDY · MOOD PLAYLIST</div>
       <audio id="musicAudio" preload="auto" autoplay playsinline></audio>
       <div class="drawer-progress"><span id="musicElapsed">0:00</span><input type="range" id="musicSeek" min="0" max="100" value="0" aria-label="Music progress"><span id="musicDuration">0:00</span></div>
       <div class="drawer-controls">
@@ -176,7 +178,22 @@
     <div class="drawer-queue" id="musicQueue"><div class="queue-empty">Your playlist will appear here once MP3 files are added.</div></div>
     <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
   </aside>
+  <div class="theme-wash" id="themeWash" aria-hidden="true"></div>
+  <button class="theme-backdrop" id="themeBackdrop" type="button" aria-label="Close study mood drawer" tabindex="-1"></button>
+  <aside class="theme-drawer" id="themeDrawer" aria-hidden="true" aria-labelledby="themeDrawerTitle" inert>
+    <div class="drawer-grab" aria-hidden="true"></div>
+    <div class="theme-drawer-header"><div><span class="drawer-kicker">THE LAST MILE · YOUR AMBIENCE</span><h2 id="themeDrawerTitle">Choose your <em>mood.</em></h2><p>Change the colours and soundtrack to match the way you feel.</p></div><button class="drawer-close" id="themeClose" type="button" aria-label="Close study mood drawer">✕</button></div>
+    <div class="theme-current-line"><span>CURRENT STUDY MOOD</span><strong id="themeCurrentName">LOVE STUDY</strong></div>
+    <div class="theme-options" role="group" aria-label="Choose a study mood">
+      <button class="theme-option" type="button" data-theme-choice="love" aria-pressed="false"><span class="theme-option-icon">♡</span><span class="theme-option-copy"><strong>Love Study</strong><small>Soft, warm and heartfelt</small></span><span class="theme-option-swatch love-swatch"></span><span class="theme-option-check">✓</span></button>
+      <button class="theme-option" type="button" data-theme-choice="joy" aria-pressed="false"><span class="theme-option-icon">☀</span><span class="theme-option-copy"><strong>Joy Study</strong><small>Bright energy, lighter day</small></span><span class="theme-option-swatch joy-swatch"></span><span class="theme-option-check">✓</span></button>
+      <button class="theme-option" type="button" data-theme-choice="retro" aria-pressed="false"><span class="theme-option-icon">◷</span><span class="theme-option-copy"><strong>Retro Study</strong><small>Vintage warmth and nostalgia</small></span><span class="theme-option-swatch retro-swatch"></span><span class="theme-option-check">✓</span></button>
+      <button class="theme-option" type="button" data-theme-choice="sad" aria-pressed="false"><span class="theme-option-icon">☾</span><span class="theme-option-copy"><strong>Sad Study</strong><small>Quiet blue for heavy days</small></span><span class="theme-option-swatch sad-swatch"></span><span class="theme-option-check">✓</span></button>
+      <button class="theme-option" type="button" data-theme-choice="hectic" aria-pressed="false"><span class="theme-option-icon">✳</span><span class="theme-option-copy"><strong>Hectic Study</strong><small>High-voltage, urgent focus</small></span><span class="theme-option-swatch hectic-swatch"></span><span class="theme-option-check">✓</span></button>
+    </div>
+    <p class="theme-drawer-note">Every mood has its own music folder. Add songs to that mood to build its soundtrack.</p>
+  </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/app.js?v=27"></script>
+  <script src="assets/app.js?v=30"></script>
 </body>
 </html>
