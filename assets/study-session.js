@@ -71,7 +71,11 @@ $('pauseStudySession').addEventListener('click',pause);$('resumeStudySession').a
 $('endStudySession').addEventListener('click',function(){if(!session)return;newMath();$('studyMathGate').classList.add('open');$('studyMathGate').setAttribute('aria-hidden','false');$('studyMathAnswer').focus();});
 $('cancelStudyEnd').addEventListener('click',function(){$('studyMathGate').classList.remove('open');$('studyMathGate').setAttribute('aria-hidden','true');$('studyMathAnswer').value='';});
 $('studyMathForm').addEventListener('submit',function(event){event.preventDefault();if(Number($('studyMathAnswer').value)!==mathAnswer){$('studyMathFeedback').textContent='Not quite. Solve the new problem.';return;}saveAndClose();});
+function checkHomeClosed(){var marker=get('studyHomeClosedAt',null);if(marker&&session&&marker.sessionId===session.id)autoEnd('home-closed',true);}
 if(channel)channel.addEventListener('message',function(event){if(event.data&&event.data.type==='home-closed'&&session&&event.data.sessionId===session.id)autoEnd('home-closed',true);});
+window.addEventListener('storage',function(event){if(event.key==='tlm:studyHomeClosedAt')checkHomeClosed();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkHomeClosed();});
+checkHomeClosed();
 window.addEventListener('pagehide',onPageHide);
 window.addEventListener('storage',function(event){if(event.key==='tlm:activeStudySession'&&event.newValue==='null')autoEnd('ended-elsewhere',false);});
 if(setup())startTicker();
