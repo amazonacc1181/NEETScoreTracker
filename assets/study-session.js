@@ -3,7 +3,7 @@
 var $=function(id){return document.getElementById(id);},PREFIX='tlm:';
 var get=function(key,fallback){try{var raw=localStorage.getItem(PREFIX+key);return raw===null?fallback:JSON.parse(raw);}catch(e){return fallback;}};
 var set=function(key,value){try{localStorage.setItem(PREFIX+key,JSON.stringify(value));}catch(e){}};
-var profile=get('profile',null),session=get('activeStudySession',null),ticker=null,mathAnswer=null,finished=false;
+var profile=get('profile',null),session=get('activeStudySession',null),ticker=null,persistTicker=null,mathAnswer=null,finished=false;
 var channel=('BroadcastChannel' in window)?new BroadcastChannel('tlm-study-session'):null;
 var categoryIndex={General:0,EWS:1,OBC:2,SC:3,ST:4};
 var cutoffs={'AIIMS New Delhi':[51,292,192,793,987],'AIIMS Bhopal':[567,1220,1084,7782,8673],'AIIMS Bhubaneswar':[664,1660,1233,5396,10926],'AIIMS Jodhpur':[343,879,714,3941,4457],'AIIMS Patna':[1593,2675,2054,16709,24984],'AIIMS Raipur':[1008,2323,1683,12796,16950],'AIIMS Rishikesh':[537,1089,979,6429,8532],'AIIMS Nagpur':[792,1839,1350,8360,13431],'AIIMS Bathinda':[1630,2910,2190,18819,26664],'AIIMS Mangalagiri':[1314,3021,2079,16901,21776],'AIIMS Bibinagar':[1705,3180,2592,17543,28792],'AIIMS Deoghar':[3090,4569,3771,25371,40599],'AIIMS Gorakhpur':[2114,3085,2443,19159,33950],'AIIMS Kalyani':[2188,3955,3049,18440,37522],'AIIMS Raebareli':[2634,3586,3160,22455,35875],'AIIMS Rajkot':[2039,2889,2892,20222,31646],'AIIMS Vijaypur (Jammu)':[3327,4748,3834,27322,34696],'AIIMS Guwahati':[2997,4802,3823,27539,37116],'AIIMS Bilaspur':[2260,3287,2786,20129,30805],'AIIMS Madurai':[3421,5416,4281,27253,44940],'AIIMS Rewari':[3810,5492,4382,28615,39811]};
