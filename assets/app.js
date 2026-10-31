@@ -53,15 +53,44 @@ var campuses=[
 {name:'AIIMS Gorakhpur',place:'Kunraghat · Uttar Pradesh',url:'https://aiimsgorakhpur.edu.in/',photo:'https://www.collegebatch.com/static/clg-gallery/all-india-institute-of-medical-sciences-gorakhpur-287350.webp',credit:'https://www.collegebatch.com/20874-all-india-institute-of-medical-sciences-campus-tour-gorakhpur-fs05'},
 {name:'AIIMS Kalyani',place:'Kalyani · West Bengal',url:'https://aiimskalyani.edu.in/',photo:'https://assets.telegraphindia.com/abp/2024/Sep/1725533743_untitled-design-2024-09-05t162557-424.jpg',credit:'https://www.anandabazar.com/education-career/aiims-kalyani-starts-admission-process-for-diploma-in-dental-hygiene-and-diploma-in-dental-mechanics-dgtl/cid/1543654'}
 ];
+
+var dreamCollegeSelect=$('dreamCollege');
+var selectedDream=store.get('dreamCollege','');
+var currentCampusOrder=campuses.slice();
+campuses.forEach(function(item){
+ var option=document.createElement('option');
+ option.value=item.name;
+ option.textContent=item.name+' — '+item.place;
+ dreamCollegeSelect.appendChild(option);
+});
+if(!campuses.some(function(item){return item.name===selectedDream;}))selectedDream='';
+dreamCollegeSelect.value=selectedDream;
 var campusGrid=$('campusGrid');
 function renderCampuses(list){
+ currentCampusOrder=list.slice();
  campusGrid.innerHTML=list.map(function(item,index){
-  var special=item.featured?'<span class="dream-chip">YOUR DREAM INSTITUTE</span>':'';
-  return '<article class="campus-card'+(item.featured?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
+  var chosen=item.name===selectedDream;
+  var special=chosen?'<span class="dream-chip">YOUR DREAM AIIMS</span>':'';
+  return '<article class="campus-card'+(chosen?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
  }).join('');
 }
+function updateDreamCollege(name){
+ var item=campuses.find(function(campus){return campus.name===name;});
+ selectedDream=item?item.name:'';
+ store.set('dreamCollege',selectedDream);
+ dreamCollegeSelect.value=selectedDream;
+ var visual=item||campuses[0];
+ $('heroCampusImage').src=visual.photo;
+ $('heroCampusImage').alt=item?item.name+' campus, '+item.place:'AIIMS campus in India';
+ $('heroPhotoLabel').textContent=item?'YOUR DREAM CAMPUS':'THE AIIMS DREAM ACROSS INDIA';
+ $('heroPhotoCredit').textContent=item?item.name.toUpperCase()+' · '+item.place.toUpperCase():'CHOOSE YOUR DREAM AIIMS';
+ $('dreamCollegeNote').textContent=item?'YOUR DREAM IS SAVED ON THIS DEVICE · CHANGE IT ANYTIME':'CHOOSE ANY AIIMS TO PERSONALISE YOUR WALL';
+ renderCampuses(currentCampusOrder);
+}
 function shuffle(items){var array=items.slice();for(var i=array.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp;}return array;}
+dreamCollegeSelect.addEventListener('change',function(){updateDreamCollege(this.value);});
 renderCampuses(campuses);
+updateDreamCollege(selectedDream);
 $('shuffleCampuses').addEventListener('click',function(){renderCampuses(shuffle(campuses));toast('The AIIMS wall has been reshuffled.');});
 
 /* A refreshable, curated set of YouTube campus videos and Shorts. */
@@ -77,7 +106,8 @@ var shorts=[
 {id:'CZIQWOOl6yw',title:'AIIMS motivation series · Day 20',by:'Raj [AIIMS]'},
 {id:'gSD0cyY1TO4',title:'No one sees the effort',by:'Raj [AIIMS]'},
 {id:'6Dy_Jy0kw38',title:'NEET motivation · dream AIIMS',by:'Raj [AIIMS]'},
-{id:'qLTF8akDqZg',title:'The AIIMS fest feeling',by:'Raj [AIIMS]'}
+{id:'qLTF8akDqZg',title:'The AIIMS fest feeling',by:'Raj [AIIMS]'},
+{id:'VfjIbGRdj7g',title:'AIIMS Diaries — life after NEET, Vlog 98',by:'Shivam Raj [AIIMS]'}
 ];
 var lastVideoIds=[],lastShortIds=[];
 function pickNew(list,count,previous){
@@ -89,7 +119,7 @@ function pickNew(list,count,previous){
 function renderVideos(){
  var selected=pickNew(videos,3,lastVideoIds);lastVideoIds=selected.map(function(item){return item.id;});
  $('videoGrid').innerHTML=selected.map(function(item){return '<article class="video-card"><div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/'+item.id+'?rel=0" title="'+item.title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="video-info"><small>CAMPUS VIDEO · YOUTUBE</small><h3>'+item.title+'</h3><p>'+item.by+' · '+item.note+'</p></div></article>';}).join('');
- var selectedShorts=pickNew(shorts,4,lastShortIds);lastShortIds=selectedShorts.map(function(item){return item.id;});
+ var selectedShorts=pickNew(shorts,5,lastShortIds);lastShortIds=selectedShorts.map(function(item){return item.id;});
  $('shortsGrid').innerHTML=selectedShorts.map(function(item){return '<article class="short-card"><div class="short-frame"><iframe src="https://www.youtube-nocookie.com/embed/'+item.id+'?rel=0" title="'+item.title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="short-info"><h3>'+item.title+'</h3><small>'+item.by+'</small></div></article>';}).join('');
 }
 renderVideos();
