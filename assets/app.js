@@ -38,9 +38,9 @@ var campuses=[
 {name:'AIIMS Rishikesh',place:'Virbhadra Road · Uttarakhand',url:'https://aiimsrishikesh.edu.in/',photo:'https://i.pinimg.com/736x/76/78/6c/76786c6d217a29e39f699621233cfd75.jpg',credit:'https://jp.pinterest.com/pin/737957088973286605/'},
 {name:'AIIMS Mangalagiri',place:'Mangalagiri · Andhra Pradesh',url:'https://aiimsmangalagiri.edu.in/',photo:'https://static.wixstatic.com/media/4a0c19_dd55d28c4e544a0297821b0b65c723ea~mv2.jpg/v1/fit/w_2500%2Ch_1330%2Cal_c/4a0c19_dd55d28c4e544a0297821b0b65c723ea~mv2.jpg',credit:'https://www.amsamaiims.in/'},
 {name:'AIIMS Guwahati',place:'Changsari · Assam',url:'https://aiimsguwahati.ac.in/',photo:'https://etimg.etb2bimg.com/photo/124618204.cms',credit:'https://health.economictimes.indiatimes.com/news/hospitals/clinical-trial-unit-inaugurated-at-guwahati-aiims/124618135'},
-{name:'AIIMS Darbhanga',place:'Darbhanga · Bihar',url:'https://pmssy.mohfw.gov.in/',photo:'https://wpmedia.prabhatkhabar.com/uploads/2025/05/Darbhanga-aiims-news-bihar-DPR-ready-.png',credit:'https://www.prabhatkhabar.com/state/bihar/darbhanga/darbhanga-aiims-dpr-e-ready-in-next-two-months-bihar-news'},
+{name:'AIIMS Darbhanga',place:'Darbhanga · Bihar',url:'https://pmssy.mohfw.gov.in/',photo:'https://wpmedia.prabhatkhabar.com/uploads/2025/05/Darbhanga-aiims-news-bihar-DPR-ready-.png',credit:'https://www.prabhatkhabar.com/state/bihar/darbhanga/darbhanga-aiims-dpr-e-ready-in-next-two-months-bihar-news',alt:'Proposed AIIMS Darbhanga campus rendering'},
 {name:'AIIMS Rajkot',place:'Khandheri · Gujarat',url:'https://aiimsrajkot.edu.in/',photo:'https://images.indianexpress.com/2024/02/RAJKOT-AIIMS.jpg',credit:'https://indianexpress.com/article/cities/ahmedabad/pm-to-inaugurate-aiims-rajkot-tomorrow-all-750-beds-to-be-in-place-by-december-9177863/'},
-{name:'AIIMS Rewari',place:'Majra · Haryana',url:'https://pmssy.mohfw.gov.in/',photo:'https://images.bhaskarassets.com/web2images/521/2025/05/15/d8b69824-d610-48c7-b710-398f34700702_1747317221672.jpg',credit:'https://www.bhaskar.com/local/haryana/rewari/bawal/news/rewari-aiims-majra-bhalkhi-opd-ipd-services-infrastructure-development-update-135033171.html'},
+{name:'AIIMS Rewari',place:'Majra · Haryana',url:'https://pmssy.mohfw.gov.in/',photo:'https://images.bhaskarassets.com/web2images/521/2025/05/15/d8b69824-d610-48c7-b710-398f34700702_1747317221672.jpg',credit:'https://www.bhaskar.com/local/haryana/rewari/bawal/news/rewari-aiims-majra-bhalkhi-opd-ipd-services-infrastructure-development-update-135033171.html',alt:'Proposed AIIMS Rewari campus rendering'},
 {name:'AIIMS Bilaspur',place:'Kothipura · Himachal Pradesh',url:'https://www.aiimsbilaspur.edu.in/',photo:'https://images.livemint.com/img/2022/10/05/1600x900/AIIMS_Bilaspur4_1664936079843_1664961750719_1664961750719.jpg',credit:'https://www.livemint.com/news/india/pm-modi-inaugurates-green-hospital-aiims-bilaspur-in-himachal-pradesh-11664961534107.html'},
 {name:'AIIMS Vijaypur (Jammu)',place:'Vijaypur · Jammu & Kashmir',url:'https://www.aiimsjammu.edu.in/',photo:'https://cf-images.assettype.com/outlookindia/2025-04-14/mn4wf6wc/IMG8344.PNG?auto=format%2Ccompress&dpr=1.0&fit=max&format=webp&w=801',credit:'https://www.outlookindia.com/announcements/news-media-wire/aiims-vijaypur-jammu-honoured-with-achievement-award-for-best-construction-projects-at-cidc-vishwakarma-awards-2025'},
 {name:'AIIMS Awantipora',place:'Awantipora · Kashmir',url:'https://pmssy.mohfw.gov.in/',photo:'https://i0.wp.com/lakecitytimes.com/wp-content/uploads/2025/03/AIIMS-Awantipora.jpg?fit=756%2C391&ssl=1',credit:'https://lakecitytimes.com/2025/08/24/aiims-awantipora-likely-to-miss-november-2025-deadline/'},
@@ -57,7 +57,7 @@ var campusGrid=$('campusGrid');
 function renderCampuses(list){
  campusGrid.innerHTML=list.map(function(item,index){
   var special=item.featured?'<span class="dream-chip">YOUR DREAM INSTITUTE</span>':'';
-  return '<article class="campus-card'+(item.featured?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+item.name+' campus" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
+  return '<article class="campus-card'+(item.featured?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+(item.alt||item.name+' campus')+'" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
  }).join('');
 }
 function shuffle(items){var array=items.slice();for(var i=array.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp;}return array;}
@@ -81,8 +81,9 @@ var shorts=[
 ];
 var lastVideoIds=[],lastShortIds=[];
 function pickNew(list,count,previous){
- var pool=list.filter(function(item){return previous.indexOf(item.id)===-1;});
- if(pool.length<count)pool=list.slice();
+ var unseen=list.filter(function(item){return previous.indexOf(item.id)===-1;});
+ var earlier=shuffle(list.filter(function(item){return previous.indexOf(item.id)!==-1;}));
+ var pool=unseen.concat(earlier.slice(0,Math.max(0,count-unseen.length)));
  return shuffle(pool).slice(0,Math.min(count,pool.length));
 }
 function renderVideos(){
