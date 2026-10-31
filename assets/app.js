@@ -1,107 +1,158 @@
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id);};
-var store={get:function(key,fallback){try{var v=localStorage.getItem('tlm:'+key);return v===null?fallback:JSON.parse(v);}catch(e){return fallback;}},set:function(key,value){try{localStorage.setItem('tlm:'+key,JSON.stringify(value));return true;}catch(e){return false;}}};
-function localDay(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function prettyDate(d){return d.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).toUpperCase();}
-function toast(message){var el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('show');},2400);}
-var todayKey=localDay(new Date());$('todayDate').textContent=prettyDate(new Date());$('journalDate').textContent=prettyDate(new Date());
-var menuButton=$('menuButton'),mobileNav=$('mobileNav');
-function setMenuOpen(open){mobileNav.classList.toggle('open',open);menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Close navigation':'Open navigation');menuButton.textContent=open?'✕':'☰';}
-menuButton.addEventListener('click',function(){setMenuOpen(menuButton.getAttribute('aria-expanded')!=='true');});
-document.querySelectorAll('.mobile-nav a').forEach(function(a){a.addEventListener('click',function(){setMenuOpen(false);});});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenuOpen(false);});
-window.addEventListener('resize',function(){if(window.matchMedia('(min-width: 901px)').matches)setMenuOpen(false);});
-if(store.get('theme','dark')==='light')document.body.classList.add('light');
-$('themeToggle').addEventListener('click',function(){document.body.classList.toggle('light');store.set('theme',document.body.classList.contains('light')?'light':'dark');});
-var dateInput=$('targetDate');dateInput.value=store.get('targetDate','2027-05-02');
-function updateCountdown(){var raw=dateInput.value;if(!raw){['days','hours','minutes','seconds'].forEach(function(id){$(id).textContent='—';});$('targetText').textContent='SET A PLANNING DATE';return;}var target=new Date(raw+'T00:00:00'),diff=target.getTime()-Date.now();if(!isFinite(diff))return;if(diff<0)diff=0;var day=Math.floor(diff/86400000),hour=Math.floor(diff%86400000/3600000),minute=Math.floor(diff%3600000/60000),second=Math.floor(diff%60000/1000);$('days').textContent=String(day).padStart(3,'0');$('hours').textContent=String(hour).padStart(2,'0');$('minutes').textContent=String(minute).padStart(2,'0');$('seconds').textContent=String(second).padStart(2,'0');$('targetText').textContent=target.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase()+' · PROVISIONAL';}
-dateInput.addEventListener('change',function(){store.set('targetDate',dateInput.value);updateCountdown();});updateCountdown();setInterval(updateCountdown,1000);
-var taskInputs=Array.from(document.querySelectorAll('[data-task]')),dayData=store.get('day:'+todayKey,{});
-taskInputs.forEach(function(input){input.checked=!!dayData[input.dataset.task];input.addEventListener('change',saveTasks);});
-function dayCount(key){var data=store.get('day:'+key,{});return Object.keys(data).filter(function(k){return data[k];}).length;}
-function renderWeek(){var now=new Date(),total=0,labels=[];for(var i=6;i>=0;i--){var d=new Date(now);d.setDate(now.getDate()-i);var key=localDay(d),n=dayCount(key);total+=n;labels.push({n:n,label:d.toLocaleDateString('en-IN',{weekday:'short'}).slice(0,1)});}var bars=Array.from(document.querySelectorAll('.week-bar'));bars.forEach(function(bar,i){bar.querySelector('span').style.height=Math.max(3,labels[i].n/4*100)+'%';bar.querySelector('small').textContent=labels[i].label;bar.title=labels[i].n+' of 4 tasks';});$('weekTotal').textContent=total+' / 28';var streak=0;for(var j=0;j<365;j++){var d2=new Date(now);d2.setDate(now.getDate()-j);if(dayCount(localDay(d2))>0)streak++;else break;}$('streakNumber').textContent=streak;}
-function saveTasks(){var data={};taskInputs.forEach(function(input){data[input.dataset.task]=input.checked;});store.set('day:'+todayKey,data);var count=taskInputs.filter(function(input){return input.checked;}).length,pct=Math.round(count/taskInputs.length*100);$('taskCount').textContent=count+' OF '+taskInputs.length+' COMPLETED';$('dayProgress').style.width=pct+'%';$('dayMessage').textContent=count===0?'START WITH ONE.':count===taskInputs.length?'ALL FOUR. YOU SHOWED UP.':'KEEP THE MOMENTUM.';renderWeek();}
-saveTasks();
-var duration=25*60,remaining=duration,timer=null,running=false,circumference=2*Math.PI*96;$('timerRing').style.strokeDasharray=circumference;
-function paintTimer(){var m=Math.floor(remaining/60),s=remaining%60;$('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');$('timerRing').style.strokeDashoffset=circumference*(1-remaining/duration);}
-function stopTimer(){if(timer){clearInterval(timer);timer=null;}running=false;$('timerStart').innerHTML='START FOCUS <span>▶</span>';}
-$('timerStart').addEventListener('click',function(){if(running){stopTimer();$('timerStart').innerHTML='RESUME FOCUS <span>▶</span>';return;}if(remaining===0){remaining=duration;paintTimer();}running=true;$('timerStart').innerHTML='PAUSE <span>Ⅱ</span>';timer=setInterval(function(){remaining--;paintTimer();if(remaining<=0){stopTimer();$('timerLabel').textContent='BLOCK COMPLETE';toast('Focus block complete. Take a short break.');}},1000);});
-$('timerReset').addEventListener('click',function(){stopTimer();remaining=duration;$('timerLabel').textContent='MINUTES OF FOCUS';paintTimer();});
-document.querySelectorAll('.preset').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.preset').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');stopTimer();duration=Number(btn.dataset.minutes)*60;remaining=duration;$('timerLabel').textContent='MINUTES OF FOCUS';paintTimer();});});paintTimer();
-var tests=store.get('tests',[]);
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function renderTests(){$('testCount').textContent=tests.length;if(!tests.length){$('testAverage').textContent='—';$('bestScore').textContent='—';$('testHistory').innerHTML='<div class="empty-state">Your first score goes here. Make it a starting point, not a verdict.</div>';return;}var avg=tests.reduce(function(a,t){return a+t.score/t.max;},0)/tests.length*100,best=tests.reduce(function(a,t){return t.score/t.max>a.score/a.max?t:a;});$('testAverage').textContent=avg.toFixed(1)+'%';$('bestScore').textContent=best.score+'/'+best.max;$('testHistory').innerHTML=tests.slice(0,5).map(function(t){return '<div class="test-item"><b>'+escapeHTML(t.name)+'</b><span>'+t.date+'</span><strong>'+t.score+'/'+t.max+'</strong></div>';}).join('');}
-$('scoreForm').addEventListener('submit',function(e){e.preventDefault();var name=$('testName').value.trim(),score=Number($('testScore').value),max=Number($('testMax').value);if(!name||!Number.isFinite(score)||!Number.isFinite(max)||max<1||score<0||score>max||max>720){toast('Check the test name and score.');return;}tests.unshift({name:name,score:score,max:max,date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short'})});tests=tests.slice(0,30);store.set('tests',tests);renderTests();$('scoreForm').reset();$('testMax').value='720';toast('Mock result saved. Learn from it.');});renderTests();
-$('journalText').value=store.get('journal:'+todayKey,'');
-$('saveJournal').addEventListener('click',function(){store.set('journal:'+todayKey,$('journalText').value);$('journalStatus').textContent='SAVED JUST NOW · PRIVATE TO THIS BROWSER';toast('Your note is saved.');});
-$('journalText').addEventListener('input',function(){$('journalStatus').textContent='UNSAVED CHANGES';});
-$('heroPromise').addEventListener('click',function(){$('promise').scrollIntoView({behavior:'smooth'});});
-var audio=$('audioPlayer'),tracks=[],trackIndex=0;
-function fmt(seconds){if(!Number.isFinite(seconds))return '0:00';return Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');}
-function setTrack(i){if(!tracks.length)return;trackIndex=(i+tracks.length)%tracks.length;audio.src=tracks[trackIndex].src;$('trackTitle').textContent=tracks[trackIndex].title||'UNTITLED TRACK';$('trackSubtitle').textContent='TRACK '+(trackIndex+1)+' OF '+tracks.length;audio.load();audio.play().then(function(){$('playTrack').textContent='Ⅱ';}).catch(function(){$('playTrack').textContent='▶';});}
-fetch('music/playlist.json').then(function(r){return r.ok?r.json():[];}).then(function(list){tracks=Array.isArray(list)?list.filter(function(t){return t&&typeof t.src==='string';}):[];$('musicEmpty').hidden=tracks.length>0;if(tracks.length)setTrack(0);}).catch(function(){});
-$('playTrack').addEventListener('click',function(){if(!tracks.length){toast('Your music room is ready for your playlist.');return;}if(audio.paused){audio.play().then(function(){$('playTrack').textContent='Ⅱ';}).catch(function(){});}else{audio.pause();$('playTrack').textContent='▶';}});
-$('prevTrack').addEventListener('click',function(){if(tracks.length)setTrack(trackIndex-1);});$('nextTrack').addEventListener('click',function(){if(tracks.length)setTrack(trackIndex+1);});
-$('muteTrack').addEventListener('click',function(){audio.muted=!audio.muted;$('muteTrack').textContent=audio.muted?'×':'♫';});
-audio.addEventListener('timeupdate',function(){var pct=audio.duration?audio.currentTime/audio.duration*100:0;$('audioSeek').value=pct;$('audioCurrent').textContent=fmt(audio.currentTime);$('audioDuration').textContent=fmt(audio.duration);});
-$('audioSeek').addEventListener('input',function(){if(audio.duration)audio.currentTime=Number(this.value)/100*audio.duration;});audio.addEventListener('ended',function(){if(tracks.length)setTrack(trackIndex+1);});
+var toast=function(message){var el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('show');},2400);};
+var store={get:function(key,fallback){try{var value=localStorage.getItem('tlm:'+key);return value===null?fallback:JSON.parse(value);}catch(e){return fallback;}},set:function(key,value){try{localStorage.setItem('tlm:'+key,JSON.stringify(value));}catch(e){}}};
 
-/* All-India AIIMS directory: PMSSY status snapshot plus the original AIIMS New Delhi. */
-var aiimsInstitutes=[
-{name:'AIIMS New Delhi',city:'Ansari Nagar, New Delhi',state:'Delhi',group:'functional',status:'Original institute · fully operational',url:'https://www.aiims.edu/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Bhopal',city:'Saket Nagar, Bhopal',state:'Madhya Pradesh',group:'functional',status:'Fully functional',url:'https://aiimsbhopal.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Bhubaneswar',city:'Sijua, Bhubaneswar',state:'Odisha',group:'functional',status:'Fully functional',url:'https://www.aiimsbhubaneswar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Jodhpur',city:'Basni, Jodhpur',state:'Rajasthan',group:'functional',status:'Fully functional',url:'https://aiimsjodhpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Patna',city:'Phulwarisharif, Patna',state:'Bihar',group:'functional',status:'Fully functional',url:'http://aiimspatna.org/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Raipur',city:'Tatibandh, Raipur',state:'Chhattisgarh',group:'functional',status:'Fully functional',url:'http://aiimsraipur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Rishikesh',city:'Virbhadra Road, Rishikesh',state:'Uttarakhand',group:'functional',status:'Fully functional',url:'http://aiimsrishikesh.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Raebareli',city:'Munshiganj, Raebareli',state:'Uttar Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsrbl.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Gorakhpur',city:'Kunraghat, Gorakhpur',state:'Uttar Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsgorakhpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Mangalagiri',city:'Mangalagiri, Guntur region',state:'Andhra Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsmangalagiri.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Nagpur',city:'MIHAN, Nagpur',state:'Maharashtra',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsnagpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Bathinda',city:'Bathinda',state:'Punjab',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsbathinda.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Bibinagar',city:'Bibinagar, Yadadri Bhuvanagiri',state:'Telangana',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsbibinagar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Kalyani',city:'Kalyani, Nadia',state:'West Bengal',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimskalyani.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Deoghar',city:'Devipur / Deoghar',state:'Jharkhand',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsdeoghar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE',highlight:true},
-{name:'AIIMS Bilaspur',city:'Kothipura, Bilaspur',state:'Himachal Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://www.aiimsbilaspur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Rajkot',city:'Khandheri, Rajkot',state:'Gujarat',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsrajkot.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Guwahati',city:'Changsari, Kamrup',state:'Assam',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsguwahati.ac.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Vijaypur (Jammu)',city:'Vijaypur, Samba',state:'Jammu & Kashmir',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://www.aiimsjammu.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
-{name:'AIIMS Madurai',city:'Madurai / temporary academic campus at Ramanathapuram',state:'Tamil Nadu',group:'mbbs',status:'MBBS classes running · campus work ongoing',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
-{name:'AIIMS Awantipora',city:'Awantipora, Pulwama',state:'Jammu & Kashmir',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
-{name:'AIIMS Majra (Rewari)',city:'Majra, Rewari',state:'Haryana',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
-{name:'AIIMS Darbhanga',city:'Darbhanga',state:'Bihar',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'}
+/* Simple accessible navigation */
+var menuToggle=$('menuToggle'),mobileNav=$('mobileNav');
+function setMenu(open){mobileNav.classList.toggle('open',open);menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');menuToggle.textContent=open?'✕':'☰';}
+menuToggle.addEventListener('click',function(){setMenu(menuToggle.getAttribute('aria-expanded')!=='true');});
+mobileNav.querySelectorAll('a').forEach(function(link){link.addEventListener('click',function(){setMenu(false);});});
+document.addEventListener('keydown',function(event){if(event.key==='Escape')setMenu(false);});
+window.addEventListener('resize',function(){if(window.matchMedia('(min-width:761px)').matches)setMenu(false);});
+
+/* NEET exam countdown — date is editable and intentionally marked provisional. */
+var examDate=$('examDate');
+examDate.value=store.get('examDate','2027-05-02');
+function renderExamCountdown(){
+ var raw=examDate.value;
+ if(!raw){['examDays','examHours','examMinutes','examSeconds'].forEach(function(id){$(id).textContent='—';});$('examDateLabel').textContent='SET YOUR TARGET';return;}
+ var target=new Date(raw+'T00:00:00'),diff=Math.max(0,target.getTime()-Date.now());
+ if(!isFinite(diff))return;
+ var days=Math.floor(diff/86400000),hours=Math.floor(diff%86400000/3600000),mins=Math.floor(diff%3600000/60000),secs=Math.floor(diff%60000/1000);
+ $('examDays').textContent=String(days).padStart(3,'0');$('examHours').textContent=String(hours).padStart(2,'0');$('examMinutes').textContent=String(mins).padStart(2,'0');$('examSeconds').textContent=String(secs).padStart(2,'0');
+ $('examDateLabel').textContent=target.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+}
+examDate.addEventListener('change',function(){store.set('examDate',examDate.value);renderExamCountdown();});
+renderExamCountdown();setInterval(renderExamCountdown,1000);
+
+/* Campus wall — photo credits link to the originating pages. */
+var campuses=[
+{name:'AIIMS New Delhi',place:'Ansari Nagar · Delhi',url:'https://www.aiims.edu/',photo:'https://www.worldwidecolleges.com/wp-content/uploads/classified-listing/2023/04/All-India-Institute-of-Medical-Sciences-New-Delhi-AIIMS.jpg',credit:'https://www.worldwidecolleges.com/education/all-india-institute-of-medical-sciences-new-delhi/'},
+{name:'AIIMS Bhopal',place:'Saket Nagar · Madhya Pradesh',url:'https://aiimsbhopal.edu.in/',photo:'https://feeds.abplive.com/onecms/images/uploaded-images/2024/08/07/ae66f9251624f701a31f13cf10d31e1a1723026075984998_original.jpg',credit:'https://www.abplive.com/states/madhya-pradesh/bhopal-aiims-purchasing-2-robots-worth-60-crore-rupees-to-treat-patient-in-hospital-ann-2755671'},
+{name:'AIIMS Bhubaneswar',place:'Sijua · Odisha',url:'https://aiimsbhubaneswar.edu.in/',photo:'https://upload.wikimedia.org/wikipedia/commons/6/64/AIIMS_Bhubaneswar_01.jpg',credit:'https://commons.wikimedia.org/wiki/File:AIIMS_Bhubaneswar_01.jpg'},
+{name:'AIIMS Jodhpur',place:'Basni · Rajasthan',url:'https://aiimsjodhpur.edu.in/',photo:'https://media.licdn.com/dms/image/v2/C5612AQGhtCinFWg_Zw/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1620047161173?e=2147483647&t=a3-nOgtU-n6_atv4YadMstRlOO7MVpBSvLAUUL-5Mrg&v=beta',credit:'https://www.linkedin.com/pulse/aiims-jodhpur-has-introduced-new-dm-programs-medical-genetics-'},
+{name:'AIIMS Patna',place:'Phulwarisharif · Bihar',url:'http://aiimspatna.org/',photo:'https://ik.imagekit.io/syustaging/SYU_PREPROD/Cover_VBT_mcCnx.webp',credit:'https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-aiims-patna-cid-25410'},
+{name:'AIIMS Raipur',place:'Tatibandh · Chhattisgarh',url:'https://www.aiimsraipur.edu.in/',photo:'https://cf-images.assettype.com/edexlive/2026-09-30/jh28sjq7/all-india-institute-of-medical-sciences-raipur.webp?ar=40%3A21&auto=format%2Ccompress&enlarge=true&mode=crop&ogImage=true&overlay=false&overlay_position=bottom&overlay_width=100&w=1200',credit:'https://www.edexlive.com/news/aiims-raipur-hosts-lecture-on-climate-change-launches-7th-edition-of-community-medicine-textbook'},
+{name:'AIIMS Rishikesh',place:'Virbhadra Road · Uttarakhand',url:'https://aiimsrishikesh.edu.in/',photo:'https://i.pinimg.com/736x/76/78/6c/76786c6d217a29e39f699621233cfd75.jpg',credit:'https://jp.pinterest.com/pin/737957088973286605/'},
+{name:'AIIMS Mangalagiri',place:'Mangalagiri · Andhra Pradesh',url:'https://aiimsmangalagiri.edu.in/',photo:'https://static.wixstatic.com/media/4a0c19_dd55d28c4e544a0297821b0b65c723ea~mv2.jpg/v1/fit/w_2500%2Ch_1330%2Cal_c/4a0c19_dd55d28c4e544a0297821b0b65c723ea~mv2.jpg',credit:'https://www.amsamaiims.in/'},
+{name:'AIIMS Guwahati',place:'Changsari · Assam',url:'https://aiimsguwahati.ac.in/',photo:'https://etimg.etb2bimg.com/photo/124618204.cms',credit:'https://health.economictimes.indiatimes.com/news/hospitals/clinical-trial-unit-inaugurated-at-guwahati-aiims/124618135'},
+{name:'AIIMS Darbhanga',place:'Darbhanga · Bihar',url:'https://pmssy.mohfw.gov.in/',photo:'https://wpmedia.prabhatkhabar.com/uploads/2025/05/Darbhanga-aiims-news-bihar-DPR-ready-.png',credit:'https://www.prabhatkhabar.com/state/bihar/darbhanga/darbhanga-aiims-dpr-e-ready-in-next-two-months-bihar-news'},
+{name:'AIIMS Rajkot',place:'Khandheri · Gujarat',url:'https://aiimsrajkot.edu.in/',photo:'https://images.indianexpress.com/2024/02/RAJKOT-AIIMS.jpg',credit:'https://indianexpress.com/article/cities/ahmedabad/pm-to-inaugurate-aiims-rajkot-tomorrow-all-750-beds-to-be-in-place-by-december-9177863/'},
+{name:'AIIMS Rewari',place:'Majra · Haryana',url:'https://pmssy.mohfw.gov.in/',photo:'https://images.bhaskarassets.com/web2images/521/2025/05/15/d8b69824-d610-48c7-b710-398f34700702_1747317221672.jpg',credit:'https://www.bhaskar.com/local/haryana/rewari/bawal/news/rewari-aiims-majra-bhalkhi-opd-ipd-services-infrastructure-development-update-135033171.html'},
+{name:'AIIMS Bilaspur',place:'Kothipura · Himachal Pradesh',url:'https://www.aiimsbilaspur.edu.in/',photo:'https://images.livemint.com/img/2022/10/05/1600x900/AIIMS_Bilaspur4_1664936079843_1664961750719_1664961750719.jpg',credit:'https://www.livemint.com/news/india/pm-modi-inaugurates-green-hospital-aiims-bilaspur-in-himachal-pradesh-11664961534107.html'},
+{name:'AIIMS Vijaypur (Jammu)',place:'Vijaypur · Jammu & Kashmir',url:'https://www.aiimsjammu.edu.in/',photo:'https://cf-images.assettype.com/outlookindia/2025-04-14/mn4wf6wc/IMG8344.PNG?auto=format%2Ccompress&dpr=1.0&fit=max&format=webp&w=801',credit:'https://www.outlookindia.com/announcements/news-media-wire/aiims-vijaypur-jammu-honoured-with-achievement-award-for-best-construction-projects-at-cidc-vishwakarma-awards-2025'},
+{name:'AIIMS Awantipora',place:'Awantipora · Kashmir',url:'https://pmssy.mohfw.gov.in/',photo:'https://i0.wp.com/lakecitytimes.com/wp-content/uploads/2025/03/AIIMS-Awantipora.jpg?fit=756%2C391&ssl=1',credit:'https://lakecitytimes.com/2025/08/24/aiims-awantipora-likely-to-miss-november-2025-deadline/'},
+{name:'AIIMS Deoghar',place:'Devipur · Jharkhand',url:'https://aiimsdeoghar.edu.in/',photo:'https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg',credit:'https://college360.co.in/university/AIIMS-Deoghar-All-India-Institute-Of-Medical-Science-Deoghar-4629/facility',featured:true},
+{name:'AIIMS Nagpur',place:'MIHAN · Maharashtra',url:'https://aiimsnagpur.edu.in/',photo:'https://ik.imagekit.io/syustaging/SYU_PREPROD/All-India-Institute-of-Medical-Sciences---_AIIMS_-_Nagpur-_Maharashtra_gRH6Nf2sS.webp',credit:'https://www.selectyouruniversity.com/college/all-india-institute-of-medical-sciences-nagpur-cid-59702'},
+{name:'AIIMS Bathinda',place:'Bathinda · Punjab',url:'https://aiimsbathinda.edu.in/',photo:'https://aiimsbathinda.edu.in/images/slides/20220723095916.jpeg',credit:'https://aiimsbathinda.edu.in/'},
+{name:'AIIMS Madurai',place:'Madurai · Tamil Nadu',url:'https://aiimsmadurai.edu.in/',photo:'https://aiimsmadurai.edu.in/pPnDrdXN/assets/images/Events/5.jpg',credit:'https://aiimsmadurai.edu.in/pPnDrdXN/'},
+{name:'AIIMS Bibinagar',place:'Bibinagar · Telangana',url:'https://aiimsbibinagar.edu.in/',photo:'https://pbs.twimg.com/media/G938rwObUAA0-BC.jpg',credit:'https://x.com/kishanreddybjp/status/2008038853656125848'},
+{name:'AIIMS Raebareli',place:'Munshiganj · Uttar Pradesh',url:'http://aiimsrbl.edu.in/',photo:'https://wpmedia.prabhatkhabar.com/uploads/2024/02/GG70aQlXUAAOMk3-1.jpg',credit:'https://www.prabhatkhabar.com/state/uttar-pradesh/raebareli-aiims-virtually-inaugurate-today-by-pm-modi-smk'},
+{name:'AIIMS Gorakhpur',place:'Kunraghat · Uttar Pradesh',url:'https://aiimsgorakhpur.edu.in/',photo:'https://www.collegebatch.com/static/clg-gallery/all-india-institute-of-medical-sciences-gorakhpur-287350.webp',credit:'https://www.collegebatch.com/20874-all-india-institute-of-medical-sciences-campus-tour-gorakhpur-fs05'},
+{name:'AIIMS Kalyani',place:'Kalyani · West Bengal',url:'https://aiimskalyani.edu.in/',photo:'https://assets.telegraphindia.com/abp/2024/Sep/1725533743_untitled-design-2024-09-05t162557-424.jpg',credit:'https://www.anandabazar.com/education-career/aiims-kalyani-starts-admission-process-for-diploma-in-dental-hygiene-and-diploma-in-dental-mechanics-dgtl/cid/1543654'}
 ];
-var aiimsGrid=$('aiimsGrid'),aiimsSearch=$('aiimsSearch'),aiimsEmpty=$('aiimsEmpty'),aiimsResultCount=$('aiimsResultCount'),aiimsActiveFilter='all';
-function renderAiims(){
- if(!aiimsGrid)return;
- var query=(aiimsSearch&&aiimsSearch.value||'').trim().toLowerCase();
- var visible=aiimsInstitutes.filter(function(item){
-  var filterMatch=aiimsActiveFilter==='all'||item.group===aiimsActiveFilter;
-  var haystack=(item.name+' '+item.city+' '+item.state+' '+item.status).toLowerCase();
-  return filterMatch&&(!query||haystack.indexOf(query)!==-1);
- });
- aiimsGrid.innerHTML=visible.map(function(item){
-  var number=String(aiimsInstitutes.indexOf(item)+1).padStart(2,'0');
-  var featured=item.highlight?' featured':'';
-  var flag=item.highlight?'<span class="aiims-dream-flag">YOUR DREAM INSTITUTE</span>':'';
-  return '<article class="aiims-card'+featured+'"><div class="aiims-card-art" aria-hidden="true"><span class="aiims-card-index">INSTITUTE '+number+' / 23</span><span class="aiims-card-word">AIIMS</span><span class="aiims-card-art-caption">THE INDIA-WIDE INSTITUTE NETWORK</span></div><div class="aiims-card-body">'+flag+'<span class="aiims-card-type">ALL INDIA INSTITUTE OF MEDICAL SCIENCES</span><h3>'+escapeHTML(item.name)+'</h3><p class="aiims-location">'+escapeHTML(item.city)+', '+escapeHTML(item.state)+'</p><span class="aiims-status status-'+item.group+'">'+escapeHTML(item.status)+'</span><a class="aiims-card-link" href="'+escapeHTML(item.url)+'" target="_blank" rel="noopener">'+escapeHTML(item.link)+' <span>↗</span></a></div></article>';
+var campusGrid=$('campusGrid');
+function renderCampuses(list){
+ campusGrid.innerHTML=list.map(function(item,index){
+  var special=item.featured?'<span class="dream-chip">YOUR DREAM INSTITUTE</span>':'';
+  return '<article class="campus-card'+(item.featured?' featured':'')+'"><div class="campus-image"><img src="'+item.photo+'" alt="'+item.name+' campus" loading="lazy" onerror="this.onerror=null;this.src=\'assets/lastmile-icon.svg\';this.classList.add(\'image-fallback\');"><span class="campus-number">'+String(index+1).padStart(2,'0')+' / 23</span></div><div class="campus-info">'+special+'<h3>'+item.name+'</h3><p>'+item.place+'</p><div class="campus-links"><a href="'+item.url+'" target="_blank" rel="noopener">INSTITUTE / PROJECT ↗</a><a href="'+item.credit+'" target="_blank" rel="noopener">PHOTO SOURCE</a></div></div></article>';
  }).join('');
- aiimsResultCount.textContent=visible.length+' of '+aiimsInstitutes.length+' institutes';
- aiimsEmpty.hidden=visible.length!==0;
 }
-if(aiimsGrid){
- document.querySelectorAll('[data-aiims-filter]').forEach(function(button){
-  button.addEventListener('click',function(){
-   aiimsActiveFilter=button.dataset.aiimsFilter;
-   document.querySelectorAll('[data-aiims-filter]').forEach(function(other){var active=other===button;other.classList.toggle('active',active);other.setAttribute('aria-pressed',String(active));});
-   renderAiims();
-  });
- });
- if(aiimsSearch)aiimsSearch.addEventListener('input',renderAiims);
- renderAiims();
-}
+function shuffle(items){var array=items.slice();for(var i=array.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp;}return array;}
+renderCampuses(campuses);
+$('shuffleCampuses').addEventListener('click',function(){renderCampuses(shuffle(campuses));toast('The AIIMS wall has been reshuffled.');});
 
-if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+/* A refreshable, curated set of YouTube campus videos and Shorts. */
+var videos=[
+{id:'vHKnyKhTuHU',title:'AIIMS Delhi — complete campus tour',by:'Bharti Prajapati · AIIMS Delhi',note:'Hostels, college blocks and student spaces'},
+{id:'Oifj33YUycs',title:'AIIMS Gorakhpur — detailed campus tour',by:'FluteVerse MBBS',note:'Library, lecture halls, hostel and campus life'},
+{id:'TcCHxmVfrQo',title:'Inside AIIMS Deoghar',by:'Tushar AIIMS Deoghar',note:'A look at the campus and student facilities'},
+{id:'7bGBGzvRIjg',title:'A day inside AIIMS Delhi',by:'Tathagat Awatar',note:'A student view of campus life'}
+];
+var shorts=[
+{id:'tyHgDKFaCDs',title:'AIIMS Diaries — life after NEET',by:'Shivam Raj [AIIMS]'},
+{id:'mdXewtqisvM',title:'AIIMS Diaries — campus moments',by:'Shivam Raj [AIIMS]'},
+{id:'CZIQWOOl6yw',title:'AIIMS motivation series · Day 20',by:'Raj [AIIMS]'},
+{id:'gSD0cyY1TO4',title:'No one sees the effort',by:'Raj [AIIMS]'},
+{id:'6Dy_Jy0kw38',title:'NEET motivation · dream AIIMS',by:'Raj [AIIMS]'},
+{id:'qLTF8akDqZg',title:'The AIIMS fest feeling',by:'Raj [AIIMS]'}
+];
+var lastVideoIds=[],lastShortIds=[];
+function pickNew(list,count,previous){
+ var pool=list.filter(function(item){return previous.indexOf(item.id)===-1;});
+ if(pool.length<count)pool=list.slice();
+ return shuffle(pool).slice(0,Math.min(count,pool.length));
+}
+function renderVideos(){
+ var selected=pickNew(videos,3,lastVideoIds);lastVideoIds=selected.map(function(item){return item.id;});
+ $('videoGrid').innerHTML=selected.map(function(item){return '<article class="video-card"><div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/'+item.id+'?rel=0" title="'+item.title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="video-info"><small>CAMPUS VIDEO · YOUTUBE</small><h3>'+item.title+'</h3><p>'+item.by+' · '+item.note+'</p></div></article>';}).join('');
+ var selectedShorts=pickNew(shorts,4,lastShortIds);lastShortIds=selectedShorts.map(function(item){return item.id;});
+ $('shortsGrid').innerHTML=selectedShorts.map(function(item){return '<article class="short-card"><div class="short-frame"><iframe src="https://www.youtube-nocookie.com/embed/'+item.id+'?rel=0" title="'+item.title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="short-info"><h3>'+item.title+'</h3><small>'+item.by+'</small></div></article>';}).join('');
+}
+renderVideos();
+$('refreshVideos').addEventListener('click',function(){renderVideos();toast('Fresh videos and Shorts selected.');});
+
+/* Self-study countdown */
+var timerTotal=50*60,timerRemaining=timerTotal,timerInterval=null,timerRunning=false,ringCirc=2*Math.PI*96;
+$('timerProgress').style.strokeDasharray=ringCirc;
+function paintStudyTimer(){
+ var min=Math.floor(timerRemaining/60),sec=timerRemaining%60;
+ $('studyTime').textContent=String(min).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+ $('timerProgress').style.strokeDashoffset=ringCirc*(1-timerRemaining/timerTotal);
+}
+function haltTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}timerRunning=false;}
+function setTimerButton(text,icon){$('studyStart').innerHTML=text+' <span>'+icon+'</span>';}
+document.querySelectorAll('[data-minutes]').forEach(function(button){button.addEventListener('click',function(){
+ haltTimer();document.querySelectorAll('[data-minutes]').forEach(function(item){item.classList.toggle('selected',item===button);});
+ timerTotal=Number(button.dataset.minutes)*60;timerRemaining=timerTotal;$('studyStatus').textContent='READY WHEN YOU ARE';$('timerHint').textContent='One focused session. No distractions.';setTimerButton('START STUDY','▶');paintStudyTimer();
+});});
+$('studyStart').addEventListener('click',function(){
+ if(timerRunning){haltTimer();setTimerButton('RESUME STUDY','▶');$('studyStatus').textContent='PAUSED';return;}
+ if(timerRemaining<=0){timerRemaining=timerTotal;paintStudyTimer();}
+ timerRunning=true;$('studyStatus').textContent='FOCUS IN PROGRESS';setTimerButton('PAUSE SESSION','Ⅱ');
+ timerInterval=setInterval(function(){timerRemaining--;paintStudyTimer();if(timerRemaining<=0){haltTimer();$('studyStatus').textContent='SESSION COMPLETE';$('timerHint').textContent='You showed up. Take a short break, then begin again.';setTimerButton('START AGAIN','↻');toast('Study session complete. Well done.');}},1000);
+});
+$('studyReset').addEventListener('click',function(){haltTimer();timerRemaining=timerTotal;$('studyStatus').textContent='READY WHEN YOU ARE';$('timerHint').textContent='One focused session. No distractions.';setTimerButton('START STUDY','▶');paintStudyTimer();});
+paintStudyTimer();
+
+/* Playlist: attempts audible autoplay, then waits for a visitor gesture if the browser blocks it. */
+var audio=$('musicAudio'),tracks=[],trackIndex=0,musicStarted=false;
+function timeText(seconds){if(!Number.isFinite(seconds))return '0:00';return Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');}
+function updateMusicStatus(message){$('musicState').textContent=message;}
+function startMusic(){
+ if(!tracks.length)return;
+ audio.muted=false;
+ var attempt=audio.play();
+ if(attempt&&typeof attempt.then==='function'){
+  attempt.then(function(){musicStarted=true;$('toggleMusic').textContent='Ⅱ';$('toggleMusic').setAttribute('aria-label','Pause music');updateMusicStatus('MUSIC PLAYING');$('musicHelp').textContent='Music is playing. Use the controls to change tracks or pause.';})
+  .catch(function(){musicStarted=false;$('toggleMusic').textContent='▶';$('toggleMusic').setAttribute('aria-label','Play music');updateMusicStatus('TAP ONCE TO ENABLE MUSIC');$('musicHelp').textContent='Your browser blocked automatic sound. Tap the play button once to start your playlist.';});
+ }else{musicStarted=true;updateMusicStatus('MUSIC PLAYING');}
+}
+function loadTrack(index,play){
+ if(!tracks.length)return;
+ trackIndex=(index+tracks.length)%tracks.length;var track=tracks[trackIndex];
+ audio.src=track.src;$('trackTitle').textContent=track.title||'UNTITLED TRACK';$('trackPosition').textContent='TRACK '+(trackIndex+1)+' OF '+tracks.length;audio.load();
+ if(play)startMusic();
+}
+fetch('music/playlist.json',{cache:'no-store'}).then(function(response){if(!response.ok)throw new Error('Playlist not available');return response.json();}).then(function(list){
+ tracks=Array.isArray(list)?list.filter(function(track){return track&&typeof track.src==='string';}):[];
+ if(!tracks.length){updateMusicStatus('WAITING FOR YOUR PLAYLIST');$('musicHelp').textContent='Attach your MP3 files in this chat and I’ll add them to music/playlist.json. The player will pick them up automatically.';return;}
+ $('musicHelp').textContent='Trying to start your playlist…';loadTrack(0,true);
+}).catch(function(){updateMusicStatus('PLAYLIST NOT FOUND');$('musicHelp').textContent='The music playlist could not be loaded. Try refreshing the page.';});
+$('toggleMusic').addEventListener('click',function(){
+ if(!tracks.length){toast('Your MP3 playlist will appear here once added.');return;}
+ if(audio.paused){startMusic();}else{audio.pause();musicStarted=false;$('toggleMusic').textContent='▶';$('toggleMusic').setAttribute('aria-label','Play music');updateMusicStatus('MUSIC PAUSED');}
+});
+$('previousTrack').addEventListener('click',function(){if(tracks.length)loadTrack(trackIndex-1,true);});
+$('nextTrack').addEventListener('click',function(){if(tracks.length)loadTrack(trackIndex+1,true);});
+$('muteMusic').addEventListener('click',function(){audio.muted=!audio.muted;$('muteMusic').textContent=audio.muted?'×':'♫';});
+audio.addEventListener('timeupdate',function(){var percent=audio.duration?audio.currentTime/audio.duration*100:0;$('musicSeek').value=percent;$('musicElapsed').textContent=timeText(audio.currentTime);$('musicDuration').textContent=timeText(audio.duration);});
+$('musicSeek').addEventListener('input',function(){if(audio.duration)audio.currentTime=(Number(this.value)/100)*audio.duration;});
+audio.addEventListener('ended',function(){if(tracks.length)loadTrack(trackIndex+1,true);});
+/* A first user tap anywhere can satisfy browsers that blocked autoplay. */
+window.addEventListener('pointerdown',function(){if(tracks.length&&!musicStarted&&audio.paused)startMusic();},{once:true,passive:true});
+
+if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 })();
