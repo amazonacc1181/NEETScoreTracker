@@ -113,7 +113,7 @@ def commons_candidates(name):
                 found.append((info.get("thumburl") or info.get("url"),info.get("descriptionurl","")))
         except Exception as e:print(f"  Commons lookup issue {name}: {e}")
         time.sleep(.08)
-    return found
+    return found[:2]
 def main():
     rows=read_campuses()
     results=[]
@@ -132,9 +132,9 @@ def main():
         sources=[]
         if name in SEEDS:
             sources.extend((u,"seeded logo source") for u in SEEDS[name])
-        sources.extend((u,"official institute homepage") for u in homepage_candidates(site))
+        sources.extend((u,"official institute homepage") for u in homepage_candidates(site)[:5])
         commons=commons_candidates(name)
-        sources.extend((u,src or "Wikimedia Commons file page") for u,src in commons)
+        sources.extend((u,src or "Wikimedia Commons file page") for u,src in commons[:2])
         chosen=None
         seen=set()
         for url,source in sources:
