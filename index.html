@@ -85,28 +85,23 @@
           <div class="countdown-foot"><span>NO MAGIC. JUST CONSISTENCY.</span><b id="examDateLabel">02 MAY 2027</b></div>
         </div>
       </div>
-    </section><section class="study-section page-section" id="study">
-      <div class="section-topline"><span>04 / RIGHT NOW</span><span>MAKE THIS SESSION COUNT</span></div>
-      <div class="study-layout">
-        <div class="study-copy">
-          <h2>Don't think about<br>the whole journey.<br><em>Win this hour.</em></h2>
-          <p>Put your phone aside, open the book and give one session your full attention. The next white coat begins with the page in front of you.</p>
-          <div class="study-quote">“You don't need to feel ready. You just need to begin.”</div>
-        </div>
-        <div class="timer-card">
-          <span class="timer-kicker">SELF-STUDY COUNTDOWN</span>
-          <div class="timer-ring-wrap">
-            <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true"><circle class="timer-ring-bg" cx="110" cy="110" r="96"></circle><circle class="timer-ring-progress" id="timerProgress" cx="110" cy="110" r="96"></circle></svg>
-            <div class="timer-readout"><strong id="studyTime">50:00</strong><small id="studyStatus">READY WHEN YOU ARE</small></div>
-          </div>
-          <div class="timer-presets">
-            <button type="button" data-minutes="25">25 MIN</button><button class="selected" type="button" data-minutes="50">50 MIN</button><button type="button" data-minutes="90">90 MIN</button><button type="button" data-minutes="120">2 HOURS</button>
-          </div>
-          <div class="timer-actions"><button class="primary-button" id="studyStart" type="button">START STUDY <span>▶</span></button><button class="reset-button" id="studyReset" type="button" aria-label="Reset timer">↺</button></div>
-          <p class="timer-hint" id="timerHint">One focused session. No distractions.</p>
-        </div>
-      </div>
-    </section></section><section class="app-screen" id="screen-videos" data-screen="videos"><section class="stories-section page-section"><div class="section-topline"><span>04 / REAL CAMPUS LIFE</span><span>WATCH · LEARN · GET INSPIRED</span></div><div class="section-heading"><div><h2>See the life<br><em>you are studying for.</em></h2><p>Campus tours, hostel life and student routines from AIIMS creators.</p></div><button class="refresh-button" id="refreshVideos" type="button"><span>⟳</span> REFRESH VIDEOS</button></div><div class="media-heading"><span>FEATURED CAMPUS VIDEOS</span><small>LONG-FORM CAMPUS TOURS & VLOGS</small></div>
+    </section><section class="study-hub-section page-section" id="studyHub">
+  <div class="section-topline"><span>02 / YOUR FOCUS</span><span>EVERY MINUTE COUNTS</span></div>
+  <div class="study-hub-card">
+    <div class="study-hub-copy">
+      <span class="study-hub-kicker">THE NEXT STEP STARTS NOW</span>
+      <h2>Make time<br><em>for your dream.</em></h2>
+      <p>Start a focused study session. Your dream AIIMS, target rank and stopwatch will stay with you until you finish.</p>
+    </div>
+    <button class="primary-button new-session-button" id="startNewStudySession" type="button">START NEW STUDY SESSION <span>↗</span></button>
+  </div>
+  <div class="study-history-heading">
+    <div><span class="study-hub-kicker">YOUR CONSISTENCY, RECORDED</span><h3>Study history</h3></div>
+    <button class="history-reset-button" id="resetStudyHistory" type="button">RESET ALL HISTORY</button>
+  </div>
+  <div class="study-history-summary" id="studyHistorySummary"><span>0 SESSIONS COMPLETED</span><strong>00:00 HOURS</strong></div>
+  <div class="study-history-list" id="studyHistoryList"><div class="study-history-empty">Your completed study sessions will appear here.</div></div>
+</section></section><section class="app-screen" id="screen-videos" data-screen="videos"><section class="stories-section page-section"><div class="section-topline"><span>04 / REAL CAMPUS LIFE</span><span>WATCH · LEARN · GET INSPIRED</span></div><div class="section-heading"><div><h2>See the life<br><em>you are studying for.</em></h2><p>Campus tours, hostel life and student routines from AIIMS creators.</p></div><button class="refresh-button" id="refreshVideos" type="button"><span>⟳</span> REFRESH VIDEOS</button></div><div class="media-heading"><span>FEATURED CAMPUS VIDEOS</span><small>LONG-FORM CAMPUS TOURS & VLOGS</small></div>
       <div class="video-grid" id="videoGrid"></div>
       <div class="video-note">Videos are hosted by their original creators on YouTube. Use the refresh button to see another selection.</div>
     </section></section></section><section class="app-screen" id="screen-shorts" data-screen="shorts"><section class="stories-section page-section"><div class="section-topline"><span>05 / QUICK INSPIRATION</span><span>REAL STUDENTS · REAL JOURNEYS</span></div><div class="section-heading"><div><h2>A little spark.<br><em>Then back to work.</em></h2><p>Short campus moments and reminders to keep showing up.</p></div><button class="refresh-button" id="refreshShorts" type="button"><span>⟳</span> REFRESH SHORTS</button></div><div class="media-heading shorts-heading"><span>AIIMS SHORTS</span><small>QUICK DOSES OF MOTIVATION</small></div>
@@ -127,6 +122,46 @@
   <button class="logout-button" id="logoutButton" type="button"><span>↪</span> LOG OUT</button>
   <a class="settings-official" href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a>
 </section></section></main>
+<section class="study-session-screen" id="studySessionScreen" aria-hidden="true">
+  <div class="study-session-backdrop"><img id="sessionCampusImage" src="assets/aiims-delhi.webp" alt=""></div>
+  <div class="study-session-shade"></div>
+  <div class="study-session-content">
+    <div class="session-topline"><span>THE LAST MILE · FOCUS MODE</span><span>NEET 2027</span></div>
+    <div class="session-identity">
+      <span class="session-kicker">YOU ARE BUILDING YOUR FUTURE</span>
+      <h1 id="sessionDoctorName">Dr. Aspirant</h1>
+      <p id="sessionDreamCampus">AIIMS New Delhi</p>
+      <div class="session-rank-pill"><span>YOUR 2027 TARGET</span><strong id="sessionRequiredRank">AIR ≤ —</strong></div>
+    </div>
+    <div class="session-clock-block">
+      <span class="session-kicker">TIME INVESTED IN YOUR DREAM</span>
+      <strong class="session-clock" id="studySessionClock">00:00:00</strong>
+      <span class="session-clock-state" id="studySessionState">FOCUS IN PROGRESS</span>
+    </div>
+    <div class="session-controls">
+      <button type="button" class="session-control-button session-pause-button" id="pauseStudySession"><span>Ⅱ</span> PAUSE</button>
+      <button type="button" class="session-control-button session-resume-button" id="resumeStudySession" hidden><span>▶</span> RESUME</button>
+      <button type="button" class="session-end-button" id="endStudySession"><span>■</span> END SESSION</button>
+    </div>
+    <p class="session-encouragement">One question at a time. One hour at a time. Keep going.</p>
+  </div>
+</section>
+<div class="study-math-gate" id="studyMathGate" aria-hidden="true">
+  <form class="study-math-card" id="studyMathForm">
+    <span class="session-kicker">ONE LAST STEP</span>
+    <h2>Before you <em>leave.</em></h2>
+    <p>Solve this quick maths check to finish and save your study session.</p>
+    <div class="math-question" id="studyMathQuestion">7 + 5 = ?</div>
+    <label for="studyMathAnswer">YOUR ANSWER</label>
+    <input id="studyMathAnswer" type="number" inputmode="numeric" step="1" autocomplete="off" required>
+    <p class="math-feedback" id="studyMathFeedback" aria-live="polite"></p>
+    <div class="math-gate-actions">
+      <button class="math-cancel-button" id="cancelStudyEnd" type="button">BACK TO STUDY</button>
+      <button class="primary-button" type="submit">FINISH SESSION <span>↗</span></button>
+    </div>
+  </form>
+</div>
+
 
   <footer class="site-footer app-footer"><a class="brand" href="#home"><span class="brand-mark">✳</span><span><b>THE LAST MILE</b><small>NEET 2027</small></span></a><span>Made for the future you're working towards.</span><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">OFFICIAL NEET UPDATES ↗</a></footer>
   <nav class="bottom-dock" id="bottomDock" aria-label="Main sections">
@@ -179,6 +214,6 @@
     <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
   </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/app.js?v=18"></script>
+  <script src="assets/app.js?v=20"></script>
 </body>
 </html>
