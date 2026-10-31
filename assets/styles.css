@@ -94,3 +94,23 @@ body.drawer-open{overflow:hidden}
 
 @media(max-width:1050px){.site-header{gap:14px}.main-nav{gap:11px}.main-nav a{font-size:8px}.header-cta{display:none}.music-trigger{margin-left:auto}}
 @media(max-width:760px){.music-trigger{display:none}}
+
+
+/* Visitor-selected dream AIIMS */
+.dream-picker{max-width:420px;margin:0 0 23px;padding:13px 14px 11px;background:rgba(29,42,33,.86);border:1px solid rgba(217,241,141,.28);backdrop-filter:blur(10px)}
+.dream-picker label{display:block;margin-bottom:7px;color:var(--lime);font:8px var(--mono);letter-spacing:.13em}
+.dream-select-wrap{position:relative}
+.dream-select-wrap select{width:100%;min-height:43px;appearance:none;-webkit-appearance:none;padding:0 35px 0 11px;border:1px solid var(--line);border-radius:0;background:#202d23;color:var(--ink);font:10px var(--mono);letter-spacing:.04em;outline:none;cursor:pointer}
+.dream-select-wrap select:focus{border-color:var(--lime)}
+.dream-select-wrap select option{background:#202d23;color:var(--ink)}
+.dream-select-wrap>span{position:absolute;right:12px;top:50%;transform:translateY(-55%);color:var(--lime);pointer-events:none;font:18px var(--head)}
+.dream-picker>small{display:block;margin-top:7px;color:var(--muted);font:6px var(--mono);letter-spacing:.08em}
+.dream-picker+ .hero-actions{margin-top:2px}
+.hero-photo img{transition:opacity .25s}
+.campus-card.featured{border-color:rgba(217,241,141,.75);box-shadow:inset 0 0 0 1px rgba(217,241,141,.13),0 12px 30px rgba(0,0,0,.12)}
+.dream-chip{display:inline-flex;margin:0 0 8px;padding:4px 7px;background:var(--lime);color:#172018;font:700 6px var(--mono);letter-spacing:.08em}
+.drawer-controls{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;justify-items:center;gap:6px!important;width:100%;margin-top:14px}
+.drawer-controls button{display:grid!important;place-items:center!important;justify-self:stretch;width:100%!important;height:46px!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%;background:transparent;color:var(--muted);font-family:Arial,sans-serif;font-size:20px;line-height:1;text-align:center;vertical-align:middle;cursor:pointer}
+.drawer-controls button.active{color:var(--lime);background:rgba(217,241,141,.08)}
+.drawer-controls .drawer-play{grid-column:3;justify-self:center;width:50px!important;height:50px!important;border-radius:50%;background:var(--lime)!important;color:#172018!important;font-size:17px!important;box-shadow:0 7px 18px rgba(0,0,0,.2)}
+@media(max-width:760px){.dream-picker{max-width:100%;margin-bottom:18px;padding:12px}.dream-select-wrap select{min-height:46px;font-size:9px}.drawer-controls{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px!important}.drawer-controls button{height:44px!important;font-size:18px}}
