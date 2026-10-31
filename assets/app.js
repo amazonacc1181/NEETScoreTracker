@@ -152,7 +152,7 @@ audio.addEventListener('timeupdate',function(){var percent=audio.duration?audio.
 $('musicSeek').addEventListener('input',function(){if(audio.duration)audio.currentTime=(Number(this.value)/100)*audio.duration;});
 audio.addEventListener('ended',function(){if(tracks.length)loadTrack(trackIndex+1,true);});
 /* A first user tap anywhere can satisfy browsers that blocked autoplay. */
-window.addEventListener('pointerdown',function(){if(tracks.length&&!musicStarted&&audio.paused)startMusic();},{once:true,passive:true});
+window.addEventListener('pointerdown',function(event){if(event.target&&event.target.closest&&event.target.closest('.music-player'))return;if(tracks.length&&!musicStarted&&audio.paused)startMusic();},{passive:true});
 
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 })();
