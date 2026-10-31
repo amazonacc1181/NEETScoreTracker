@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101713">
+  <meta name="description" content="A focused NEET 2027 study session for your dream AIIMS.">
+  <title>Study Session — The Last Mile</title>
+  <link rel="icon" href="assets/lastmile-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css?v=23">
+</head>
+<body class="study-session-page">
+  <section class="study-session-screen active" id="studySessionScreen" aria-hidden="false">
+    <div class="study-session-backdrop"><img id="sessionCampusImage" src="assets/aiims-delhi.webp" alt=""></div>
+    <div class="study-session-shade"></div>
+    <div class="study-session-content">
+      <div class="session-topline"><a href="index.html" class="session-home-link">← THE LAST MILE</a><span>NEET 2027 · FOCUS MODE</span></div>
+      <div class="session-identity">
+        <span class="session-kicker">YOU ARE BUILDING YOUR FUTURE</span>
+        <h1 id="sessionDoctorName">Dr. Aspirant</h1>
+        <p id="sessionDreamCampus">AIIMS New Delhi</p>
+        <div class="session-rank-pill"><span>YOUR 2027 TARGET</span><strong id="sessionRequiredRank">AIR ≤ —</strong></div>
+      </div>
+      <div class="session-clock-block">
+        <span class="session-kicker">TIME INVESTED IN YOUR DREAM</span>
+        <strong class="session-clock" id="studySessionClock">00:00:00</strong>
+        <span class="session-clock-state" id="studySessionState">FOCUS IN PROGRESS</span>
+      </div>
+      <div class="session-controls">
+        <button type="button" class="session-control-button session-pause-button" id="pauseStudySession"><span>Ⅱ</span> PAUSE</button>
+        <button type="button" class="session-control-button session-resume-button" id="resumeStudySession" hidden><span>▶</span> RESUME</button>
+        <button type="button" class="session-end-button" id="endStudySession"><span>■</span> END SESSION</button>
+      </div>
+      <p class="session-encouragement">Your session keeps time when this tab is in the background. Music can play while you study.</p>
+    </div>
+  </section>
+  <div class="study-math-gate" id="studyMathGate" aria-hidden="true">
+    <form class="study-math-card" id="studyMathForm">
+      <span class="session-kicker">ONE LAST STEP</span><h2>Before you <em>leave.</em></h2>
+      <p>Solve this quick maths check to finish and save your study session.</p>
+      <div class="math-question" id="studyMathQuestion">7 + 5 = ?</div>
+      <label for="studyMathAnswer">YOUR ANSWER</label><input id="studyMathAnswer" type="number" inputmode="numeric" step="1" autocomplete="off" required>
+      <p class="math-feedback" id="studyMathFeedback" aria-live="polite"></p>
+      <div class="math-gate-actions"><button class="math-cancel-button" id="cancelStudyEnd" type="button">BACK TO STUDY</button><button class="primary-button" type="submit">FINISH SESSION <span>↗</span></button></div>
+    </form>
+  </div>
+  <div class="study-done-screen" id="studyDoneScreen" hidden>
+    <span class="study-hub-kicker">SESSION SAVED</span><h1>Well done,<br><em>Dr. Aspirant.</em></h1>
+    <p>Your study time has been saved to your history.</p><a class="primary-button" href="index.html">RETURN TO THE LAST MILE <span>↗</span></a>
+  </div>
+    <button class="music-fab" id="musicFab" type="button" aria-controls="musicDrawer" aria-expanded="false"><span>♫</span><small>MUSIC</small></button>
+  <button class="music-backdrop" id="musicBackdrop" type="button" aria-label="Close music drawer" tabindex="-1"></button>
+  <aside class="music-drawer" id="musicDrawer" aria-hidden="true" aria-labelledby="musicDrawerTitle" inert>
+    <div class="drawer-grab" aria-hidden="true"></div>
+    <div class="drawer-header">
+      <div><span class="drawer-kicker">THE LAST MILE · SOUNDTRACK</span><h2 id="musicDrawerTitle">Your music <em>room.</em></h2></div>
+      <button class="drawer-close" id="musicClose" type="button" aria-label="Close music drawer">✕</button>
+    </div>
+    <div class="drawer-now-playing">
+      <div class="drawer-art"><span class="drawer-art-star">✳</span><span class="drawer-art-word">LAST<br>MILE</span><span class="drawer-art-ring"></span></div>
+      <div class="drawer-track-copy"><small>NOW PLAYING</small><strong id="trackTitle">YOUR FIRST TRACK GOES HERE</strong><span id="trackPosition">NO TRACKS ADDED YET</span></div>
+      <div class="drawer-status" id="musicState">WAITING FOR YOUR PLAYLIST</div>
+      <audio id="musicAudio" preload="auto" autoplay playsinline></audio>
+      <div class="drawer-progress"><span id="musicElapsed">0:00</span><input type="range" id="musicSeek" min="0" max="100" value="0" aria-label="Music progress"><span id="musicDuration">0:00</span></div>
+      <div class="drawer-controls">
+        <button type="button" id="shuffleMusic" aria-label="Toggle shuffle" title="Shuffle">⤨</button>
+        <button type="button" id="previousTrack" aria-label="Previous track" title="Previous track">⏮</button>
+        <button type="button" id="toggleMusic" class="drawer-play" aria-label="Play music">▶</button>
+        <button type="button" id="nextTrack" aria-label="Next track" title="Next track">⏭</button>
+        <button type="button" id="repeatMusic" aria-label="Toggle repeat" title="Repeat">↻</button>
+      </div>
+      <div class="drawer-volume"><span>VOLUME</span><input type="range" id="musicVolume" min="0" max="100" value="75" aria-label="Music volume"><button type="button" id="muteMusic" aria-label="Mute music">♫</button></div>
+    </div>
+    <div class="drawer-queue-head"><span>UP NEXT</span><span id="queueCount">0 TRACKS</span></div>
+    <div class="drawer-queue" id="musicQueue"><div class="queue-empty">Your playlist will appear here once MP3 files are added.</div></div>
+    <div class="drawer-footer" id="musicHelp">Attach your MP3 files in this chat and I'll add them to the website playlist. Only upload music you have permission to distribute.</div>
+  </aside>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/study-session.js?v=23"></script>
+</body>
+</html>
