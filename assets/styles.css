@@ -14,3 +14,7 @@
 @media(max-width:390px){.page-section{padding-inline:15px}.hero-content{padding-inline:17px}.campus-grid{gap:7px}.campus-image{height:110px}.campus-info h3{font-size:12px}.campus-info p{font-size:7px}.campus-links{flex-direction:column}.countdown-numbers strong{font-size:28px}.countdown-foot{flex-direction:column;gap:6px}.shorts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-heading h2,.section-copy h2,.study-copy h2,.music-copy h2{font-size:39px}}
 @media(orientation:landscape) and (max-height:560px) and (max-width:950px){.hero{min-height:0}.hero-content{padding-top:185px}.hero-photo{height:275px}.hero-photo-shade{background:linear-gradient(0deg,var(--bg),transparent 65%)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.campus-card.featured{border-color:rgba(217,241,141,.65);box-shadow:inset 0 0 0 1px rgba(217,241,141,.12)}
+.dream-chip{display:inline-flex;margin:0 0 8px;padding:4px 7px;background:var(--lime);color:#172018;font:700 6px var(--mono);letter-spacing:.08em}
+.campus-image img.image-fallback{object-fit:contain;padding:35px;background:#26372b}
