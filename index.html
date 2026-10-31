@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111612"><meta name="description" content="A personal NEET 2027 study sanctuary. One last attempt. One future to build.">
+  <title>The Last Mile — NEET 2027</title><link rel="icon" href="assets/lastmile-icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="The Last Mile home"><span class="brand-mark">✳</span><span class="brand-copy"><b>THE LAST MILE</b><small>NEET 2027 · PRIVATE STUDY SPACE</small></span></a>
+    <nav class="desktop-nav" aria-label="Main navigation"><a href="#today">Today</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#journal">Journal</a></nav>
+    <div class="top-actions"><span class="live-tag"><i></i> YOUR FINAL CHAPTER</span><button id="themeToggle" class="icon-button" aria-label="Toggle light and dark theme" title="Toggle theme">☼</button><button class="menu-button" id="menuButton" aria-label="Open navigation">☰</button></div>
+  </header>
+  <div class="mobile-nav" id="mobileNav"><a href="#today">Today's plan</a><a href="#progress">Progress</a><a href="#dream">The dream</a><a href="#journal">Journal</a><a href="#sound">Sound room</a></div>
+
+  <main id="home">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> THE FOURTH. THE FINAL. THE ONE THAT COUNTS.</div>
+        <h1>THE LAST<br><em>MILE.</em></h1>
+        <p class="hero-lede">One more chapter. One more paper. One more day of choosing the future you said you wanted.</p>
+        <p class="hero-small">This isn't about proving anything to the world. It's about keeping a promise to yourself.</p>
+        <div class="hero-ctas"><a class="button button-lime" href="#today">MAKE TODAY COUNT <span>↗</span></a><button class="text-button" id="heroPromise">READ YOUR PROMISE <span>↓</span></button></div>
+        <div class="hero-signoff"><span class="signoff-rule"></span><span>SHOW UP. EVEN WHEN IT'S QUIET.</span></div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-image-wrap">
+          <img class="hero-image" src="https://dfhe5ze0n4pxu.cloudfront.net/College/Image/Image-1770109316314.jpg" alt="AIIMS Deoghar campus building" fetchpriority="high">
+          <div class="image-shade"></div><div class="image-topline"><span>THE PLACE IN YOUR MIND</span><span>01 / 01</span></div>
+          <div class="image-caption"><span class="campus-kicker">YOUR NORTH STAR</span><strong>AIIMS<br>DEOGHAR.</strong><a href="https://www.aiimsdeoghar.edu.in/" target="_blank" rel="noopener">VISIT THE INSTITUTE ↗</a></div>
+        </div>
+        <div class="art-note"><span class="note-star">✳</span><span>Let the dream be bigger<br>than the difficult day.</span></div><div class="vertical-label">A FUTURE YOU CAN WALK INTO</div>
+      </div>
+      <div class="hero-bottomline"><span>VOL. 04 — THE FINAL ATTEMPT</span><span>BUILT ONE DAY AT A TIME <b>↘</b></span></div>
+    </section>
+
+    <section class="countdown-band shell" aria-labelledby="countdownTitle">
+      <div class="countdown-intro"><div class="section-index">01 / THE DATE</div><h2 id="countdownTitle">The day is<br><em>getting closer.</em></h2>
+        <p>NTA has not announced the official NEET 2027 date. Set a planning date for now, then update it when the notice arrives.</p>
+        <label class="date-label" for="targetDate">YOUR PROVISIONAL TARGET</label><div class="date-control"><input id="targetDate" type="date" value="2027-05-02"><span>↗</span></div>
+        <div class="provisional-note"><span class="status-dot"></span> PLANNING DATE · NOT AN OFFICIAL EXAM DATE</div>
+      </div>
+      <div class="countdown-display"><div class="countdown-heading"><span>TIME LEFT TO YOUR TARGET</span><span class="countdown-spark">✳</span></div>
+        <div class="time-grid"><div class="time-unit"><strong id="days">—</strong><span>DAYS</span></div><div class="time-colon">:</div><div class="time-unit"><strong id="hours">—</strong><span>HOURS</span></div><div class="time-colon">:</div><div class="time-unit"><strong id="minutes">—</strong><span>MINUTES</span></div><div class="time-colon">:</div><div class="time-unit"><strong id="seconds">—</strong><span>SECONDS</span></div></div>
+        <div class="countdown-foot"><span>THE CLOCK DOESN'T NEED YOUR PERMISSION.</span><span id="targetText">02 MAY 2027 · PROVISIONAL</span></div>
+      </div><div class="countdown-vertical">EVERY DAY IS AN OPPORTUNITY.</div>
+    </section>
+
+    <section class="section shell" id="today">
+      <div class="section-heading"><div><div class="section-index">02 / THE WORK</div><h2>Today is where<br><em>it happens.</em></h2></div><div class="heading-aside"><span class="today-date" id="todayDate"></span><span class="micro-copy">A good day is built, not found.</span></div></div>
+      <div class="today-layout">
+        <div class="daily-panel panel"><div class="panel-head"><div><span class="panel-kicker">YOUR DAILY NON-NEGOTIABLES</span><h3>The plan for today.</h3></div><span class="panel-icon">↗</span></div>
+          <div class="task-list" id="taskList">
+            <label class="task-row"><input type="checkbox" data-task="bio"><span class="task-check"></span><span class="task-text"><b>Biology</b><small>One NCERT chapter · read, recall, revise</small></span><span class="task-tag tag-bio">BIO</span></label>
+            <label class="task-row"><input type="checkbox" data-task="chem"><span class="task-check"></span><span class="task-text"><b>Chemistry</b><small>One chapter · concepts + questions</small></span><span class="task-tag tag-chem">CHEM</span></label>
+            <label class="task-row"><input type="checkbox" data-task="physics"><span class="task-check"></span><span class="task-text"><b>Physics</b><small>One lecture · notes + examples</small></span><span class="task-tag tag-physics">PHY</span></label>
+            <label class="task-row"><input type="checkbox" data-task="practice"><span class="task-check"></span><span class="task-text"><b>Question practice</b><small>One focused MCQ set · analyse mistakes</small></span><span class="task-tag tag-practice">MCQ</span></label>
+          </div>
+          <div class="daily-footer"><span id="taskCount">0 OF 4 COMPLETED</span><span id="dayMessage">START WITH ONE.</span></div><div class="progress-track"><span id="dayProgress"></span></div>
+        </div>
+        <div class="focus-panel panel"><div class="focus-top"><span class="panel-kicker">THE FOCUS ROOM</span><span class="focus-status"><i></i> DEEP WORK</span></div><div class="focus-title">Protect your<br><em>attention.</em></div>
+          <div class="timer-wrap"><svg class="timer-ring" viewBox="0 0 220 220" role="img" aria-label="Focus timer"><circle class="timer-track" cx="110" cy="110" r="96"></circle><circle class="timer-value" id="timerRing" cx="110" cy="110" r="96"></circle></svg><div class="timer-center"><strong id="timerDisplay">25:00</strong><span id="timerLabel">MINUTES OF FOCUS</span></div></div>
+          <div class="timer-presets"><button class="preset active" data-minutes="25">25 MIN</button><button class="preset" data-minutes="50">50 MIN</button></div><div class="timer-controls"><button class="button button-lime" id="timerStart">START FOCUS <span>▶</span></button><button class="reset-button" id="timerReset" aria-label="Reset timer">↺</button></div><p class="focus-quote">Your only job for this block: stay with the page in front of you.</p>
+        </div>
+      </div>
+      <div class="micro-strip"><span>01 — READ LIKE IT MATTERS</span><span>02 — PRACTISE LIKE IT'S REAL</span><span>03 — REVIEW LIKE A SCIENTIST</span><span>04 — REPEAT TOMORROW</span></div>
+    </section>
+
+    <section class="section progress-section" id="progress"><div class="shell">
+      <div class="section-heading"><div><div class="section-index">03 / THE PROOF</div><h2>Small wins.<br><em>Visible progress.</em></h2></div><div class="heading-aside"><span class="streak-number" id="streakNumber">0</span><span class="micro-copy">DAY STREAK · KEEP THE CHAIN ALIVE</span></div></div>
+      <div class="progress-grid">
+        <div class="week-panel panel"><div class="panel-head"><div><span class="panel-kicker">CONSISTENCY, NOT PERFECTION</span><h3>Your last seven days.</h3></div><span class="week-total" id="weekTotal">0 / 28</span></div>
+          <div class="week-chart" id="weekChart"><div class="week-bar"><span></span><small>M</small></div><div class="week-bar"><span></span><small>T</small></div><div class="week-bar"><span></span><small>W</small></div><div class="week-bar"><span></span><small>T</small></div><div class="week-bar"><span></span><small>F</small></div><div class="week-bar"><span></span><small>S</small></div><div class="week-bar"><span></span><small>S</small></div></div>
+          <div class="week-legend"><span><i></i> TASKS COMPLETED</span><span>YOUR DATA STAYS ON THIS DEVICE</span></div>
+        </div>
+        <div class="north-panel"><div class="north-icon">✳</div><div class="panel-kicker">A NOTE TO REMEMBER</div><p>Motivation gets you to the desk.<br><em>Discipline brings you back.</em></p><span class="north-foot">COME BACK TOMORROW.</span></div>
+      </div>
+      <div class="test-panel panel">
+        <div class="test-intro"><span class="panel-kicker">THE TEST VAULT</span><h3>Every mock is<br><em>feedback.</em></h3><p>Record your scores. Learn from the paper. Never let one number define the whole story.</p></div>
+        <div class="test-entry"><form id="scoreForm" class="score-form"><label>TEST NAME<input id="testName" type="text" placeholder="e.g. Allen Full Test 08" maxlength="45" required></label><label>YOUR SCORE<input id="testScore" type="number" inputmode="numeric" min="0" max="720" placeholder="e.g. 540" required></label><label>OUT OF<input id="testMax" type="number" inputmode="numeric" min="1" max="720" value="720" required></label><button class="button button-lime" type="submit">SAVE RESULT <span>＋</span></button></form>
+          <div class="test-summary"><div><strong id="testCount">0</strong><span>TESTS LOGGED</span></div><div><strong id="testAverage">—</strong><span>AVERAGE %</span></div><div><strong id="bestScore">—</strong><span>BEST SCORE</span></div></div><div class="test-history" id="testHistory"><div class="empty-state">Your first score goes here. Make it a starting point, not a verdict.</div></div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="section shell" id="dream">
+      <div class="section-heading"><div><div class="section-index">04 / THE WHY</div><h2>Keep the dream<br><em>in sight.</em></h2></div><div class="heading-aside"><span class="micro-copy">NOT A FANTASY. A DIRECTION.</span></div></div>
+      <div class="dream-grid">
+        <div class="dream-photo"><img src="https://www.collegebatch.com/static/clg-gallery/all-india-institute-of-medical-sciences-deoghar-313471.webp" alt="Landscaped campus at AIIMS Deoghar" loading="lazy"><div class="dream-photo-shade"></div><div class="dream-photo-content"><span>THE DREAM HAS AN ADDRESS</span><strong>AIIMS<br>DEOGHAR.</strong><a href="https://www.aiimsdeoghar.edu.in/" target="_blank" rel="noopener">EXPLORE THE INSTITUTE ↗</a></div><span class="photo-credit">CAMPUS IMAGE · COLLEGEBATCH</span></div>
+        <div class="dream-copy"><span class="panel-kicker">PICTURE THE ORDINARY DAYS THERE</span><h3>The first walk<br>through the campus.<br><em>The first white coat.</em></h3><p>The library that becomes familiar. The anatomy lectures. The people who become your batchmates. The work that slowly turns a student into a doctor.</p>
+          <div class="dream-steps"><div><b>01</b><span>GET THERE</span></div><div><b>02</b><span>DO THE WORK</span></div><div><b>03</b><span>GROW INTO IT</span></div></div><a class="outline-link" href="https://www.aiimsdeoghar.edu.in/" target="_blank" rel="noopener">OFFICIAL AIIMS DEOGHAR WEBSITE <span>↗</span></a>
+        </div>
+      </div>
+      <div class="future-strip"><span class="future-mark">✳</span><p>One day, the hard part will be over.<br><em>Make sure you are proud of how you got there.</em></p><span class="future-sign">— FUTURE YOU</span></div>
+    </section>
+
+    <section class="section journal-section" id="journal"><div class="shell journal-grid">
+      <div class="journal-intro"><div class="section-index">05 / THE INNER VOICE</div><h2>Leave a note<br>for the person<br><em>you're becoming.</em></h2><p>Some days will be heavy. Write it down. Let tomorrow begin with a clearer mind.</p><div class="journal-decoration">“You do not have to see the whole staircase. Just take the next step.”</div></div>
+      <div class="journal-card panel"><div class="journal-card-head"><span class="panel-kicker">YOUR PRIVATE PAGE</span><span class="journal-date" id="journalDate"></span></div><label class="journal-label" for="journalText">WHAT'S ON YOUR MIND TODAY?</label><textarea id="journalText" rows="7" maxlength="1800" placeholder="Today I showed up because...&#10;&#10;One thing I understood better...&#10;&#10;Tomorrow I will..."></textarea>
+        <div class="journal-actions"><span id="journalStatus">ONLY YOU CAN SEE THIS ON THIS DEVICE.</span><button class="button button-lime" id="saveJournal">SAVE TODAY'S NOTE <span>↗</span></button></div>
+        <div class="future-letter"><span class="panel-kicker">A MESSAGE TO YOUR FUTURE SELF</span><p>When you read this after the exam, remember the version of you who kept going when nobody was watching.</p></div>
+      </div>
+    </div></section>
+
+    <section class="section shell sound-section" id="sound">
+      <div class="sound-left"><div class="section-index">06 / THE SOUNDTRACK</div><h2>Find your<br><em>frequency.</em></h2><p>Some songs make the room quieter. Some remind you why you started. Your study soundtrack belongs here.</p><div class="sound-coming"><span class="equalizer"><i></i><i></i><i></i><i></i><i></i></span><span>YOUR MUSIC ROOM IS READY FOR YOUR TRACKS</span></div></div>
+      <div class="player panel"><div class="record-art"><div class="record-ring"><span>✳</span></div><div class="record-label">THE<br>LAST<br>MILE</div></div>
+        <div class="player-meta"><span class="panel-kicker">NOW PLAYING</span><strong id="trackTitle">A QUIET PLACE TO FOCUS</strong><small id="trackSubtitle">NO TRACKS ADDED YET</small></div><audio id="audioPlayer" preload="metadata"></audio>
+        <div class="audio-progress"><span id="audioCurrent">0:00</span><input type="range" id="audioSeek" min="0" max="100" value="0" aria-label="Track progress"><span id="audioDuration">0:00</span></div>
+        <div class="player-controls"><button id="prevTrack" aria-label="Previous track">|◀</button><button id="playTrack" class="play-button" aria-label="Play music">▶</button><button id="nextTrack" aria-label="Next track">▶|</button><button id="muteTrack" aria-label="Mute music">♫</button></div>
+        <div class="music-empty" id="musicEmpty">The player is built. The playlist is still yours to add.<br><small>When you share audio you own or are licensed to use, we'll add it here.</small></div>
+      </div>
+    </section>
+
+    <section class="closing shell" id="promise"><div class="closing-top"><span>THE LAST MILE · NEET 2027</span><span>ONE DAY AT A TIME · ALWAYS</span></div>
+      <div class="closing-content"><span class="closing-star">✳</span><h2>Make the<br>future <em>real.</em></h2><p>Not tomorrow. Not when the mood is perfect.<br>Today, with what you have, where you are.</p><a class="button button-lime" href="#today">BACK TO TODAY <span>↑</span></a></div>
+      <div class="closing-bottom"><span>MADE FOR THE DAYS THAT MATTER.</span><span>YOUR STORY IS STILL BEING WRITTEN.</span></div>
+    </section>
+  </main>
+  <footer class="footer shell"><a class="brand" href="#home"><span class="brand-mark">✳</span><span class="brand-copy"><b>THE LAST MILE</b><small>NEET 2027 · PRIVATE STUDY SPACE</small></span></a><span>Progress saved in this browser · Not synced across devices</span><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">CHECK OFFICIAL NTA UPDATES ↗</a></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div><script src="assets/app.js"></script>
+</body></html>
