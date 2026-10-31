@@ -91,3 +91,6 @@ body.drawer-open{overflow:hidden}
 body.drawer-open{overflow:hidden}
 @media(max-width:760px){.music-drawer{width:min(100vw,460px);padding:22px 20px calc(20px + env(safe-area-inset-bottom))}.drawer-grab{display:block;width:43px;height:4px;border-radius:5px;background:rgba(230,240,220,.25);margin:-10px auto 17px}.drawer-art{height:142px}.music-fab{right:15px;bottom:15px;padding:10px 13px}}
 @media(prefers-reduced-motion:reduce){.music-drawer,.music-backdrop,.music-fab{transition:none}}
+
+@media(max-width:1050px){.site-header{gap:14px}.main-nav{gap:11px}.main-nav a{font-size:8px}.header-cta{display:none}.music-trigger{margin-left:auto}}
+@media(max-width:760px){.music-trigger{display:none}}
