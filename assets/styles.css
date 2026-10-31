@@ -396,3 +396,7 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
  .study-session-page .study-session-content{min-height:calc(100svh - 54px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
  .study-session-page .music-fab{right:14px;bottom:calc(14px + env(safe-area-inset-bottom))}
 }
+
+.aiims-logo-item .aiims-logo-placeholder{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;padding:0;border-radius:50%;background:var(--lime);color:#18221a;font:700 21px/1 var(--head)}
+.aiims-logo-item .aiims-logo-name{max-width:105px}
+@media(max-width:760px){.aiims-logo-item .aiims-logo-placeholder{width:31px;height:31px;flex-basis:31px;font-size:18px}}
