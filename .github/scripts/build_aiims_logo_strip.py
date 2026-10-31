@@ -41,7 +41,7 @@ def read_campuses():
     return rows
 def get_bytes(url):
     try:
-        r=SESSION.get(url,timeout=(12,35),allow_redirects=True)
+        r=SESSION.get(url,timeout=(6,14),allow_redirects=True)
         r.raise_for_status()
         if not r.headers.get("Content-Type","").lower().startswith("image/"):
             return None
@@ -61,7 +61,7 @@ def store_image(data,path):
     except Exception:return False
 def homepage_candidates(url):
     try:
-        r=SESSION.get(url,timeout=(12,30),allow_redirects=True)
+        r=SESSION.get(url,timeout=(6,14),allow_redirects=True)
         r.raise_for_status()
         soup=BeautifulSoup(r.text,"html.parser")
         candidates=[]
@@ -93,11 +93,11 @@ def homepage_candidates(url):
         print(f"  homepage scan failed: {url}: {e}")
         return []
 def commons_candidates(name):
-    q=[f'"{name}" logo',f'"All India Institute of Medical Sciences" {name.replace("AIIMS ","")} logo']
+    q=[f'"{name}" logo']
     found=[]
     for query in q:
         try:
-            params={"action":"query","format":"json","generator":"search","gsrnamespace":6,"gsrlimit":25,
+            params={"action":"query","format":"json","generator":"search","gsrnamespace":6,"gsrlimit":12,
                     "gsrsearch":query,"prop":"imageinfo","iiprop":"url|mime|extmetadata"}
             data=SESSION.get("https://commons.wikimedia.org/w/api.php",params=params,timeout=30).json()
             pages=list(data.get("query",{}).get("pages",{}).values())
@@ -112,7 +112,7 @@ def commons_candidates(name):
                 if not any(k in license_text for k in ["cc0","cc by","cc-by","public domain","pd"]):continue
                 found.append((info.get("thumburl") or info.get("url"),info.get("descriptionurl","")))
         except Exception as e:print(f"  Commons lookup issue {name}: {e}")
-        time.sleep(.2)
+        time.sleep(.08)
     return found
 def main():
     rows=read_campuses()
