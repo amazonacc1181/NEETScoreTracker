@@ -46,5 +46,62 @@ $('prevTrack').addEventListener('click',function(){if(tracks.length)setTrack(tra
 $('muteTrack').addEventListener('click',function(){audio.muted=!audio.muted;$('muteTrack').textContent=audio.muted?'×':'♫';});
 audio.addEventListener('timeupdate',function(){var pct=audio.duration?audio.currentTime/audio.duration*100:0;$('audioSeek').value=pct;$('audioCurrent').textContent=fmt(audio.currentTime);$('audioDuration').textContent=fmt(audio.duration);});
 $('audioSeek').addEventListener('input',function(){if(audio.duration)audio.currentTime=Number(this.value)/100*audio.duration;});audio.addEventListener('ended',function(){if(tracks.length)setTrack(trackIndex+1);});
+
+/* All-India AIIMS directory: PMSSY status snapshot plus the original AIIMS New Delhi. */
+var aiimsInstitutes=[
+{name:'AIIMS New Delhi',city:'Ansari Nagar, New Delhi',state:'Delhi',group:'functional',status:'Original institute · fully operational',url:'https://www.aiims.edu/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Bhopal',city:'Saket Nagar, Bhopal',state:'Madhya Pradesh',group:'functional',status:'Fully functional',url:'https://aiimsbhopal.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Bhubaneswar',city:'Sijua, Bhubaneswar',state:'Odisha',group:'functional',status:'Fully functional',url:'https://www.aiimsbhubaneswar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Jodhpur',city:'Basni, Jodhpur',state:'Rajasthan',group:'functional',status:'Fully functional',url:'https://aiimsjodhpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Patna',city:'Phulwarisharif, Patna',state:'Bihar',group:'functional',status:'Fully functional',url:'http://aiimspatna.org/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Raipur',city:'Tatibandh, Raipur',state:'Chhattisgarh',group:'functional',status:'Fully functional',url:'http://aiimsraipur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Rishikesh',city:'Virbhadra Road, Rishikesh',state:'Uttarakhand',group:'functional',status:'Fully functional',url:'http://aiimsrishikesh.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Raebareli',city:'Munshiganj, Raebareli',state:'Uttar Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsrbl.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Gorakhpur',city:'Kunraghat, Gorakhpur',state:'Uttar Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsgorakhpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Mangalagiri',city:'Mangalagiri, Guntur region',state:'Andhra Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsmangalagiri.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Nagpur',city:'MIHAN, Nagpur',state:'Maharashtra',group:'clinical',status:'MBBS · OPD · IPD operational',url:'http://aiimsnagpur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Bathinda',city:'Bathinda',state:'Punjab',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsbathinda.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Bibinagar',city:'Bibinagar, Yadadri Bhuvanagiri',state:'Telangana',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsbibinagar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Kalyani',city:'Kalyani, Nadia',state:'West Bengal',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimskalyani.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Deoghar',city:'Devipur / Deoghar',state:'Jharkhand',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsdeoghar.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE',highlight:true},
+{name:'AIIMS Bilaspur',city:'Kothipura, Bilaspur',state:'Himachal Pradesh',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://www.aiimsbilaspur.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Rajkot',city:'Khandheri, Rajkot',state:'Gujarat',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsrajkot.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Guwahati',city:'Changsari, Kamrup',state:'Assam',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://aiimsguwahati.ac.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Vijaypur (Jammu)',city:'Vijaypur, Samba',state:'Jammu & Kashmir',group:'clinical',status:'MBBS · OPD · IPD operational',url:'https://www.aiimsjammu.edu.in/',link:'OFFICIAL INSTITUTE WEBSITE'},
+{name:'AIIMS Madurai',city:'Madurai / temporary academic campus at Ramanathapuram',state:'Tamil Nadu',group:'mbbs',status:'MBBS classes running · campus work ongoing',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
+{name:'AIIMS Awantipora',city:'Awantipora, Pulwama',state:'Jammu & Kashmir',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
+{name:'AIIMS Majra (Rewari)',city:'Majra, Rewari',state:'Haryana',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'},
+{name:'AIIMS Darbhanga',city:'Darbhanga',state:'Bihar',group:'building',status:'Construction in progress',url:'https://pmssy.mohfw.gov.in/',link:'GOVERNMENT PROJECT STATUS'}
+];
+var aiimsGrid=$('aiimsGrid'),aiimsSearch=$('aiimsSearch'),aiimsEmpty=$('aiimsEmpty'),aiimsResultCount=$('aiimsResultCount'),aiimsActiveFilter='all';
+function renderAiims(){
+ if(!aiimsGrid)return;
+ var query=(aiimsSearch&&aiimsSearch.value||'').trim().toLowerCase();
+ var visible=aiimsInstitutes.filter(function(item){
+  var filterMatch=aiimsActiveFilter==='all'||item.group===aiimsActiveFilter;
+  var haystack=(item.name+' '+item.city+' '+item.state+' '+item.status).toLowerCase();
+  return filterMatch&&(!query||haystack.indexOf(query)!==-1);
+ });
+ aiimsGrid.innerHTML=visible.map(function(item){
+  var number=String(aiimsInstitutes.indexOf(item)+1).padStart(2,'0');
+  var featured=item.highlight?' featured':'';
+  var flag=item.highlight?'<span class="aiims-dream-flag">YOUR DREAM INSTITUTE</span>':'';
+  return '<article class="aiims-card'+featured+'"><div class="aiims-card-art" aria-hidden="true"><span class="aiims-card-index">INSTITUTE '+number+' / 23</span><span class="aiims-card-word">AIIMS</span><span class="aiims-card-art-caption">THE INDIA-WIDE INSTITUTE NETWORK</span></div><div class="aiims-card-body">'+flag+'<span class="aiims-card-type">ALL INDIA INSTITUTE OF MEDICAL SCIENCES</span><h3>'+escapeHTML(item.name)+'</h3><p class="aiims-location">'+escapeHTML(item.city)+', '+escapeHTML(item.state)+'</p><span class="aiims-status status-'+item.group+'">'+escapeHTML(item.status)+'</span><a class="aiims-card-link" href="'+escapeHTML(item.url)+'" target="_blank" rel="noopener">'+escapeHTML(item.link)+' <span>↗</span></a></div></article>';
+ }).join('');
+ aiimsResultCount.textContent=visible.length+' of '+aiimsInstitutes.length+' institutes';
+ aiimsEmpty.hidden=visible.length!==0;
+}
+if(aiimsGrid){
+ document.querySelectorAll('[data-aiims-filter]').forEach(function(button){
+  button.addEventListener('click',function(){
+   aiimsActiveFilter=button.dataset.aiimsFilter;
+   document.querySelectorAll('[data-aiims-filter]').forEach(function(other){var active=other===button;other.classList.toggle('active',active);other.setAttribute('aria-pressed',String(active));});
+   renderAiims();
+  });
+ });
+ if(aiimsSearch)aiimsSearch.addEventListener('input',renderAiims);
+ renderAiims();
+}
+
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
 })();
