@@ -643,3 +643,10 @@ body{background:var(--bg);color:var(--ink)}
 @media(max-width:950px){.vault-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.vault-items-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.media-vault{margin-top:39px}.vault-shell{padding:16px}.vault-heading{gap:12px}.vault-heading h2{font-size:35px}.vault-heading p{font-size:11px}.vault-count-mark{padding:9px 10px;font-size:20px}.vault-stat-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.vault-stat-row>div{padding:10px}.vault-search-row{flex-direction:column}.vault-search-action{min-height:43px}.vault-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.vault-topic{min-height:143px;padding:11px}.vault-topic strong{font-size:11px}.vault-topic small{font-size:9px}.vault-items-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vault-item-body{padding:9px}.vault-item h4{font-size:10px}.vault-item-actions{gap:4px}.vault-item-actions button,.vault-item-actions a{min-height:27px;padding:0 6px;font-size:6px}.vault-import summary{align-items:flex-start;flex-direction:column}.vault-import summary small{text-align:left}.vault-import-actions{align-items:flex-start;flex-direction:column}.vault-local-label{font-size:6px}}
 @media(max-width:360px){.vault-topic-grid,.vault-items-grid{grid-template-columns:1fr}.vault-item.is-short .vault-thumb{aspect-ratio:16/9}}
+
+.vault-api-import{border-color:rgba(var(--accent-rgb,190,220,150),.34)}
+.vault-api-label{display:flex;flex-direction:column;gap:8px;margin:12px 0;color:var(--lime,#d2e7a1);font:8px var(--mono,monospace);letter-spacing:.08em}
+.vault-api-label input{width:100%;height:42px;padding:0 12px;border:1px solid var(--line,rgba(255,255,255,.15));outline:0;background:rgba(0,0,0,.2);color:var(--text,#fff);font:11px var(--mono,monospace)}
+.vault-api-label input:focus{border-color:var(--lime,#d2e7a1)}
+.vault-api-import p a{color:var(--lime,#d2e7a1);text-decoration:underline;text-underline-offset:3px}
+.vault-import-actions button:disabled{opacity:.5;cursor:wait}
