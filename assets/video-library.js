@@ -4,6 +4,31 @@ var DB_NAME='TheLastMileVideoVault';
 var STORE_NAME='videos';
 var records=[];
 var dbPromise=null;
+var defaultSeeds=[
+{id:'vHKnyKhTuHU',title:'AIIMS Delhi — complete campus tour',type:'video',category:'AIIMS campus tours',creator:'Bharti Prajapati · AIIMS Delhi',url:'https://www.youtube.com/watch?v=vHKnyKhTuHU',saved:false,addedAt:1},
+{id:'Oifj33YUycs',title:'AIIMS Gorakhpur — detailed campus tour',type:'video',category:'AIIMS campus tours',creator:'FluteVerse MBBS',url:'https://www.youtube.com/watch?v=Oifj33YUycs',saved:false,addedAt:2},
+{id:'TcCHxmVfrQo',title:'Inside AIIMS Deoghar',type:'video',category:'AIIMS campus tours',creator:'Tushar AIIMS Deoghar',url:'https://www.youtube.com/watch?v=TcCHxmVfrQo',saved:false,addedAt:3},
+{id:'7bGBGzvRIjg',title:'A day inside AIIMS Delhi',type:'video',category:'MBBS student life',creator:'Tathagat Awatar',url:'https://www.youtube.com/watch?v=7bGBGzvRIjg',saved:false,addedAt:4},
+{id:'tyHgDKFaCDs',title:'AIIMS Diaries — life after NEET',type:'shorts',category:'AIIMS motivation',creator:'Shivam Raj [AIIMS]',url:'https://www.youtube.com/shorts/tyHgDKFaCDs',saved:false,addedAt:5},
+{id:'mdXewtqisvM',title:'AIIMS Diaries — campus moments',type:'shorts',category:'AIIMS motivation',creator:'Shivam Raj [AIIMS]',url:'https://www.youtube.com/shorts/mdXewtqisvM',saved:false,addedAt:6},
+{id:'CZIqWOOl6yw',title:'AIIMS motivation series · Day 20',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/CZIqWOOl6yw',saved:false,addedAt:7},
+{id:'gSD0cyY1TO4',title:'No one sees the effort',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/gSD0cyY1TO4',saved:false,addedAt:8},
+{id:'6Dy_Jy0kw38',title:'NEET motivation · dream AIIMS',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/6Dy_Jy0kw38',saved:false,addedAt:9},
+{id:'qLTF8akDqZg',title:'The AIIMS fest feeling',type:'shorts',category:'MBBS student life',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/qLTF8akDqZg',saved:false,addedAt:10},
+{id:'VfjIbGRdj7g',title:'AIIMS Diaries — life after NEET, Vlog 98',type:'shorts',category:'AIIMS motivation',creator:'Shivam Raj [AIIMS]',url:'https://www.youtube.com/shorts/VfjIbGRdj7g',saved:false,addedAt:11},
+{id:'AuYEC2MBVrk',title:'Seep ma’am supremacy · NEET motivation',type:'shorts',category:'NEET motivation',creator:'Unacademy NEET · Seep Pahuja',url:'https://www.youtube.com/shorts/AuYEC2MBVrk',saved:false,addedAt:12},
+{id:'SbSZLrx1GUM',title:'Ignore the Noise. Believe in Yourself. · NEET 2027',type:'shorts',category:'NEET motivation',creator:'Unacademy NEET · Seep Pahuja',url:'https://www.youtube.com/shorts/SbSZLrx1GUM',saved:false,addedAt:13},
+{id:'qxwP2Fj1ggI',title:'NEET 2027 · 250 Days Ultimate Chemistry Plan',type:'video',category:'Chemistry',creator:'Unacademy NEET · Akanksha Ma’am',url:'https://www.youtube.com/watch?v=qxwP2Fj1ggI',saved:false,addedAt:14},
+{id:'00NQ0_Kq7yc',title:'One Day, Your Hard Work Will Speak for You',type:'shorts',category:'NEET motivation',creator:'Unacademy NEET · Seep Pahuja',url:'https://www.youtube.com/shorts/00NQ0_Kq7yc',saved:false,addedAt:15},
+{id:'2PUDtZ7YCpw',title:'NEET 2027 Test Analysis · Analyse Like a Topper',type:'video',category:'Mock test analysis',creator:'Unacademy NEET · ACiD Sir',url:'https://www.youtube.com/watch?v=2PUDtZ7YCpw',saved:false,addedAt:16},
+{id:'AyHriizwPa0',title:'Mole Concept Part 2 · NCERT Deep Dive',type:'video',category:'Chemistry',creator:'Unacademy NEET · Akanksha Ma’am',url:'https://www.youtube.com/watch?v=AyHriizwPa0',saved:false,addedAt:17},
+{id:'JAcfm-wuim0',title:'NEET 2027 Physics Made Easy · Step-by-Step Solving',type:'video',category:'Physics',creator:'Unacademy NEET · Anupam Sir',url:'https://www.youtube.com/watch?v=JAcfm-wuim0',saved:false,addedAt:18},
+{id:'Gu6D3nnD5S0',title:'NEET 2027 Droppers · Stop Repeating Your Mistakes',type:'video',category:'NEET strategy',creator:'Unacademy NEET · ACiD Sir',url:'https://www.youtube.com/watch?v=Gu6D3nnD5S0',saved:false,addedAt:19},
+{id:'cwvEXfzgKzg',title:'This Will Change Your NEET 2027 Result · Strategy',type:'video',category:'NEET strategy',creator:'Unacademy NEET · Akanksha Ma’am',url:'https://www.youtube.com/watch?v=cwvEXfzgKzg',saved:false,addedAt:20},
+{id:'yZo3xAPky_g',title:'Aldol Condensation Reaction Made Easy · NEET 2027',type:'video',category:'Organic chemistry',creator:'Unacademy NEET · ACiD Sir',url:'https://www.youtube.com/watch?v=yZo3xAPky_g',saved:false,addedAt:21},
+{id:'RgNU6KU4FME',title:'How Toppers Score 700+ Without Studying All Day',type:'video',category:'Topper strategy',creator:'Unacademy NEET · Akanksha Ma’am',url:'https://www.youtube.com/watch?v=RgNU6KU4FME',saved:false,addedAt:22},
+{id:'xR3q2wdcfuU',title:'Master Organic Chemistry Without Memorising Reactions',type:'video',category:'Organic chemistry',creator:'Unacademy NEET · ACiD Sir',url:'https://www.youtube.com/watch?v=xR3q2wdcfuU',saved:false,addedAt:23}
+];
 var pageByMode={videos:1,shorts:1};
 var PAGE_SIZE=18;
 var topics=[
@@ -462,6 +487,9 @@ function boot(){
  if(!videoRoot&&!shortsRoot)return;
  Promise.resolve(readAll()).then(function(data){
   records=Array.isArray(data)?data:[];
+  var known={};records.forEach(function(item){known[item.id]=true;});
+  var newSeeds=defaultSeeds.filter(function(item){return !known[item.id];});
+  if(newSeeds.length){records=records.concat(newSeeds);writeBatch(records).catch(function(){});}
   if(videoRoot)createVault(videoRoot,'videos');
   if(shortsRoot)createVault(shortsRoot,'shorts');
  });
