@@ -11,7 +11,7 @@ var defaultSeeds=[
 {id:'7bGBGzvRIjg',title:'A day inside AIIMS Delhi',type:'video',category:'MBBS student life',creator:'Tathagat Awatar',url:'https://www.youtube.com/watch?v=7bGBGzvRIjg',saved:false,addedAt:4},
 {id:'tyHgDKFaCDs',title:'AIIMS Diaries — life after NEET',type:'shorts',category:'AIIMS motivation',creator:'Shivam Raj [AIIMS]',url:'https://www.youtube.com/shorts/tyHgDKFaCDs',saved:false,addedAt:5},
 {id:'mdXewtqisvM',title:'AIIMS Diaries — campus moments',type:'shorts',category:'AIIMS motivation',creator:'Shivam Raj [AIIMS]',url:'https://www.youtube.com/shorts/mdXewtqisvM',saved:false,addedAt:6},
-{id:'CZIqWOOl6yw',title:'AIIMS motivation series · Day 20',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/CZIqWOOl6yw',saved:false,addedAt:7},
+{id:'CZIQWOOl6yw',title:'AIIMS motivation series · Day 20',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/CZIqWOOl6yw',saved:false,addedAt:7},
 {id:'gSD0cyY1TO4',title:'No one sees the effort',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/gSD0cyY1TO4',saved:false,addedAt:8},
 {id:'6Dy_Jy0kw38',title:'NEET motivation · dream AIIMS',type:'shorts',category:'NEET motivation',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/6Dy_Jy0kw38',saved:false,addedAt:9},
 {id:'qLTF8akDqZg',title:'The AIIMS fest feeling',type:'shorts',category:'MBBS student life',creator:'Raj [AIIMS]',url:'https://www.youtube.com/shorts/qLTF8akDqZg',saved:false,addedAt:10},
