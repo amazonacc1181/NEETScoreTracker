@@ -1,1 +1,18 @@
-{"name":"The Last Mile — NEET 2027","short_name":"The Last Mile","description":"A visual AIIMS motivation wall, NEET countdown, study timer and soundtrack.","start_url":"./","scope":"./","display":"standalone","background_color":"#101713","theme_color":"#101713","icons":[{"src":"assets/lastmile-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name": "The Last Mile — Future Doctor HQ",
+  "short_name": "The Last Mile",
+  "description": "Your future doctor HQ: AIIMS inspiration, NEET countdown, focused study and mood-based music.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101713",
+  "theme_color": "#101713",
+  "icons": [
+    {
+      "src": "./assets/lastmile-icon.svg?v=31",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
