@@ -207,7 +207,7 @@ function createVault(root,mode){
   '<div class="vault-filter-row" role="group" aria-label="Filter media">'+filterList.map(function(f){return '<button type="button" data-filter="'+f[0]+'" class="'+(f[0]===startFilter?'active':'')+'">'+f[1]+'</button>';}).join('')+'</div>',
   '<div class="vault-subhead"><div><span>DISCOVERY SHELVES</span><small>LIVE YOUTUBE SEARCHES · NO RE-UPLOADS</small></div></div>',
   '<div class="vault-topic-grid" data-topics></div>',
-  mode==='videos'?'<details class="vault-import"><summary><span>＋ BULK IMPORT YOUR OWN VIDEO BANK</span><small>Paste 10,000+ YouTube links, JSON or CSV</small></summary><div class="vault-import-inner"><p>Use one YouTube URL per line, or CSV rows in this order: <b>Title, URL, Type, Category</b>. JSON arrays are also supported. Your list is saved privately in this browser using IndexedDB.</p><textarea data-import placeholder="https://www.youtube.com/watch?v=VIDEO_ID&#10;A biology lecture, https://www.youtube.com/watch?v=VIDEO_ID, video, Biology&#10;A quick revision short, https://www.youtube.com/shorts/VIDEO_ID, shorts, Revision"></textarea><div class="vault-import-actions"><button type="button" data-import-button>IMPORT LINKS</button><span data-import-status>Up to 50,000 entries supported by the library interface.</span></div></div></details>':'',
+  mode==='videos'?'<details class="vault-import"><summary><span>＋ BULK IMPORT YOUR OWN VIDEO BANK</span><small>Paste 10,000+ YouTube links, JSON or CSV</small></summary><div class="vault-import-inner"><p>Use one YouTube URL per line, or CSV rows in this order: <b>Title, URL, Type, Category</b>. JSON arrays are also supported. Your list is saved privately in this browser using IndexedDB.</p><textarea data-import placeholder="https://www.youtube.com/watch?v=VIDEO_ID&#10;A biology lecture, https://www.youtube.com/watch?v=VIDEO_ID, video, Biology&#10;A quick revision short, https://www.youtube.com/shorts/VIDEO_ID, shorts, Revision"></textarea><div class="vault-import-actions"><button type="button" data-import-button>IMPORT LINKS</button><span data-import-status>Up to 50,000 entries supported by the library interface.</span></div></div></details><details class="vault-import vault-api-import"><summary><span>◉ BUILD THE 10,000+ BANK FROM YOUTUBE</span><small>Bulk discovery · NEET / AIIMS / MBBS · real video IDs</small></summary><div class="vault-import-inner"><p>This connects to the official YouTube Data API. A Google API key is required. Restrict that key to your website referrer and the YouTube Data API v3 before saving it here.</p><label class="vault-api-label">YOUTUBE DATA API KEY<input type="password" data-youtube-key autocomplete="off" placeholder="Paste your restricted API key"></label><div class="vault-import-actions"><button type="button" data-save-youtube-key>SAVE KEY ON THIS DEVICE</button><button type="button" data-harvest-youtube>HARVEST NEXT BATCH</button><span data-harvest-status>Up to 100 search requests per quota day · up to 50 results each.</span></div></div></details>':'',
   '<div class="vault-library-heading"><div><span>YOUR COLLECTION</span><small data-result-count>0 ITEMS</small></div><span class="vault-local-label">SAVED ON THIS DEVICE</span></div>',
   '<div class="vault-player" data-player hidden><div class="vault-player-head"><span>NOW PLAYING</span><button type="button" data-close-player>✕ CLOSE</button></div><div class="vault-player-frame" data-player-frame></div></div>',
   '<div class="vault-items-grid" data-items></div>',
@@ -314,6 +314,126 @@ function createVault(root,mode){
   if(event.target.closest('[data-close-player]')){playerFrame.innerHTML='';player.hidden=true;}
  });
  if(mode==='videos'){
+  var apiKeyInput=root.querySelector('[data-youtube-key]');
+  var apiSave=root.querySelector('[data-save-youtube-key]');
+  var apiRun=root.querySelector('[data-harvest-youtube]');
+  var apiStatus=root.querySelector('[data-harvest-status]');
+  var savedApiKey=localStorage.getItem('tlm:youtubeApiKey')||'';
+  if(apiKeyInput)apiKeyInput.value=savedApiKey;
+  function quotaDay(){
+   try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+   catch(e){return new Date().toISOString().slice(0,10);}
+  }
+  function readHarvestState(){
+   try{
+    var saved=JSON.parse(localStorage.getItem('tlm:youtubeHarvester')||'{}');
+    if(!saved||typeof saved!=='object')saved={};
+    if(saved.day!==quotaDay()){saved.day=quotaDay();saved.used=0;saved.nextTask=0;}
+    saved.tokens=saved.tokens||{};
+    saved.used=Number(saved.used)||0;
+    saved.nextTask=Number(saved.nextTask)||0;
+    return saved;
+   }catch(e){return {day:quotaDay(),used:0,nextTask:0,tokens:{}};}
+  }
+  function writeHarvestState(state){localStorage.setItem('tlm:youtubeHarvester',JSON.stringify(state));}
+  var harvestQueries=[
+   'NEET 2027 Physics full lectures','NEET 2027 Chemistry full lectures','NEET 2027 Biology full lectures',
+   'NEET Physics chapter wise questions','NEET Chemistry chapter wise questions','NEET Biology NCERT line by line',
+   'NEET Physics previous year questions solutions','NEET Chemistry previous year questions solutions','NEET Biology previous year questions',
+   'NEET 2027 full syllabus revision','NEET 2027 mock test analysis','NEET 2027 topper strategy',
+   'NEET 2027 daily study routine','NEET aspirant study with me','NEET 2027 motivation',
+   'AIIMS MBBS campus tour India','AIIMS MBBS hostel life','AIIMS student day in the life',
+   'MBBS first year anatomy lectures','MBBS physiology lectures','medical student vlog India',
+   'NEET organic chemistry reaction mechanism','NEET inorganic chemistry NCERT','NEET physical chemistry numericals',
+   'NEET human physiology detailed lecture','NEET genetics and evolution lectures','NEET plant physiology lectures',
+   'NEET ecology NCERT explanation','NEET modern physics one shot','NEET mechanics problem solving',
+   'NEET thermodynamics lecture','NEET electrochemistry lecture','NEET chemical bonding lecture',
+   'NEET molecular biology lecture','NEET biotechnology lecture','NEET animal kingdom lecture',
+   'NEET biomolecules NCERT lecture','NEET full mock paper discussion','NEET exam strategy time management',
+   'NEET dropper comeback story','NEET AIR 1 topper interview','AIIMS Deoghar MBBS student vlog',
+   'AIIMS Delhi MBBS student experience','medical college hostel room tour India','NEET 2027 one shot revision',
+   'NEET 2027 rapid revision marathon','NEET mistake analysis strategy','NEET active recall study method',
+   'NEET 2027 biology diagrams revision','NEET 2027 physics formula revision'
+  ];
+  function apiSearchUrl(key,query,kind,pageToken){
+   var params=new URLSearchParams();
+   params.set('part','snippet');params.set('type','video');params.set('maxResults','50');
+   params.set('q',query+(kind==='shorts'?' #shorts':''));
+   params.set('videoDuration',kind==='shorts'?'short':'any');
+   params.set('order','relevance');params.set('regionCode','IN');params.set('relevanceLanguage','en');
+   params.set('key',key);if(pageToken)params.set('pageToken',pageToken);
+   return 'https://www.googleapis.com/youtube/v3/search?'+params.toString();
+  }
+  function harvestTasks(){
+   var tasks=[];
+   harvestQueries.forEach(function(query,index){
+    tasks.push({key:'video-'+index,query:query,kind:'video',category:topics[index%topics.length].title});
+    tasks.push({key:'short-'+index,query:query,kind:'shorts',category:topics[index%topics.length].title});
+   });
+   return tasks;
+  }
+  if(apiSave)apiSave.addEventListener('click',function(){
+   var key=(apiKeyInput.value||'').trim();
+   if(!key){apiStatus.textContent='Paste a YouTube Data API v3 key first.';return;}
+   localStorage.setItem('tlm:youtubeApiKey',key);savedApiKey=key;
+   apiStatus.textContent='Key saved on this device. Make sure its website-referrer and API restrictions are enabled.';
+  });
+  if(apiRun)apiRun.addEventListener('click',async function(){
+   var key=(apiKeyInput.value||'').trim()||savedApiKey;
+   if(!key){apiStatus.textContent='A YouTube Data API key is needed. Create and restrict one in Google Cloud first.';return;}
+   localStorage.setItem('tlm:youtubeApiKey',key);savedApiKey=key;
+   var state=readHarvestState(),tasks=harvestTasks(),remaining=Math.max(0,100-state.used);
+   if(!remaining){apiStatus.textContent='Daily search quota reached ('+state.used+'/100). Continue after YouTube quota resets at midnight Pacific Time.';return;}
+   apiRun.disabled=true;apiSave.disabled=true;
+   var byId={};records.forEach(function(item){byId[item.id]=item;});
+   var addedTotal=0,processed=0,errors=0;
+   apiStatus.textContent='Starting discovery · '+remaining+' search requests remain in today’s default quota.';
+   try{
+    while(processed<remaining){
+     var task=tasks[state.nextTask%tasks.length];
+     var url=apiSearchUrl(key,task.query,task.kind,state.tokens[task.key]||'');
+     state.used++;writeHarvestState(state);
+     var response=await fetch(url);
+     var payload=await response.json();
+     if(!response.ok){
+      var message=payload&&payload.error&&payload.error.message?payload.error.message:'YouTube API request failed ('+response.status+').';
+      throw new Error(message);
+     }
+     if(payload.nextPageToken)state.tokens[task.key]=payload.nextPageToken;
+     else delete state.tokens[task.key];
+     var batch=[];
+     (payload.items||[]).forEach(function(entry){
+      var videoId=entry&&entry.id&&entry.id.videoId;
+      if(!videoId||!/^[A-Za-z0-9_-]{11}$/.test(videoId)||byId[videoId])return;
+      var snippet=entry.snippet||{};
+      var title=String(snippet.title||'Untitled YouTube video');
+      var item={
+       id:videoId,title:title,type:task.kind==='shorts'?'shorts':'video',
+       category:task.category,creator:String(snippet.channelTitle||''),
+       url:'https://www.youtube.com/watch?v='+videoId,
+       saved:false,addedAt:Date.now(),
+       source:'YouTube Data API search',publishedAt:snippet.publishedAt||''
+      };
+      byId[videoId]=item;batch.push(item);addedTotal++;
+     });
+     if(batch.length){
+      records=records.concat(batch);
+      await writeBatch(records);
+      document.dispatchEvent(new Event('tlm-media-vault-updated'));
+     }
+     state.nextTask=(state.nextTask+1)%tasks.length;
+     writeHarvestState(state);
+     processed++;
+     apiStatus.textContent='Harvesting '+processed+'/'+remaining+' requests · '+addedTotal.toLocaleString('en-IN')+' new unique videos · '+records.length.toLocaleString('en-IN')+' total in your library.';
+     if(state.used>=100)break;
+     await new Promise(function(resolve){setTimeout(resolve,160);});
+    }
+    apiStatus.textContent='Batch finished: '+addedTotal.toLocaleString('en-IN')+' new unique records from '+processed+' searches. Library total: '+records.length.toLocaleString('en-IN')+'. '+Math.max(0,100-state.used)+' search requests remain today.';
+    renderItems();
+   }catch(error){
+    apiStatus.textContent='Stopped after '+processed+' searches: '+(error&&error.message?error.message:'unknown API error')+'. Your saved records are retained. Check key restrictions and quota, then retry later.';
+   }finally{apiRun.disabled=false;apiSave.disabled=false;}
+  });
   var importButton=root.querySelector('[data-import-button]');
   importButton.addEventListener('click',function(){
    var textarea=root.querySelector('[data-import]'),status=root.querySelector('[data-import-status]');
