@@ -165,7 +165,7 @@ function refreshProfileUI(){
  selectedDream=profile.dreamCollege;
  var item=campuses.find(function(c){return c.name===selectedDream;});
  if(!item)return;
- $('welcomeTitle').innerHTML='Welcome,<br><em>Dr. '+String(profile.name).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];})+'</em>';
+ $('welcomeTitle').innerHTML='Welcome,<br><em>Future Dr. '+String(profile.name).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];})+'</em>';
  $('homeDreamLine').textContent='Your dream is '+item.name+'. Build your way there, one focused day at a time.';
  $('homeCategoryLabel').textContent=(categoryNames[profile.category]||profile.category)+' CATEGORY';
  $('heroPhotoCredit').textContent=item.name.toUpperCase()+' · '+item.place.toUpperCase();
