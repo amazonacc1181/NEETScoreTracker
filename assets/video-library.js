@@ -288,6 +288,7 @@ function createVault(root,mode){
   var q=search.value.trim()||(mode==='shorts'?'NEET motivation and revision':'NEET 2027 study videos');
   window.open(ytSearchUrl(q,mode),'_blank','noopener');
  });
+ document.addEventListener('tlm-media-vault-updated',renderItems);
  root.addEventListener('click',function(event){
   var watch=event.target.closest('[data-watch]');
   if(watch){
@@ -301,13 +302,13 @@ function createVault(root,mode){
   var save=event.target.closest('[data-save]');
   if(save){
    var record=records.find(function(x){return x.id===save.dataset.save;});if(!record)return;
-   record.saved=!record.saved;writeOne(record).then(function(){renderItems();});
+   record.saved=!record.saved;writeOne(record).then(function(){document.dispatchEvent(new Event('tlm-media-vault-updated'));});
    return;
   }
   var remove=event.target.closest('[data-remove]');
   if(remove){
    var idToDelete=remove.dataset.remove;
-   deleteOne(idToDelete).then(function(){records=records.filter(function(x){return x.id!==idToDelete;});renderItems();});
+   deleteOne(idToDelete).then(function(){records=records.filter(function(x){return x.id!==idToDelete;});document.dispatchEvent(new Event('tlm-media-vault-updated'));});
    return;
   }
   if(event.target.closest('[data-close-player]')){playerFrame.innerHTML='';player.hidden=true;}
@@ -327,7 +328,7 @@ function createVault(root,mode){
    records=Object.keys(map).map(function(key){return map[key];});
    writeBatch(records).then(function(){
     status.textContent=added.toLocaleString('en-IN')+' new items imported. '+records.length.toLocaleString('en-IN')+' total in your collection.';
-    textarea.value='';state.filter='all';state.page=1;
+    textarea.value='';state.filter='all';state.page=1;document.dispatchEvent(new Event('tlm-media-vault-updated'));
     root.querySelectorAll('[data-filter]').forEach(function(x){x.classList.toggle('active',x.dataset.filter==='all');});
     renderItems();
    }).catch(function(error){status.textContent=error.message||'Import failed. Try a smaller batch.';});
